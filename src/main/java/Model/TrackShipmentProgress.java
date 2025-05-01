@@ -4,14 +4,14 @@ public class TrackShipmentProgress {
     private int shipmentID;
     private String currentLocation;
     private String estimatedDeliveryTime;
-    private String delayReason;
+    private Integer delays;
     private String status;
 
-    public TrackShipmentProgress(int shipmentID, String currentLocation, String estimatedDeliveryTime, String delayReason, String status) {
+    public TrackShipmentProgress(int shipmentID, String currentLocation, String estimatedDeliveryTime, Integer delays, String status) {
         this.shipmentID = shipmentID;
         this.currentLocation = currentLocation;
         this.estimatedDeliveryTime = estimatedDeliveryTime;
-        this.delayReason = delayReason;
+        this.delays = delays;
         this.status = status;
     }
 
@@ -27,8 +27,8 @@ public class TrackShipmentProgress {
         return estimatedDeliveryTime;
     }
 
-    public String getDelayReason() {
-        return delayReason;
+    public Integer getDelays() {
+        return delays;
     }
 
     public String getStatus() {
@@ -47,8 +47,8 @@ public class TrackShipmentProgress {
         this.estimatedDeliveryTime = estimatedDeliveryTime;
     }
 
-    public void setDelayReason(String delayReason) {
-        this.delayReason = delayReason;
+    public void setDelays(Integer delays) {
+        this.delays = delays;
     }
 
     public void setStatus(String status) {
@@ -63,15 +63,15 @@ public class TrackShipmentProgress {
         this.estimatedDeliveryTime = newEstimatedTime;
     }
 
-    public void recordDelay(String newDelayReason) {
-        this.delayReason = newDelayReason;
+    public void recordDelay(Integer newDelay) {
+        this.delays = newDelay;
     }
 
     public String getShipmentStatus(String newStatus) {
         return "Shipment ID: " + shipmentID + "\n" +
                 "Current Location: " + currentLocation + "\n" +
                 "Estimated Delivery Time: " + estimatedDeliveryTime + "\n" +
-                "Delay Reason: " + delayReason + "\n" +
+                "Delay Reason: " + delays + "\n" +
                 "Status: " + status;
     }
 }
