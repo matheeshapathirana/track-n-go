@@ -44,10 +44,13 @@ public class adminView {
 
     public adminView() {
         txtID.setEditable(false); // Make ID field non-editable
+        txtshipmentid.setEditable(false);
 
         loadTrackTable();
         loadPersonnelTable();
         setNextPersonnelID(); // Set next available ID on startup
+        setNextShipmentID(); // Set next available shipment ID on startup
+        clearPersonnelFields();
 
         btnupdatetrack.addActionListener(new ActionListener() {
             @Override
@@ -220,6 +223,29 @@ public class adminView {
         txtSchedule.setText("");
         txtRoute.setText("");
         txtAreaHistory.setText("");
+    }
+
+    // Helper to get next available shipment ID (auto-increment)
+    private int getNextShipmentID() {
+        TrackShipmentProgressDAO dao = new TrackShipmentProgressDAO();
+        List<TrackShipmentProgress> list = dao.getAllShipmentProgress();
+        int maxID = 0;
+        for (TrackShipmentProgress t : list) {
+            try {
+                int id = Integer.parseInt(String.valueOf(t.getShipmentID()));
+                if (id > maxID) {
+                    maxID = id;
+                }
+            } catch (NumberFormatException ex) {
+                // Ignore invalid IDs
+            }
+        }
+        return maxID + 1;
+    }
+
+    // Set txtshipmentid to next available shipment ID
+    private void setNextShipmentID() {
+        txtshipmentid.setText(String.valueOf(getNextShipmentID()));
     }
 
     public static void main(String[] args) {
