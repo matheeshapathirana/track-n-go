@@ -17,7 +17,7 @@
         <properties/>
         <border type="none"/>
         <children>
-          <grid id="c636e" layout-manager="GridLayoutManager" row-count="3" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="c636e" binding="loginbackpanel" layout-manager="GridLayoutManager" row-count="3" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
               <tabbedpane title="Login"/>
@@ -25,7 +25,7 @@
             <properties/>
             <border type="none"/>
             <children>
-              <component id="c7811" class="javax.swing.JPasswordField" binding="txtpassword">
+              <component id="c7811" class="javax.swing.JPasswordField" binding="txtloginpassword">
                 <constraints>
                   <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
@@ -41,7 +41,7 @@
                   <text value="Email"/>
                 </properties>
               </component>
-              <component id="b3b95" class="javax.swing.JFormattedTextField" binding="txtemail">
+              <component id="b3b95" class="javax.swing.JFormattedTextField" binding="txtloginemail">
                 <constraints>
                   <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
@@ -67,7 +67,7 @@
               </component>
             </children>
           </grid>
-          <grid id="58c0" layout-manager="GridLayoutManager" row-count="4" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="58c0" binding="registerbackpanel" layout-manager="GridLayoutManager" row-count="4" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
               <tabbedpane title="Register"/>
@@ -101,7 +101,7 @@
                   <text value="Email"/>
                 </properties>
               </component>
-              <component id="3932e" class="javax.swing.JTextField" binding="textField1" default-binding="true">
+              <component id="3932e" class="javax.swing.JTextField" binding="txtregisterusername">
                 <constraints>
                   <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
@@ -109,7 +109,7 @@
                 </constraints>
                 <properties/>
               </component>
-              <component id="e4243" class="javax.swing.JPasswordField" binding="passwordField2" default-binding="true">
+              <component id="e4243" class="javax.swing.JPasswordField" binding="txtregisterpassword">
                 <constraints>
                   <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
@@ -117,7 +117,7 @@
                 </constraints>
                 <properties/>
               </component>
-              <component id="9b1a" class="javax.swing.JTextField" binding="textField2" default-binding="true">
+              <component id="9b1a" class="javax.swing.JTextField" binding="txtregisteremail">
                 <constraints>
                   <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>

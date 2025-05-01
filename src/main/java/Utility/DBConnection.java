@@ -10,15 +10,16 @@ public class DBConnection {
     private static final String PASSWORD = "user2006";
     private static Connection connection = null;
 
-    public static Connection getConnection() {
-        if (connection == null) {
-            try {
-                Class.forName("com.mysql.cj.jdbc.Driver");
+    public static synchronized Connection getConnection() {
+        try {
+            // Check if the connection is null or closed
+            if (connection == null || connection.isClosed()) {
                 connection = DriverManager.getConnection(URL, USER, PASSWORD);
                 System.out.println("Database connected.");
-            } catch (Exception e) {
-                System.out.println("Database connection error: " + e.getMessage());
             }
+        } catch (SQLException e) {
+            System.err.println("Database connection error: " + e.getMessage());
+            e.printStackTrace(); // Log the stack trace for debugging
         }
         return connection;
     }
