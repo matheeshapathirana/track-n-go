@@ -27,6 +27,9 @@ public class DeliveryPersonnelView extends JFrame{
     private JPanel PersonnelManagerPanel;
     private JLabel alllDriverslbl;
     private JLabel mainlbl;
+    private JPanel spacer1;  //these spacer1,2,3 was used to keep space in between
+    private JPanel spacer2;
+    private JPanel spacer3;
 
     private void clearFields() {
         txtID.setText("");
@@ -74,9 +77,10 @@ public class DeliveryPersonnelView extends JFrame{
                     DeliveryPersonnel p1 = new DeliveryPersonnel(0, personnelName, personnelContact, schedule, assignedRoute, deliveryHistory);
 
                     controller.addDeliveryPersonnel(p1);
-                    JOptionPane.showMessageDialog(null, "Personnel added successfully");
+                    JOptionPane.showMessageDialog(null, "Personnel added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
                     clearFields();
                     loadPersonnelTable();
+                    pack();
 
                 }
             }
@@ -98,13 +102,14 @@ public class DeliveryPersonnelView extends JFrame{
                     DeliveryPersonnel p1 = new DeliveryPersonnel(personnelID, personnelName, personnelContact, schedule, assignedRoute, deliveryHistory);
 
                     controller.updateDeliveryPersonnel(p1);
-                    JOptionPane.showMessageDialog(null, "Personnel updated successfully");
+                    JOptionPane.showMessageDialog(null, "Personnel updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
                     clearFields();
                     loadPersonnelTable();
+                    pack();
                 }
                 catch (NumberFormatException ex)
                 {
-                    JOptionPane.showMessageDialog(null, "Please enter a valid ID to proceed");
+                    JOptionPane.showMessageDialog(null, "Please select a valid personnel to proceed", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -120,13 +125,14 @@ public class DeliveryPersonnelView extends JFrame{
                     p1.setPersonnelID(personnelID);
 
                     controller.deleteDeliveryPersonnel(p1);
-                    JOptionPane.showMessageDialog(null, "Personnel deleted successfully");
+                    JOptionPane.showMessageDialog(null, "Personnel deleted successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
                     clearFields();
                     loadPersonnelTable();
+                    pack();
                 }
                 catch(NumberFormatException ex)
                 {
-                    JOptionPane.showMessageDialog(null, "Please enter a valid ID to proceed");
+                    JOptionPane.showMessageDialog(null, "Please select a valid personnel to proceed", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -148,7 +154,9 @@ public class DeliveryPersonnelView extends JFrame{
             data[i][5]=personnel.getDeliveryHistory();
         }
         AllDriversView.setModel(new javax.swing.table.DefaultTableModel(data, columnNames));
+        pack();
     }
+    //main method to load all to the ui
     public static void main(String[] args)
     {
         DeliveryPersonnelView view = new DeliveryPersonnelView();
@@ -157,5 +165,6 @@ public class DeliveryPersonnelView extends JFrame{
         view.setContentPane(view.PersonnelManagerPanel);
         view.setVisible(true);
         view.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        view.setLocationRelativeTo(null);
     }
 }
