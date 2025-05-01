@@ -1,6 +1,12 @@
 package View;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import Model.TrackShipmentProgressDAO;
+import Model.TrackShipmentProgress;
+import javax.swing.table.DefaultTableModel;
+import java.util.List;
 
 public class adminView {
     private JTabbedPane tabbedPane1;
@@ -34,4 +40,171 @@ public class adminView {
     private JLabel alllDriverslbl;
     private JPanel spacer3;
     private JPanel spacer2;
+    private JComboBox comboBox1;
+
+    public adminView() {
+        loadTrackTable();
+        loadPersonnelTable();
+        btnupdatetrack.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (txtshipmentid.getText().isEmpty() || txtlocation.getText().isEmpty() || txtdeliverytimes.getText().isEmpty() || txtdelays.getText().isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Please fill all fields!", "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    String shipmentID = txtshipmentid.getText();
+                    String location = txtlocation.getText();
+                    String deliveryTime = txtdeliverytimes.getText();
+                    String delay = txtdelays.getText();
+                    String status = comboBox1.getSelectedItem() != null ? comboBox1.getSelectedItem().toString() : "";
+                    Controller.TrackShipmentProgressController controller = new Controller.TrackShipmentProgressController();
+                    controller.updateShipmentProgress(shipmentID, location, deliveryTime, delay, status);
+                    loadTrackTable(); // Refresh table after update
+                }
+            }
+        });
+
+        // Populate text fields when a row is selected
+        tracktable.getSelectionModel().addListSelectionListener(e -> {
+            int selectedRow = tracktable.getSelectedRow();
+            if (selectedRow >= 0) {
+                txtshipmentid.setText(tracktable.getValueAt(selectedRow, 0).toString());
+                txtlocation.setText(tracktable.getValueAt(selectedRow, 1).toString());
+                txtdeliverytimes.setText(tracktable.getValueAt(selectedRow, 2).toString());
+                txtdelays.setText(tracktable.getValueAt(selectedRow, 3).toString());
+                // status is not editable, but you can add a field if needed
+            }
+        });
+
+        // Delivery Personnel Table: populate fields when a row is selected
+        AllDriversView.getSelectionModel().addListSelectionListener(e -> {
+            int selectedRow = AllDriversView.getSelectedRow();
+            if (selectedRow >= 0) {
+                txtID.setText(AllDriversView.getValueAt(selectedRow, 0).toString());
+                txtName.setText(AllDriversView.getValueAt(selectedRow, 1).toString());
+                txtContact.setText(AllDriversView.getValueAt(selectedRow, 2).toString());
+                txtSchedule.setText(AllDriversView.getValueAt(selectedRow, 3).toString());
+                txtRoute.setText(AllDriversView.getValueAt(selectedRow, 4).toString());
+                txtAreaHistory.setText(AllDriversView.getValueAt(selectedRow, 5).toString());
+            }
+        });
+
+        // Add Personnel
+        addDriverButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(txtName.getText().isEmpty() || txtContact.getText().isEmpty() || txtSchedule.getText().isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Please fill all fields!", "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    String personnelName = txtName.getText();
+                    String personnelContact = txtContact.getText();
+                    String schedule = txtSchedule.getText();
+                    String assignedRoute = txtRoute.getText();
+                    String deliveryHistory = txtAreaHistory.getText();
+                    Controller.DeliveryPersonnelController controller = new Controller.DeliveryPersonnelController();
+                    Model.DeliveryPersonnel p1 = new Model.DeliveryPersonnel(0, personnelName, personnelContact, schedule, assignedRoute, deliveryHistory);
+                    controller.addDeliveryPersonnel(p1);
+                    JOptionPane.showMessageDialog(null, "Personnel added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    clearPersonnelFields();
+                    loadPersonnelTable();
+                }
+            }
+        });
+
+        // Update Personnel
+        updateDriverButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    int personnelID = Integer.parseInt(txtID.getText());
+                    String personnelName = txtName.getText();
+                    String personnelContact = txtContact.getText();
+                    String schedule = txtSchedule.getText();
+                    String assignedRoute = txtRoute.getText();
+                    String deliveryHistory = txtAreaHistory.getText();
+                    Controller.DeliveryPersonnelController controller = new Controller.DeliveryPersonnelController();
+                    Model.DeliveryPersonnel p1 = new Model.DeliveryPersonnel(personnelID, personnelName, personnelContact, schedule, assignedRoute, deliveryHistory);
+                    controller.updateDeliveryPersonnel(p1);
+                    JOptionPane.showMessageDialog(null, "Personnel updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    clearPersonnelFields();
+                    loadPersonnelTable();
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(null, "Please select a valid personnel to proceed", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
+        // Delete Personnel
+        deleteDriverButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    int personnelID = Integer.parseInt(txtID.getText());
+                    Controller.DeliveryPersonnelController controller = new Controller.DeliveryPersonnelController();
+                    Model.DeliveryPersonnel p1 = new Model.DeliveryPersonnel();
+                    p1.setPersonnelID(personnelID);
+                    controller.deleteDeliveryPersonnel(p1);
+                    JOptionPane.showMessageDialog(null, "Personnel deleted successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    clearPersonnelFields();
+                    loadPersonnelTable();
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(null, "Please select a valid personnel to proceed", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+    }
+
+    // Load all shipment tracking data into the table
+    private void loadTrackTable() {
+        TrackShipmentProgressDAO dao = new TrackShipmentProgressDAO();
+        List<TrackShipmentProgress> list = dao.getAllShipmentProgress();
+        String[] columnNames = {"Shipment ID", "Current Location", "Estimated Delivery Time", "Delay", "Status"};
+        String[][] data = new String[list.size()][columnNames.length];
+        for (int i = 0; i < list.size(); i++) {
+            TrackShipmentProgress progress = list.get(i);
+            data[i][0] = String.valueOf(progress.getShipmentID());
+            data[i][1] = progress.getCurrentLocation();
+            data[i][2] = progress.getEstimatedDeliveryTime();
+            data[i][3] = String.valueOf(progress.getDelay());
+            data[i][4] = progress.getStatus();
+        }
+        tracktable.setModel(new DefaultTableModel(data, columnNames));
+    }
+
+    // Load all delivery personnel data into the table
+    private void loadPersonnelTable() {
+        Model.DeliveryPersonnelDAO dao = new Model.DeliveryPersonnelDAO();
+        java.util.List<Model.DeliveryPersonnel> list = dao.getAllPersonnel();
+        String[] columnNames = {"ID", "Name", "Contact", "Schedule", "Route", "Deliveries"};
+        String[][] data = new String[list.size()][columnNames.length];
+        for (int i = 0; i < list.size(); i++) {
+            Model.DeliveryPersonnel personnel = list.get(i);
+            data[i][0] = String.valueOf(personnel.getPersonnelID());
+            data[i][1] = personnel.getPersonnelName();
+            data[i][2] = personnel.getPersonnelContact();
+            data[i][3] = personnel.getSchedule();
+            data[i][4] = personnel.getAssignedRoute();
+            data[i][5] = personnel.getDeliveryHistory();
+        }
+        AllDriversView.setModel(new javax.swing.table.DefaultTableModel(data, columnNames));
+    }
+
+    // Clear personnel fields
+    private void clearPersonnelFields() {
+        txtID.setText("");
+        txtName.setText("");
+        txtContact.setText("");
+        txtSchedule.setText("");
+        txtRoute.setText("");
+        txtAreaHistory.setText("");
+    }
+
+    public static void main(String[] args) {
+        JFrame frame = new JFrame("Admin View");
+        adminView view = new adminView();
+        frame.setContentPane(view.tabbedPane1);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(800, 600);
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+    }
 }
