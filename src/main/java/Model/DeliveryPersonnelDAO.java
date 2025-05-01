@@ -3,20 +3,14 @@ package Model;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import Utility.DBConnection;
 
 //setting up the connection to the db created
 public class DeliveryPersonnelDAO {
-    //opens a connection to the sql database
-    private Connection getConnection() throws SQLException {
-        String url = "jdbc:mysql://pixel-host.zapto.org:3306/trackngo";
-        String user = "user";
-        String password = "user2006";
-        return DriverManager.getConnection(url, user, password);
-    }
     //add drivers using sql
     public void addPersonnel(DeliveryPersonnel p) {
         String sql = "INSERT INTO DeliveryPersonnel(personnelName, personnelContact, schedule, assignedRoute, deliveryHistory) VALUES (?, ?, ?, ?, ?)";
-        try (Connection conn = getConnection();
+        try (Connection conn = DBConnection.getConnection(); //opens a connection to the sql database
              PreparedStatement s = conn.prepareStatement(sql)) {
             s.setString(1, p.getPersonnelName());
             s.setString(2, p.getPersonnelContact());
@@ -26,13 +20,14 @@ public class DeliveryPersonnelDAO {
             s.executeUpdate();
         } catch (SQLException e) {
             System.out.println("Error adding personnel: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
     //updating delivery personnel
     public void updatePersonnel(DeliveryPersonnel p) {
         String sql = "UPDATE DeliveryPersonnel SET personnelName = ?, personnelContact = ?, schedule = ?, assignedRoute = ?, deliveryHistory = ? WHERE personnelID = ?";
-        try(Connection conn = getConnection();
+        try(Connection conn = DBConnection.getConnection();
             PreparedStatement s = conn.prepareStatement(sql))
         {
             s.setString(1, p.getPersonnelName());
@@ -50,7 +45,7 @@ public class DeliveryPersonnelDAO {
     //deleting personnel
     public void deletePersonnel(int personnelID) {
         String sql = "DELETE FROM DeliveryPersonnel WHERE personnelID = ?";
-        try(Connection conn = getConnection();
+        try(Connection conn = DBConnection.getConnection();
             PreparedStatement s = conn.prepareStatement(sql))
         {
             s.setInt(1, personnelID);
@@ -63,12 +58,12 @@ public class DeliveryPersonnelDAO {
 
     }
 
-    //getting all saved records
+    //getting all saved records from the database
     public List <DeliveryPersonnel> getAllPersonnel() {
         List<DeliveryPersonnel> list = new ArrayList<>();
         String sql = "SELECT * FROM DeliveryPersonnel";
 
-        try(Connection conn = getConnection();
+        try(Connection conn = DBConnection.getConnection();
         Statement stmt = conn.createStatement();
         ResultSet result = stmt.executeQuery(sql)){
 
