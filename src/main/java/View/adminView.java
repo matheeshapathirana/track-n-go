@@ -43,8 +43,12 @@ public class adminView {
     private JComboBox comboBox1;
 
     public adminView() {
+        txtID.setEditable(false); // Make ID field non-editable
+
         loadTrackTable();
         loadPersonnelTable();
+        setNextPersonnelID(); // Set next available ID on startup
+
         btnupdatetrack.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -95,13 +99,15 @@ public class adminView {
                 if(txtName.getText().isEmpty() || txtContact.getText().isEmpty() || txtSchedule.getText().isEmpty()) {
                     JOptionPane.showMessageDialog(null, "Please fill all fields!", "Error", JOptionPane.ERROR_MESSAGE);
                 } else {
+                    // Get next available ID
+                    int nextID = getNextPersonnelID();
                     String personnelName = txtName.getText();
                     String personnelContact = txtContact.getText();
                     String schedule = txtSchedule.getText();
                     String assignedRoute = txtRoute.getText();
                     String deliveryHistory = txtAreaHistory.getText();
                     Controller.DeliveryPersonnelController controller = new Controller.DeliveryPersonnelController();
-                    Model.DeliveryPersonnel p1 = new Model.DeliveryPersonnel(0, personnelName, personnelContact, schedule, assignedRoute, deliveryHistory);
+                    Model.DeliveryPersonnel p1 = new Model.DeliveryPersonnel(nextID, personnelName, personnelContact, schedule, assignedRoute, deliveryHistory);
                     controller.addDeliveryPersonnel(p1);
                     JOptionPane.showMessageDialog(null, "Personnel added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
                     clearPersonnelFields();
@@ -188,9 +194,27 @@ public class adminView {
         AllDriversView.setModel(new javax.swing.table.DefaultTableModel(data, columnNames));
     }
 
-    // Clear personnel fields
+    // Helper to get next available personnel ID (auto-increment)
+    private int getNextPersonnelID() {
+        Model.DeliveryPersonnelDAO dao = new Model.DeliveryPersonnelDAO();
+        java.util.List<Model.DeliveryPersonnel> list = dao.getAllPersonnel();
+        int maxID = 0;
+        for (Model.DeliveryPersonnel p : list) {
+            if (p.getPersonnelID() > maxID) {
+                maxID = p.getPersonnelID();
+            }
+        }
+        return maxID + 1;
+    }
+
+    // Set txtID to next available ID
+    private void setNextPersonnelID() {
+        txtID.setText(String.valueOf(getNextPersonnelID()));
+    }
+
+    // Clear personnel fields and set next available ID
     private void clearPersonnelFields() {
-        txtID.setText("");
+        txtID.setText(String.valueOf(getNextPersonnelID()));
         txtName.setText("");
         txtContact.setText("");
         txtSchedule.setText("");
