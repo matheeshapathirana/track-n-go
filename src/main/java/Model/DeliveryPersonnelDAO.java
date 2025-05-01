@@ -1,19 +1,21 @@
 package Model;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 //setting up the connection to the db created
 public class DeliveryPersonnelDAO {
     //opens a connection to the sql database
     private Connection getConnection() throws SQLException {
-        String password = "user2006";
         String url = "jdbc:mysql://pixel-host.zapto.org:3306/trackngo";
         String user = "user";
+        String password = "user2006";
         return DriverManager.getConnection(url, user, password);
     }
     //add drivers using sql
     public void addPersonnel(DeliveryPersonnel p) {
-        String sql = "INSERT INTO DeliveryPersonnel(personnelName, personnelContact, schedule, assignedRoute, deliveryHistory) VALUES (?,?,?,?,?,?)";
+        String sql = "INSERT INTO DeliveryPersonnel(personnelName, personnelContact, schedule, assignedRoute, deliveryHistory) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = getConnection();
              PreparedStatement s = conn.prepareStatement(sql)) {
             s.setString(1, p.getPersonnelName());
@@ -59,5 +61,33 @@ public class DeliveryPersonnelDAO {
             System.out.println("Error deleting personnel: " + e.getMessage());
         }
 
+    }
+
+    //getting all saved records
+    public List <DeliveryPersonnel> getAllPersonnel() {
+        List<DeliveryPersonnel> list = new ArrayList<>();
+        String sql = "SELECT * FROM DeliveryPersonnel";
+
+        try(Connection conn = getConnection();
+        Statement stmt = conn.createStatement();
+        ResultSet result = stmt.executeQuery(sql)){
+
+            while(result.next()){
+                DeliveryPersonnel p = new DeliveryPersonnel();
+                p.setPersonnelID(result.getInt("personnelID"));
+                p.setPersonnelName(result.getString("personnelName"));
+                p.setPersonnelContact(result.getString("personnelContact"));
+                p.setSchedule(result.getString("schedule"));
+                p.setAssignedRoute(result.getString("assignedRoute"));
+                p.setDeliveryHistory(result.getString("deliveryHistory"));
+
+                list.add(p);
+            }
+        }
+        catch(SQLException e)
+        {
+            System.out.println("Error getting personnel list: " + e.getMessage());
+        }
+        return list;
     }
 }
