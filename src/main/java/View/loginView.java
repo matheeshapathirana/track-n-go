@@ -34,9 +34,14 @@ public class loginView extends JFrame {
                 String email = txtloginemail.getText();
                 String password = new String(txtloginpassword.getPassword());
                 LoginController controller = new LoginController();
-                boolean success = controller.login(email, password);
-                if (success) {
+                String role = controller.login(email, password); // Get the user's role
+                if (role != null) {
                     JOptionPane.showMessageDialog(loginbackpanel, "Login successful!");
+                    if (role.equals("admin")) {
+                        // Open adminView if role is admin
+                        View.adminView.main(new String[]{});
+                        dispose(); // Close the login window
+                    }
                 } else {
                     JOptionPane.showMessageDialog(loginbackpanel, "Invalid credentials.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
@@ -49,10 +54,17 @@ public class loginView extends JFrame {
                 String username = txtregisterusername.getText();
                 String email = txtregisteremail.getText();
                 String password = new String(txtregisterpassword.getPassword());
+                // Default role is 'user'. Do not set admin role automatically.
+                String role = "user";
                 LoginController controller = new LoginController();
-                boolean registered = controller.register(username, email, password);
+                boolean registered = controller.register(username, email, password, role);
                 if (registered) {
                     JOptionPane.showMessageDialog(registerbackpanel, "Registration successful!");
+                    if (role.equals("admin")) {
+                        // Open adminView if role is admin
+                        View.adminView.main(new String[]{});
+                        dispose(); // Close the login window
+                    }
                 } else {
                     JOptionPane.showMessageDialog(registerbackpanel, "Registration failed. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
