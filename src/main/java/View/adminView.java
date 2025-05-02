@@ -41,6 +41,7 @@ public class adminView {
     private JPanel spacer3;
     private JPanel spacer2;
     private JComboBox comboBox1;
+    private JButton clearbtn;
 
     public adminView() {
         txtID.setEditable(false); // Make ID field non-editable
@@ -51,6 +52,13 @@ public class adminView {
         setNextPersonnelID(); // Set next available ID on startup
         setNextShipmentID(); // Set next available shipment ID on startup
         clearPersonnelFields();
+        //action to clear all fields
+        clearbtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                clearPersonnelFields();
+            }
+        });
 
         btnupdatetrack.addActionListener(new ActionListener() {
             @Override
@@ -100,7 +108,7 @@ public class adminView {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if(txtName.getText().isEmpty() || txtContact.getText().isEmpty() || txtSchedule.getText().isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "Please fill all fields!", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Please fill required fields!", "Error", JOptionPane.ERROR_MESSAGE);
                 } else {
                     // Get next available ID
                     int nextID = getNextPersonnelID();
@@ -112,7 +120,7 @@ public class adminView {
                     Controller.DeliveryPersonnelController controller = new Controller.DeliveryPersonnelController();
                     Model.DeliveryPersonnel p1 = new Model.DeliveryPersonnel(nextID, personnelName, personnelContact, schedule, assignedRoute, deliveryHistory);
                     controller.addDeliveryPersonnel(p1);
-                    JOptionPane.showMessageDialog(null, "Personnel added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Driver added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
                     clearPersonnelFields();
                     loadPersonnelTable();
                 }
@@ -133,11 +141,11 @@ public class adminView {
                     Controller.DeliveryPersonnelController controller = new Controller.DeliveryPersonnelController();
                     Model.DeliveryPersonnel p1 = new Model.DeliveryPersonnel(personnelID, personnelName, personnelContact, schedule, assignedRoute, deliveryHistory);
                     controller.updateDeliveryPersonnel(p1);
-                    JOptionPane.showMessageDialog(null, "Personnel updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Driver updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
                     clearPersonnelFields();
                     loadPersonnelTable();
                 } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(null, "Please select a valid personnel to proceed", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Please select a valid driver to proceed", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -152,11 +160,11 @@ public class adminView {
                     Model.DeliveryPersonnel p1 = new Model.DeliveryPersonnel();
                     p1.setPersonnelID(personnelID);
                     controller.deleteDeliveryPersonnel(p1);
-                    JOptionPane.showMessageDialog(null, "Personnel deleted successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Driver deleted successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
                     clearPersonnelFields();
                     loadPersonnelTable();
                 } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(null, "Please select a valid personnel to proceed", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Please select a valid driver to proceed", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
