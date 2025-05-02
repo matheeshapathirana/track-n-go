@@ -58,7 +58,7 @@ public class adminView {
     private JButton btnclearfields;
     private JTable shipmentdatatable;
     private JLabel availabilitylbl;
-    private JComboBox comboboxavailablity;
+    private JComboBox comboboxavailability;
 
     public adminView() {
         txtID.setEditable(false); // Make ID field non-editable
@@ -66,8 +66,8 @@ public class adminView {
         txttrackingid.setEditable(false); // trackingID should not be editable
 
         // Initialize availability combo box options
-        comboboxavailablity.addItem("Available");
-        comboboxavailablity.addItem("Unavailable");
+        comboboxavailability.addItem("Available");
+        comboboxavailability.addItem("Unavailable");
 
         loadTrackTable();
         loadPersonnelTable();
@@ -125,7 +125,7 @@ public class adminView {
                 txtSchedule.setText(AllDriversView.getValueAt(selectedRow, 3).toString());
                 txtRoute.setText(AllDriversView.getValueAt(selectedRow, 4).toString());
                 txtAreaHistory.setText(AllDriversView.getValueAt(selectedRow, 5).toString());
-                comboboxavailablity.setSelectedItem(AllDriversView.getValueAt(selectedRow, 6).toString());
+                comboboxavailability.setSelectedItem(AllDriversView.getValueAt(selectedRow, 6).toString());
             }
         });
 
@@ -143,7 +143,7 @@ public class adminView {
                     String schedule = txtSchedule.getText();
                     String assignedRoute = txtRoute.getText();
                     String deliveryHistory = txtAreaHistory.getText();
-                    String availability = comboboxavailablity.getSelectedItem() != null ? comboboxavailablity.getSelectedItem().toString() : "";
+                    String availability = comboboxavailability.getSelectedItem() != null ? comboboxavailability.getSelectedItem().toString() : "";
                     Controller.DeliveryPersonnelController controller = new Controller.DeliveryPersonnelController();
                     Model.DeliveryPersonnel p1 = new Model.DeliveryPersonnel(nextID, personnelName, personnelContact, schedule, assignedRoute, deliveryHistory, availability);
                     controller.addDeliveryPersonnel(p1);
@@ -165,7 +165,7 @@ public class adminView {
                     String schedule = txtSchedule.getText();
                     String assignedRoute = txtRoute.getText();
                     String deliveryHistory = txtAreaHistory.getText();
-                    String availability = comboboxavailablity.getSelectedItem() != null ? comboboxavailablity.getSelectedItem().toString() : "";
+                    String availability = comboboxavailability.getSelectedItem() != null ? comboboxavailability.getSelectedItem().toString() : "";
                     Controller.DeliveryPersonnelController controller = new Controller.DeliveryPersonnelController();
                     Model.DeliveryPersonnel p1 = new Model.DeliveryPersonnel(personnelID, personnelName, personnelContact, schedule, assignedRoute, deliveryHistory, availability);
                     controller.updateDeliveryPersonnel(p1);
@@ -255,7 +255,7 @@ public class adminView {
         txtSchedule.setText("");
         txtRoute.setText("");
         txtAreaHistory.setText("");
-        comboboxavailablity.setSelectedItem("Available");
+        comboboxavailability.setSelectedItem("Available");
     }
 
     // Helper to get next available shipment ID (auto-increment)
