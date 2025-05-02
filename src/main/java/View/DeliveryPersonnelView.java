@@ -30,6 +30,7 @@ public class DeliveryPersonnelView extends JFrame{
     private JPanel spacer1;  //these spacer1,2,3 was used to keep space in between
     private JPanel spacer2;
     private JPanel spacer3;
+    private JButton clearbtn;
 
     private void clearFields() {
         txtID.setText("");
@@ -55,6 +56,13 @@ public class DeliveryPersonnelView extends JFrame{
                 txtSchedule.setText(AllDriversView.getValueAt(selectedRow, 3).toString());
                 txtRoute.setText(AllDriversView.getValueAt(selectedRow, 4).toString());
                 txtAreaHistory.setText(AllDriversView.getValueAt(selectedRow, 5).toString());
+            }
+        });
+        //action to clear all fields
+        clearbtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                clearFields();
             }
         });
         //action for add drivers button
@@ -161,7 +169,7 @@ public class DeliveryPersonnelView extends JFrame{
     {
         DeliveryPersonnelView view = new DeliveryPersonnelView();
         view.setTitle("Delivery Personnel Manager");
-        view.setSize(600, 600);
+        view.setSize(800, 600);
         view.setContentPane(view.PersonnelManagerPanel);
         view.setVisible(true);
         view.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
