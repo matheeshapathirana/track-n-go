@@ -59,6 +59,19 @@ public class adminView {
     private JTable shipmentdatatable;
     private JLabel availabilitylbl;
     private JComboBox comboboxavailability;
+    private JLabel lblemail;
+    private JLabel lblusername;
+    private JLabel lblpassword;
+    private JLabel lblrole;
+    private JTextField txtemail;
+    private JTextField txtusername;
+    private JTextField txtpassword;
+    private JComboBox comboboxrole;
+    private JButton btnadduser;
+    private JButton btnupdateuser;
+    private JButton btndeleteuser;
+    private JButton btnclearuserfields;
+    private JTable userdata;
 
     public adminView() {
         txtID.setEditable(false); // Make ID field non-editable
@@ -71,10 +84,12 @@ public class adminView {
 
         loadTrackTable();
         loadPersonnelTable();
+        loadUserTable();
         setNextPersonnelID(); // Set next available ID on startup
         setNextShipmentID(); // Set next available shipment ID on startup
         setNextTrackingID(); // Set next available tracking ID on startup
         clearPersonnelFields();
+        clearUserFields();
         //action to clear all fields
         clearbtn.addActionListener(new ActionListener() {
             @Override
@@ -196,6 +211,94 @@ public class adminView {
                 }
             }
         });
+
+        // User Table: populate fields when a row is selected
+        userdata.getSelectionModel().addListSelectionListener(e -> {
+            int selectedRow = userdata.getSelectedRow();
+            if (selectedRow >= 0) {
+                txtemail.setText(userdata.getValueAt(selectedRow, 0).toString());
+                txtusername.setText(userdata.getValueAt(selectedRow, 1).toString());
+                txtpassword.setText(userdata.getValueAt(selectedRow, 2).toString());
+                comboboxrole.setSelectedItem(userdata.getValueAt(selectedRow, 3).toString());
+            }
+        });
+
+        // Add User
+        btnadduser.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (txtemail.getText().isEmpty() || txtusername.getText().isEmpty() || txtpassword.getText().isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Please fill all user fields!", "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    String email = txtemail.getText();
+                    String username = txtusername.getText();
+                    String password = txtpassword.getText();
+                    String role = comboboxrole.getSelectedItem() != null ? comboboxrole.getSelectedItem().toString() : "user";
+                    Controller.UsersController controller = new Controller.UsersController();
+                    boolean success = controller.addUser(email, username, password, role);
+                    if (success) {
+                        JOptionPane.showMessageDialog(null, "User added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                        loadUserTable();
+                        clearUserFields();
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Failed to add user!", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }
+        });
+
+        // Update User
+        btnupdateuser.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (txtemail.getText().isEmpty() || txtusername.getText().isEmpty() || txtpassword.getText().isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Please fill all user fields!", "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    String email = txtemail.getText();
+                    String username = txtusername.getText();
+                    String password = txtpassword.getText();
+                    String role = comboboxrole.getSelectedItem() != null ? comboboxrole.getSelectedItem().toString() : "user";
+                    Controller.UsersController controller = new Controller.UsersController();
+                    boolean success = controller.updateUser(email, username, password, role);
+                    if (success) {
+                        JOptionPane.showMessageDialog(null, "User updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                        loadUserTable();
+                        clearUserFields();
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Failed to update user!", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }
+        });
+
+        // Delete User
+        btndeleteuser.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (txtemail.getText().isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Please select a user to delete!", "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    String email = txtemail.getText();
+                    Controller.UsersController controller = new Controller.UsersController();
+                    boolean success = controller.deleteUser(email);
+                    if (success) {
+                        JOptionPane.showMessageDialog(null, "User deleted successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                        loadUserTable();
+                        clearUserFields();
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Failed to delete user!", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }
+        });
+
+        // Clear User Fields
+        btnclearuserfields.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                clearUserFields();
+            }
+        });
     }
 
     // Load all shipment tracking data into the table
@@ -227,6 +330,22 @@ public class adminView {
             populatePersonnelRow(data, i, personnel);
         }
         AllDriversView.setModel(new javax.swing.table.DefaultTableModel(data, columnNames));
+    }
+
+    // Load all user data into the table
+    private void loadUserTable() {
+        Controller.UsersController controller = new Controller.UsersController();
+        java.util.List<Model.Users> list = controller.getAllUsers();
+        String[] columnNames = {"Email", "Username", "Password", "Role"};
+        String[][] data = new String[list.size()][columnNames.length];
+        for (int i = 0; i < list.size(); i++) {
+            Model.Users user = list.get(i);
+            data[i][0] = user.getEmail();
+            data[i][1] = user.getUsername();
+            data[i][2] = user.getPassword();
+            data[i][3] = controller.getUserRole(user.getEmail());
+        }
+        userdata.setModel(new javax.swing.table.DefaultTableModel(data, columnNames));
     }
 
     // Helper to get next available personnel ID (auto-increment)
@@ -302,6 +421,14 @@ public class adminView {
     // Set txttrackingid to next available tracking ID
     private void setNextTrackingID() {
         txttrackingid.setText(String.valueOf(getNextTrackingID()));
+    }
+
+    // Clear user fields
+    private void clearUserFields() {
+        txtemail.setText("");
+        txtusername.setText("");
+        txtpassword.setText("");
+        comboboxrole.setSelectedIndex(0);
     }
 
     public static void populatePersonnelRow(String[][] data, int i, Model.DeliveryPersonnel personnel) {
