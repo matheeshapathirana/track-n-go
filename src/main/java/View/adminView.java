@@ -72,6 +72,21 @@ public class adminView {
     private JButton btndeleteuser;
     private JButton btnclearuserfields;
     private JTable userdata;
+    private JComboBox comboBoxyear;
+    private JComboBox comboBoxmonth;
+    private JButton btngenerate;
+    private JPanel reportsbackpanel;
+    private JLabel lblgeneratemonthlyreports;
+    private JLabel lblyear;
+    private JLabel lblmonth;
+    private JLabel lbltotaldeliveries;
+    private JLabel lbltotaldeliveriesnumber;
+    private JLabel lbldelayeddeliveries;
+    private JLabel lbldelayeddeliveriesnumber;
+    private JLabel lblaveragecustomerrating;
+    private JLabel lblaveragecustomerratingnumber;
+    private JLabel lbltotalshipments;
+    private JLabel lbltotalshipmentsnumber;
 
     public adminView() {
         txtID.setEditable(false); // Make ID field non-editable
