@@ -38,12 +38,25 @@ public class adminView {
     private JTextArea txtAreaHistory;
     private JTable AllDriversView;
     private JLabel alllDriverslbl;
-    private JPanel spacer3;
-    private JPanel spacer2;
     private JComboBox comboBox1;
     private JButton clearbtn;
     private JTextField txttrackingid;
     private JLabel lbltrackingid;
+    private JComboBox comboBox2;
+    private JTextField txtassigneddriverid;
+    private JLabel lblshipmentsshipmentid;
+    private JLabel lblassigneddriverid;
+    private JLabel lblsendername;
+    private JLabel lblreceivername;
+    private JLabel lblshipmentstatus;
+    private JTextField txtshipmentshipmentid;
+    private JTextField txtsendername;
+    private JTextField txtreceivername;
+    private JButton btnaddshipment;
+    private JButton btnupdateshipment;
+    private JButton btndeleteshipment;
+    private JButton btnclearfields;
+    private JTable shipmentdatatable;
 
     public adminView() {
         txtID.setEditable(false); // Make ID field non-editable
