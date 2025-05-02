@@ -8,6 +8,7 @@ public class TrackShipmentProgress {
     private String estimatedDeliveryTime;
     private int delay;
     private String status;
+    private int trackingID;
 
     // Getters and setters
     public int getShipmentID() {
@@ -48,5 +49,13 @@ public class TrackShipmentProgress {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public int getTrackingID() {
+        return trackingID;
+    }
+
+    public void setTrackingID(int trackingID) {
+        this.trackingID = trackingID;
     }
 }

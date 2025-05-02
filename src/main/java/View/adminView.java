@@ -42,15 +42,19 @@ public class adminView {
     private JPanel spacer2;
     private JComboBox comboBox1;
     private JButton clearbtn;
+    private JTextField txttrackingid;
+    private JLabel lbltrackingid;
 
     public adminView() {
         txtID.setEditable(false); // Make ID field non-editable
         txtshipmentid.setEditable(false);
+        txttrackingid.setEditable(false); // trackingID should not be editable
 
         loadTrackTable();
         loadPersonnelTable();
         setNextPersonnelID(); // Set next available ID on startup
         setNextShipmentID(); // Set next available shipment ID on startup
+        setNextTrackingID(); // Set next available tracking ID on startup
         clearPersonnelFields();
         //action to clear all fields
         clearbtn.addActionListener(new ActionListener() {
@@ -63,16 +67,17 @@ public class adminView {
         btnupdatetrack.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (txtshipmentid.getText().isEmpty() || txtlocation.getText().isEmpty() || txtdeliverytimes.getText().isEmpty() || txtdelays.getText().isEmpty()) {
+                if (txttrackingid.getText().isEmpty() || txtshipmentid.getText().isEmpty() || txtlocation.getText().isEmpty() || txtdeliverytimes.getText().isEmpty() || txtdelays.getText().isEmpty()) {
                     JOptionPane.showMessageDialog(null, "Please fill all fields!", "Error", JOptionPane.ERROR_MESSAGE);
                 } else {
+                    String trackingID = txttrackingid.getText();
                     String shipmentID = txtshipmentid.getText();
                     String location = txtlocation.getText();
                     String deliveryTime = txtdeliverytimes.getText();
                     String delay = txtdelays.getText();
                     String status = comboBox1.getSelectedItem() != null ? comboBox1.getSelectedItem().toString() : "";
                     Controller.TrackShipmentProgressController controller = new Controller.TrackShipmentProgressController();
-                    controller.updateShipmentProgress(shipmentID, location, deliveryTime, delay, status);
+                    controller.updateShipmentProgress(trackingID, shipmentID, location, deliveryTime, delay, status);
                     loadTrackTable(); // Refresh table after update
                 }
             }
@@ -82,10 +87,11 @@ public class adminView {
         tracktable.getSelectionModel().addListSelectionListener(e -> {
             int selectedRow = tracktable.getSelectedRow();
             if (selectedRow >= 0) {
-                txtshipmentid.setText(tracktable.getValueAt(selectedRow, 0).toString());
-                txtlocation.setText(tracktable.getValueAt(selectedRow, 1).toString());
-                txtdeliverytimes.setText(tracktable.getValueAt(selectedRow, 2).toString());
-                txtdelays.setText(tracktable.getValueAt(selectedRow, 3).toString());
+                txttrackingid.setText(tracktable.getValueAt(selectedRow, 0).toString());
+                txtshipmentid.setText(tracktable.getValueAt(selectedRow, 1).toString());
+                txtlocation.setText(tracktable.getValueAt(selectedRow, 2).toString());
+                txtdeliverytimes.setText(tracktable.getValueAt(selectedRow, 3).toString());
+                txtdelays.setText(tracktable.getValueAt(selectedRow, 4).toString());
                 // status is not editable, but you can add a field if needed
             }
         });
@@ -174,15 +180,16 @@ public class adminView {
     private void loadTrackTable() {
         TrackShipmentProgressDAO dao = new TrackShipmentProgressDAO();
         List<TrackShipmentProgress> list = dao.getAllShipmentProgress();
-        String[] columnNames = {"Shipment ID", "Current Location", "Estimated Delivery Time", "Delay", "Status"};
+        String[] columnNames = {"Tracking ID", "Shipment ID", "Current Location", "Estimated Delivery Time", "Delay", "Status"};
         String[][] data = new String[list.size()][columnNames.length];
         for (int i = 0; i < list.size(); i++) {
             TrackShipmentProgress progress = list.get(i);
-            data[i][0] = String.valueOf(progress.getShipmentID());
-            data[i][1] = progress.getCurrentLocation();
-            data[i][2] = progress.getEstimatedDeliveryTime();
-            data[i][3] = String.valueOf(progress.getDelay());
-            data[i][4] = progress.getStatus();
+            data[i][0] = String.valueOf(progress.getTrackingID());
+            data[i][1] = String.valueOf(progress.getShipmentID());
+            data[i][2] = progress.getCurrentLocation();
+            data[i][3] = progress.getEstimatedDeliveryTime();
+            data[i][4] = String.valueOf(progress.getDelay());
+            data[i][5] = progress.getStatus();
         }
         tracktable.setModel(new DefaultTableModel(data, columnNames));
     }
@@ -254,6 +261,29 @@ public class adminView {
     // Set txtshipmentid to next available shipment ID
     private void setNextShipmentID() {
         txtshipmentid.setText(String.valueOf(getNextShipmentID()));
+    }
+
+    // Helper to get next available tracking ID (auto-increment)
+    private int getNextTrackingID() {
+        TrackShipmentProgressDAO dao = new TrackShipmentProgressDAO();
+        List<TrackShipmentProgress> list = dao.getAllShipmentProgress();
+        int maxID = 0;
+        for (TrackShipmentProgress t : list) {
+            try {
+                int id = Integer.parseInt(String.valueOf(t.getTrackingID()));
+                if (id > maxID) {
+                    maxID = id;
+                }
+            } catch (NumberFormatException ex) {
+                // Ignore invalid IDs
+            }
+        }
+        return maxID + 1;
+    }
+
+    // Set txttrackingid to next available tracking ID
+    private void setNextTrackingID() {
+        txttrackingid.setText(String.valueOf(getNextTrackingID()));
     }
 
     public static void main(String[] args) {

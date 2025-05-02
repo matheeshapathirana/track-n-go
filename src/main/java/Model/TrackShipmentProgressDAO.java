@@ -9,14 +9,15 @@ public class TrackShipmentProgressDAO {
 
     // Add a new shipment progress record
     public void addShipmentProgress(TrackShipmentProgress progress) {
-        String sql = "INSERT INTO TrackShipmentProgress (shipmentID, currentLocation, estimatedDeliveryTime, delay, status) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO TrackShipmentProgress (trackingID, shipmentID, currentLocation, estimatedDeliveryTime, delay, status) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement s = conn.prepareStatement(sql)) {
-            s.setInt(1, progress.getShipmentID());
-            s.setString(2, progress.getCurrentLocation());
-            s.setString(3, progress.getEstimatedDeliveryTime());
-            s.setInt(4, progress.getDelay());
-            s.setString(5, progress.getStatus());
+            s.setInt(1, progress.getTrackingID());
+            s.setInt(2, progress.getShipmentID());
+            s.setString(3, progress.getCurrentLocation());
+            s.setString(4, progress.getEstimatedDeliveryTime());
+            s.setInt(5, progress.getDelay());
+            s.setString(6, progress.getStatus());
             s.executeUpdate();
         } catch (SQLException e) {
             System.out.println("Error adding shipment progress: " + e.getMessage());
@@ -25,14 +26,15 @@ public class TrackShipmentProgressDAO {
 
     // Update an existing shipment progress record
     public void updateShipmentProgress(TrackShipmentProgress progress) {
-        String sql = "UPDATE TrackShipmentProgress SET currentLocation = ?, estimatedDeliveryTime = ?, delay = ?, status = ? WHERE shipmentID = ?";
+        String sql = "UPDATE TrackShipmentProgress SET shipmentID = ?, currentLocation = ?, estimatedDeliveryTime = ?, delay = ?, status = ? WHERE trackingID = ?";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement s = conn.prepareStatement(sql)) {
-            s.setString(1, progress.getCurrentLocation());
-            s.setString(2, progress.getEstimatedDeliveryTime());
-            s.setInt(3, progress.getDelay());
-            s.setString(4, progress.getStatus());
-            s.setInt(5, progress.getShipmentID());
+            s.setInt(1, progress.getShipmentID());
+            s.setString(2, progress.getCurrentLocation());
+            s.setString(3, progress.getEstimatedDeliveryTime());
+            s.setInt(4, progress.getDelay());
+            s.setString(5, progress.getStatus());
+            s.setInt(6, progress.getTrackingID());
             s.executeUpdate();
         } catch (SQLException e) {
             System.out.println("Error updating shipment progress: " + e.getMessage());
@@ -40,11 +42,11 @@ public class TrackShipmentProgressDAO {
     }
 
     // Delete a shipment progress record
-    public void deleteShipmentProgress(int shipmentID) {
-        String sql = "DELETE FROM TrackShipmentProgress WHERE shipmentID = ?";
+    public void deleteShipmentProgress(int trackingID) {
+        String sql = "DELETE FROM TrackShipmentProgress WHERE trackingID = ?";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement s = conn.prepareStatement(sql)) {
-            s.setInt(1, shipmentID);
+            s.setInt(1, trackingID);
             s.executeUpdate();
         } catch (SQLException e) {
             System.out.println("Error deleting shipment progress: " + e.getMessage());
@@ -60,6 +62,7 @@ public class TrackShipmentProgressDAO {
              ResultSet result = stmt.executeQuery(sql)) {
             while (result.next()) {
                 TrackShipmentProgress progress = new TrackShipmentProgress();
+                progress.setTrackingID(result.getInt("trackingID"));
                 progress.setShipmentID(result.getInt("shipmentID"));
                 progress.setCurrentLocation(result.getString("currentLocation"));
                 progress.setEstimatedDeliveryTime(result.getString("estimatedDeliveryTime"));
@@ -73,15 +76,16 @@ public class TrackShipmentProgressDAO {
         return list;
     }
 
-    // Retrieve a shipment progress record by shipmentID
-    public TrackShipmentProgress getShipmentProgressById(int shipmentID) {
-        String sql = "SELECT * FROM TrackShipmentProgress WHERE shipmentID = ?";
+    // Retrieve a shipment progress record by trackingID
+    public TrackShipmentProgress getShipmentProgressByTrackingId(int trackingID) {
+        String sql = "SELECT * FROM TrackShipmentProgress WHERE trackingID = ?";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement s = conn.prepareStatement(sql)) {
-            s.setInt(1, shipmentID);
+            s.setInt(1, trackingID);
             try (ResultSet result = s.executeQuery()) {
                 if (result.next()) {
                     TrackShipmentProgress progress = new TrackShipmentProgress();
+                    progress.setTrackingID(result.getInt("trackingID"));
                     progress.setShipmentID(result.getInt("shipmentID"));
                     progress.setCurrentLocation(result.getString("currentLocation"));
                     progress.setEstimatedDeliveryTime(result.getString("estimatedDeliveryTime"));
