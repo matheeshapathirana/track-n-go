@@ -3,7 +3,7 @@
   <grid id="27dc6" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="20" width="607" height="511"/>
+      <xy x="20" y="20" width="607" height="541"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -35,7 +35,7 @@
               </component>
             </children>
           </grid>
-          <grid id="d42df" binding="PersonnelManagerPanel" layout-manager="GridLayoutManager" row-count="11" column-count="6" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="d42df" binding="PersonnelManagerPanel" layout-manager="GridLayoutManager" row-count="12" column-count="6" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="10" left="10" bottom="10" right="10"/>
             <constraints>
               <tabbedpane title="Personnel"/>
@@ -125,7 +125,7 @@
               </component>
               <component id="fdb69" class="javax.swing.JButton" binding="addDriverButton" default-binding="true">
                 <constraints>
-                  <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="2" use-parent-layout="false"/>
+                  <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="2" use-parent-layout="false"/>
                 </constraints>
                 <properties>
                   <text value="Add Driver"/>
@@ -133,7 +133,7 @@
               </component>
               <component id="29b03" class="javax.swing.JButton" binding="updateDriverButton" default-binding="true">
                 <constraints>
-                  <grid row="6" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <grid row="7" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
                   <text value="Update Driver"/>
@@ -141,7 +141,7 @@
               </component>
               <component id="de575" class="javax.swing.JButton" binding="deleteDriverButton" default-binding="true">
                 <constraints>
-                  <grid row="6" column="2" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <grid row="7" column="2" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
                   <text value="Delete Driver"/>
@@ -165,7 +165,7 @@
               </component>
               <component id="cdbc2" class="javax.swing.JTable" binding="AllDriversView">
                 <constraints>
-                  <grid row="9" column="0" row-span="1" col-span="5" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="2" use-parent-layout="false">
+                  <grid row="10" column="0" row-span="1" col-span="5" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="2" use-parent-layout="false">
                     <preferred-size width="150" height="50"/>
                   </grid>
                 </constraints>
@@ -173,7 +173,7 @@
               </component>
               <component id="1abb2" class="javax.swing.JLabel" binding="alllDriverslbl">
                 <constraints>
-                  <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="2" use-parent-layout="false"/>
+                  <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="2" use-parent-layout="false"/>
                 </constraints>
                 <properties>
                   <text value="All registered drivers : "/>
@@ -188,7 +188,7 @@
               <grid id="6083e" binding="spacer3" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                 <margin top="0" left="10" bottom="10" right="0"/>
                 <constraints>
-                  <grid row="10" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                  <grid row="11" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties/>
                 <border type="none"/>
@@ -197,7 +197,7 @@
               <grid id="1c2a5" binding="spacer2" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                 <margin top="0" left="3" bottom="3" right="0"/>
                 <constraints>
-                  <grid row="7" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                  <grid row="8" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties/>
                 <border type="none"/>
@@ -205,11 +205,25 @@
               </grid>
               <component id="4948" class="javax.swing.JButton" binding="clearbtn">
                 <constraints>
-                  <grid row="6" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <grid row="7" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
                   <text value="Clear Fields"/>
                 </properties>
+              </component>
+              <component id="5d66" class="javax.swing.JLabel" binding="availabilitylbl">
+                <constraints>
+                  <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="3" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Availability"/>
+                </properties>
+              </component>
+              <component id="86cb" class="javax.swing.JComboBox" binding="comboBox2" default-binding="true">
+                <constraints>
+                  <grid row="6" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties/>
               </component>
             </children>
           </grid>

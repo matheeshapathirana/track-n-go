@@ -9,7 +9,7 @@ import Utility.DBConnection;
 public class DeliveryPersonnelDAO {
     //add drivers using sql
     public void addPersonnel(DeliveryPersonnel p) {
-        String sql = "INSERT INTO DeliveryPersonnel(personnelName, personnelContact, schedule, assignedRoute, deliveryHistory) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO DeliveryPersonnel(personnelName, personnelContact, schedule, assignedRoute, deliveryHistory,availability) VALUES (?, ?, ?, ?, ?,?)";
         try (Connection conn = DBConnection.getConnection(); //opens a connection to the sql database
              PreparedStatement s = conn.prepareStatement(sql)) {
             s.setString(1, p.getPersonnelName());
@@ -17,6 +17,7 @@ public class DeliveryPersonnelDAO {
             s.setString(3, p.getSchedule());
             s.setString(4, p.getAssignedRoute());
             s.setString(5, p.getDeliveryHistory());
+            s.setString(6, p.getAvailability());
             s.executeUpdate();
         } catch (SQLException e) {
             System.out.println("Error adding personnel: " + e.getMessage());
@@ -26,7 +27,7 @@ public class DeliveryPersonnelDAO {
 
     //updating delivery personnel
     public void updatePersonnel(DeliveryPersonnel p) {
-        String sql = "UPDATE DeliveryPersonnel SET personnelName = ?, personnelContact = ?, schedule = ?, assignedRoute = ?, deliveryHistory = ? WHERE personnelID = ?";
+        String sql = "UPDATE DeliveryPersonnel SET personnelName = ?, personnelContact = ?, schedule = ?, assignedRoute = ?, deliveryHistory = ?, availability = ? WHERE personnelID = ?";
         try(Connection conn = DBConnection.getConnection();
             PreparedStatement s = conn.prepareStatement(sql))
         {
@@ -35,7 +36,8 @@ public class DeliveryPersonnelDAO {
             s.setString(3, p.getSchedule());
             s.setString(4, p.getAssignedRoute());
             s.setString(5, p.getDeliveryHistory());
-            s.setInt(6, p.getPersonnelID());
+            s.setString(6, p.getAvailability());
+            s.setInt(7, p.getPersonnelID());
             s.executeUpdate();
         } catch (SQLException e) {
             System.out.println("Error updating personnel: " + e.getMessage());
@@ -75,6 +77,7 @@ public class DeliveryPersonnelDAO {
                 p.setSchedule(result.getString("schedule"));
                 p.setAssignedRoute(result.getString("assignedRoute"));
                 p.setDeliveryHistory(result.getString("deliveryHistory"));
+                p.setAvailability(result.getString("availability"));
 
                 list.add(p);
             }

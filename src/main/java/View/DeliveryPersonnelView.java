@@ -31,6 +31,8 @@ public class DeliveryPersonnelView extends JFrame{
     private JPanel spacer2;
     private JPanel spacer3;
     private JButton clearbtn;
+    private JLabel availabilitylbl;
+    private JComboBox comboBox1;
 
     private void clearFields() {
         txtID.setText("");
@@ -39,10 +41,13 @@ public class DeliveryPersonnelView extends JFrame{
         txtSchedule.setText("");
         txtRoute.setText("");
         txtAreaHistory.setText("");
+        comboBox1.setSelectedIndex(0);
     }
     public DeliveryPersonnelView() {
         //to prevent user input bcs userID is autoincrement
         txtID.setEditable(false);
+        //combo box
+        comboBox1.setModel(new DefaultComboBoxModel<>(new String[]{"Available", "Not Available"}));
         //Load data when view starts. a pvt method is written below
         loadPersonnelTable();
         //this method is used to get the values in the table to fields
@@ -56,6 +61,7 @@ public class DeliveryPersonnelView extends JFrame{
                 txtSchedule.setText(AllDriversView.getValueAt(selectedRow, 3).toString());
                 txtRoute.setText(AllDriversView.getValueAt(selectedRow, 4).toString());
                 txtAreaHistory.setText(AllDriversView.getValueAt(selectedRow, 5).toString());
+                comboBox1.setSelectedItem(AllDriversView.getValueAt(selectedRow, 6).toString());
             }
         });
         //action to clear all fields
@@ -80,9 +86,10 @@ public class DeliveryPersonnelView extends JFrame{
                     String schedule = txtSchedule.getText();
                     String assignedRoute = txtRoute.getText();
                     String deliveryHistory = txtAreaHistory.getText();
+                    String availability = comboBox1.getSelectedItem().toString();
 
                     DeliveryPersonnelController controller = new DeliveryPersonnelController();
-                    DeliveryPersonnel p1 = new DeliveryPersonnel(0, personnelName, personnelContact, schedule, assignedRoute, deliveryHistory);
+                    DeliveryPersonnel p1 = new DeliveryPersonnel(0, personnelName, personnelContact, schedule, assignedRoute, deliveryHistory, availability);
 
                     controller.addDeliveryPersonnel(p1);
                     JOptionPane.showMessageDialog(null, "Personnel added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
@@ -105,9 +112,10 @@ public class DeliveryPersonnelView extends JFrame{
                     String schedule = txtSchedule.getText();
                     String assignedRoute = txtRoute.getText();
                     String deliveryHistory = txtAreaHistory.getText();
+                    String availability = comboBox1.getSelectedItem().toString();
 
                     DeliveryPersonnelController controller = new DeliveryPersonnelController();
-                    DeliveryPersonnel p1 = new DeliveryPersonnel(personnelID, personnelName, personnelContact, schedule, assignedRoute, deliveryHistory);
+                    DeliveryPersonnel p1 = new DeliveryPersonnel(personnelID, personnelName, personnelContact, schedule, assignedRoute, deliveryHistory, availability);
 
                     controller.updateDeliveryPersonnel(p1);
                     JOptionPane.showMessageDialog(null, "Personnel updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
@@ -150,16 +158,11 @@ public class DeliveryPersonnelView extends JFrame{
         DeliveryPersonnelDAO dao = new DeliveryPersonnelDAO();
         java.util.List<DeliveryPersonnel> list = dao.getAllPersonnel();
 
-        String[] columnNames = {"ID", "Name", "Contact", "Schedule", "Route", "Deliveries"};
+        String[] columnNames = {"ID", "Name", "Contact", "Schedule", "Route", "Deliveries","Availability"};
         String[][] data = new String[list.size()][columnNames.length];
         for (int i = 0; i < list.size(); i++) {
             DeliveryPersonnel personnel = list.get(i);
-            data[i][0]=String.valueOf(personnel.getPersonnelID());
-            data[i][1]=personnel.getPersonnelName();
-            data[i][2]=personnel.getPersonnelContact();
-            data[i][3]=personnel.getSchedule();
-            data[i][4]=personnel.getAssignedRoute();
-            data[i][5]=personnel.getDeliveryHistory();
+            adminView.populatePersonnelRow(data, i, personnel);
         }
         AllDriversView.setModel(new javax.swing.table.DefaultTableModel(data, columnNames));
         pack();
