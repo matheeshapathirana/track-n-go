@@ -2,19 +2,18 @@ package Controller;
 
 import Model.CustomerNotification;
 import Model.CustomerNotificationDAO;
-import View.CustomerNotificationView;
+import View.userView;
 
 import java.util.List;
 
 public class CustomerNotificationController {
-    private CustomerNotificationView view;
+    private userView view;
     private CustomerNotificationDAO dao;
 
-    public CustomerNotificationController(CustomerNotificationView view, int customerId) {
+    public CustomerNotificationController(userView view, int customerId) {
         this.view = view;
         this.dao = new CustomerNotificationDAO();
-
-        List<CustomerNotification> notifications = dao.getNotificationsByCustomerID(customerId);
-        view.displayNotifications(notifications);
+        // Load notifications into the user view
+        view.loadCustomerNotifications(customerId);
     }
 }

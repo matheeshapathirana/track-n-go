@@ -2,28 +2,33 @@ package Model;
 
 public class CustomerNotification {
     private int notificationId;
-    private int customerId;
+    private String recipientType;
+    private int recipientId;
     private String message;
-    private String timestamp;
+    private String createdOn;
 
     public CustomerNotification() {}
 
-    public CustomerNotification(int notificationId, int customerId, String message, String timestamp) {
+    public CustomerNotification(int notificationId, String recipientType, int recipientId, String message, String createdOn) {
         this.notificationId = notificationId;
-        this.customerId = customerId;
+        this.recipientType = recipientType;
+        this.recipientId = recipientId;
         this.message = message;
-        this.timestamp = timestamp;
+        this.createdOn = createdOn;
     }
 
     public int getNotificationId() { return notificationId; }
     public void setNotificationId(int notificationId) { this.notificationId = notificationId; }
 
-    public int getCustomerId() { return customerId; }
-    public void setCustomerId(int customerId) { this.customerId = customerId; }
+    public String getRecipientType() { return recipientType; }
+    public void setRecipientType(String recipientType) { this.recipientType = recipientType; }
+
+    public int getRecipientId() { return recipientId; }
+    public void setRecipientId(int recipientId) { this.recipientId = recipientId; }
 
     public String getMessage() { return message; }
     public void setMessage(String message) { this.message = message; }
 
-    public String getTimestamp() { return timestamp; }
-    public void setTimestamp(String timestamp) { this.timestamp = timestamp; }
+    public String getCreatedOn() { return createdOn; }
+    public void setCreatedOn(String createdOn) { this.createdOn = createdOn; }
 }
