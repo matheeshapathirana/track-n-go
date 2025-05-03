@@ -102,6 +102,8 @@ public class DeliveryPersonnelDAO {
                 p.setAssignedRoute(result.getString("assignedRoute"));
                 p.setDeliveryHistory(result.getString("deliveryHistory"));
                 p.setAvailability(result.getString("availability"));
+                p.setCreatedOn(result.getString("createdOn"));
+                p.setLastUpdated(result.getString("lastUpdated"));
                 list.add(p);
             }
             long execEnd = System.currentTimeMillis();
