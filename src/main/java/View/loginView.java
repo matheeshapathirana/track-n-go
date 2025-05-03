@@ -46,6 +46,10 @@ public class loginView extends JFrame {
                         // Open adminView if role is admin
                         View.adminView.main(new String[]{});
                         dispose(); // Close the login window
+                    } else if (role.equals("user")) {
+                        // Open userView if role is user
+                        View.userView.main(new String[]{});
+                        dispose(); // Close the login window
                     }
                 } else {
                     JOptionPane.showMessageDialog(loginbackpanel, "Invalid credentials.", "Error", JOptionPane.ERROR_MESSAGE);
