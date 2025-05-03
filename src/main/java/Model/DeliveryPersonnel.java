@@ -7,15 +7,17 @@ public class DeliveryPersonnel {
     private String schedule;
     private String assignedRoute;
     private String deliveryHistory;
+    private String availability;
 
     //constructor
-    public DeliveryPersonnel(int personnelID, String personnelName, String personnelContact, String schedule, String assignedRoute, String deliveryHistory) {
+    public DeliveryPersonnel(int personnelID, String personnelName, String personnelContact, String schedule, String assignedRoute, String deliveryHistory, String availability) {
         this.personnelID = personnelID;
         this.personnelName = personnelName;
         this.personnelContact = personnelContact;
         this.schedule = schedule;
         this.assignedRoute = assignedRoute;
         this.deliveryHistory = deliveryHistory;
+        this.availability = availability;
     }
 
     //default constructor for delete in views
@@ -70,6 +72,12 @@ public class DeliveryPersonnel {
     public void setDeliveryHistory(String deliveryHistory) {
         this.deliveryHistory = deliveryHistory;
     }
+    public String getAvailability() {
+        return availability;
+    }
+    public void setAvailability(String availability) {
+        this.availability = availability;
+    }
 
     //to string for table in view
     @Override
@@ -80,7 +88,8 @@ public class DeliveryPersonnel {
                 ", Personnel Contact = '" + personnelContact + '\'' +
                 ", Schedule = '" + schedule + '\'' +
                 ", Assigned Route = '" + assignedRoute + '\'' +
-                ", Delivery History = '" + deliveryHistory;
+                ", Delivery History = '" + deliveryHistory + '\'' +
+                "Availability = " + availability;
     }
 }
 
