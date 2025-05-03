@@ -54,7 +54,7 @@ public class UsersDAO {
     // Get all users
     public List<Users> getAllUsers() {
         List<Users> users = new ArrayList<>();
-        String sql = "SELECT email, username, password FROM Users";
+        String sql = "SELECT email, username, password, userid FROM Users";
         try (Connection conn = DBConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
@@ -62,7 +62,8 @@ public class UsersDAO {
                 users.add(new Users(
                         rs.getString("email"),
                         rs.getString("username"),
-                        rs.getString("password")
+                        rs.getString("password"),
+                        rs.getInt("userid")
                 ));
             }
         } catch (SQLException e) {
