@@ -17,7 +17,7 @@
         <properties/>
         <border type="none"/>
         <children>
-          <grid id="d950b" binding="newshipmenttab" layout-manager="GridLayoutManager" row-count="6" column-count="9" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="d950b" binding="newshipmenttab" layout-manager="GridLayoutManager" row-count="9" column-count="9" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="10" left="10" bottom="10" right="10"/>
             <constraints>
               <tabbedpane title="New Shipment"/>
@@ -81,7 +81,7 @@
               </component>
               <component id="d135f" class="javax.swing.JButton" binding="btnaddshipment">
                 <constraints>
-                  <grid row="5" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="2" use-parent-layout="false"/>
+                  <grid row="6" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="2" use-parent-layout="false"/>
                 </constraints>
                 <properties>
                   <text value="Add Shipment"/>
@@ -120,7 +120,7 @@
               </component>
               <component id="957ce" class="javax.swing.JButton" binding="btnclearfields">
                 <constraints>
-                  <grid row="5" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <grid row="6" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
                   <text value="Clear Fields"/>
@@ -144,6 +144,42 @@
                     <item value="10AM - 12PM"/>
                     <item value="12PM - 2PM"/>
                     <item value="2PM - 4PM"/>
+                  </model>
+                </properties>
+              </component>
+              <component id="64ecf" class="javax.swing.JTable" binding="table1" default-binding="true">
+                <constraints>
+                  <grid row="8" column="0" row-span="1" col-span="8" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                    <preferred-size width="150" height="50"/>
+                  </grid>
+                </constraints>
+                <properties/>
+              </component>
+              <component id="8bf1a" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Available Drivers"/>
+                </properties>
+              </component>
+              <component id="bca98" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="2" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Driver"/>
+                </properties>
+              </component>
+              <component id="d87d0" class="javax.swing.JComboBox" binding="comboBox1" default-binding="true">
+                <constraints>
+                  <grid row="7" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <model>
+                    <item value="Driver1"/>
+                    <item value="Driver2"/>
+                    <item value="Driver3"/>
                   </model>
                 </properties>
               </component>

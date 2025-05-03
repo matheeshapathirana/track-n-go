@@ -28,6 +28,8 @@ public class userView {
     private JLabel lblcreatenewshipment;
     private JLabel lbladdress;
     private JLabel lbltimeslot;
+    private JTable table1;
+    private JComboBox comboBox1;
 
     // Constructor to initialize userView with customerId
     public userView(int customerId) {
