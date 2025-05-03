@@ -27,7 +27,12 @@ public class loginView extends JFrame {
 
     public loginView() {
         Connection conn = DBConnection.getConnection();
+        // Ensure GUI components are initialized before adding listeners
+        // This is important if using IntelliJ GUI Designer
+        // The following code should be called after setContentPane in main
+    }
 
+    private void setupListeners() {
         btnlogin.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -40,6 +45,10 @@ public class loginView extends JFrame {
                     if (role.equals("admin")) {
                         // Open adminView if role is admin
                         View.adminView.main(new String[]{});
+                        dispose(); // Close the login window
+                    } else if (role.equals("user")) {
+                        // Open userView if role is user
+                        View.userView.main(new String[]{});
                         dispose(); // Close the login window
                     }
                 } else {
@@ -79,6 +88,7 @@ public class loginView extends JFrame {
         view.setSize(600, 400);
         view.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         view.setLocationRelativeTo(null);
+        view.setupListeners(); // Ensure listeners are set up after GUI is initialized
         view.setVisible(true);
     }
 }
