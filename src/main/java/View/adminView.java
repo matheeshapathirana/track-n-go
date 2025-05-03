@@ -92,6 +92,7 @@ public class adminView {
         txtID.setEditable(false); // Make ID field non-editable
         txtshipmentid.setEditable(false);
         txttrackingid.setEditable(false); // trackingID should not be editable
+        txtemail.setEditable(false);
 
         // Initialize availability combo box options
         comboboxavailability.addItem("Available");
