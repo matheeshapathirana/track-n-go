@@ -2,16 +2,14 @@ package Model;
 
 public class CustomerNotification {
     private int notificationId;
-    private String recipientType;
     private int recipientId;
     private String message;
     private String createdOn;
 
     public CustomerNotification() {}
 
-    public CustomerNotification(int notificationId, String recipientType, int recipientId, String message, String createdOn) {
+    public CustomerNotification(int notificationId, int recipientId, String message, String createdOn) {
         this.notificationId = notificationId;
-        this.recipientType = recipientType;
         this.recipientId = recipientId;
         this.message = message;
         this.createdOn = createdOn;
@@ -19,9 +17,6 @@ public class CustomerNotification {
 
     public int getNotificationId() { return notificationId; }
     public void setNotificationId(int notificationId) { this.notificationId = notificationId; }
-
-    public String getRecipientType() { return recipientType; }
-    public void setRecipientType(String recipientType) { this.recipientType = recipientType; }
 
     public int getRecipientId() { return recipientId; }
     public void setRecipientId(int recipientId) { this.recipientId = recipientId; }

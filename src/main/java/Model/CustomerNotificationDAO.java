@@ -14,7 +14,7 @@ public class CustomerNotificationDAO {
 
     public List<CustomerNotification> getNotificationsByUserID(int userId) {
         List<CustomerNotification> notifications = new ArrayList<>();
-        String sql = "SELECT * FROM Notifications WHERE recipientType = 'User' AND recipientID = ? ORDER BY createdOn DESC";
+        String sql = "SELECT * FROM Notifications WHERE recipientID = ? ORDER BY createdOn DESC";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, userId);
@@ -23,7 +23,6 @@ public class CustomerNotificationDAO {
             while (rs.next()) {
                 CustomerNotification notification = new CustomerNotification(
                         rs.getInt("notificationID"),
-                        rs.getString("recipientType"),
                         rs.getInt("recipientID"),
                         rs.getString("message"),
                         rs.getString("createdOn")
@@ -37,13 +36,12 @@ public class CustomerNotificationDAO {
         return notifications;
     }
 
-    public void addNotification(String recipientType, int recipientId, String message) {
-        String sql = "INSERT INTO Notifications (recipientType, recipientID, message) VALUES (?, ?, ?)";
+    public void addNotification(int recipientId, String message) {
+        String sql = "INSERT INTO Notifications (recipientID, message) VALUES (?, ?)";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, recipientType);
-            stmt.setInt(2, recipientId);
-            stmt.setString(3, message);
+            stmt.setInt(1, recipientId);
+            stmt.setString(2, message);
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -59,7 +57,6 @@ public class CustomerNotificationDAO {
             while (rs.next()) {
                 CustomerNotification notification = new CustomerNotification(
                         rs.getInt("notificationID"),
-                        rs.getString("recipientType"),
                         rs.getInt("recipientID"),
                         rs.getString("message"),
                         rs.getString("createdOn")

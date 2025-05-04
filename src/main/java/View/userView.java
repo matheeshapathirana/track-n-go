@@ -30,18 +30,16 @@ public class userView {
     private JLabel lbltimeslot;
     private JTable table1;
     private JComboBox comboBox1;
+    private JLabel lblwelcomeuser;
+    private JLabel lblusernamegoeshere;
 
-    // Constructor to initialize userView with customerId
-    public userView(int customerId) {
-        // Initialize UI components (if using a GUI builder, this may be auto-generated)
+    // Constructor to initialize userView with customerId and username
+    public userView(int customerId, String username) {
+        if (lblusernamegoeshere != null) {
+            lblusernamegoeshere.setText(username);
+        }
         loadCustomerNotifications(customerId);
-        loadAllNotificationsTable();
-    }
-
-    // Default constructor for compatibility (optional)
-    public userView() {
-        // You may want to set a default or prompt for customerId here
-        // For now, do nothing
+        loadAllNotificationsTable(customerId);
     }
 
     // Add this method to load notifications for a customer
@@ -57,16 +55,15 @@ public class userView {
         notificationsdata.setModel(model);
     }
 
-    // Load all notifications into the notificationsdata table (admin/global view)
-    public void loadAllNotificationsTable() {
+    // Load all notifications into the notificationsdata table (filtered by user)
+    public void loadAllNotificationsTable(int userId) {
         CustomerNotificationDAO dao = new CustomerNotificationDAO();
-        java.util.List<CustomerNotification> notifications = dao.getAllNotifications();
-        String[] columnNames = {"ID", "Recipient Type", "Recipient ID", "Message", "Timestamp"};
+        java.util.List<CustomerNotification> notifications = dao.getNotificationsByUserID(userId);
+        String[] columnNames = {"ID", "Recipient ID", "Message", "Timestamp"};
         javax.swing.table.DefaultTableModel model = new javax.swing.table.DefaultTableModel(columnNames, 0);
         for (CustomerNotification notification : notifications) {
             Object[] row = {
                 notification.getNotificationId(),
-                notification.getRecipientType(),
                 notification.getRecipientId(),
                 notification.getMessage(),
                 notification.getCreatedOn()
@@ -79,7 +76,8 @@ public class userView {
     public static void main(String[] args) {
         JFrame frame = new JFrame("User View");
         int customerId = 1; // Replace with actual customer ID from login/session
-        userView view = new userView(customerId);
+        String username = "username"; // Replace with actual username from login/session
+        userView view = new userView(customerId, username);
         frame.setContentPane(view.backpanel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
