@@ -14,7 +14,7 @@ public class CustomerNotificationDAO {
 
     public List<CustomerNotification> getNotificationsByUserID(int userId) {
         List<CustomerNotification> notifications = new ArrayList<>();
-        String sql = "SELECT * FROM Notifications WHERE recipientType = 'user' AND recipientID = ? ORDER BY createdOn DESC";
+        String sql = "SELECT * FROM Notifications WHERE recipientID = ? ORDER BY createdOn DESC";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, userId);
@@ -23,7 +23,7 @@ public class CustomerNotificationDAO {
             while (rs.next()) {
                 CustomerNotification notification = new CustomerNotification(
                         rs.getInt("notificationID"),
-                        rs.getString("recipientType"),
+                        null, // recipientType removed
                         rs.getInt("recipientID"),
                         rs.getString("message"),
                         rs.getString("createdOn")
@@ -38,12 +38,11 @@ public class CustomerNotificationDAO {
     }
 
     public void addNotification(String recipientType, int recipientId, String message) {
-        String sql = "INSERT INTO Notifications (recipientType, recipientID, message) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO Notifications (recipientID, message) VALUES (?, ?)";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, recipientType);
-            stmt.setInt(2, recipientId);
-            stmt.setString(3, message);
+            stmt.setInt(1, recipientId);
+            stmt.setString(2, message);
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -59,7 +58,7 @@ public class CustomerNotificationDAO {
             while (rs.next()) {
                 CustomerNotification notification = new CustomerNotification(
                         rs.getInt("notificationID"),
-                        rs.getString("recipientType"),
+                        null, // recipientType removed
                         rs.getInt("recipientID"),
                         rs.getString("message"),
                         rs.getString("createdOn")
@@ -72,10 +71,8 @@ public class CustomerNotificationDAO {
         return notifications;
     }
 
-
-
     public int getNotificationIdByMessageAndUser(String message, int userId) {
-        String sql = "SELECT notificationID FROM Notifications WHERE message = ? AND recipientID = ? AND recipientType = 'User'";
+        String sql = "SELECT notificationID FROM Notifications WHERE message = ? AND recipientID = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, message);
             stmt.setInt(2, userId);
@@ -90,7 +87,7 @@ public class CustomerNotificationDAO {
     }
 
     public int getNotificationIdByMessageAndTimestamp(String message, String timestamp, int userId) {
-        String sql = "SELECT notificationID FROM Notifications WHERE message = ? AND createdOn = ? AND recipientID = ? AND recipientType = 'User'";
+        String sql = "SELECT notificationID FROM Notifications WHERE message = ? AND createdOn = ? AND recipientID = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, message);
             stmt.setString(2, timestamp);
@@ -117,7 +114,7 @@ public class CustomerNotificationDAO {
     }
 
     public void clearAllNotificationsForUser(int userId) {
-        String sql = "DELETE FROM Notifications WHERE recipientType = 'User' AND recipientID = ?";
+        String sql = "DELETE FROM Notifications WHERE recipientID = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, userId);
             int rowsAffected = stmt.executeUpdate();
