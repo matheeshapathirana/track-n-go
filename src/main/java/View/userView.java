@@ -33,6 +33,7 @@ public class userView {
     private JTable table1;
     private JComboBox comboBox1;
     private JLabel lblwelcome;
+    private JLabel lblusernamegoeshere;
     private JLabel lblusername;
 
     // Store the logged-in customerId as a field
@@ -46,6 +47,9 @@ public class userView {
         this.username = username;
         if (lblusername != null) {
             lblusername.setText(username);
+        }
+        if (lblusernamegoeshere != null) {
+            lblusernamegoeshere.setText(username);
         }
         loadCustomerNotifications(customerId); // Only load notifications for this user
 
@@ -103,7 +107,12 @@ public class userView {
             Object[] row = {notification.getMessage(), notification.getCreatedOn()};
             model.addRow(row);
         }
-        notificationsdata.setModel(model);
+        if (notificationsdata != null) {
+            notificationsdata.setModel(model);
+        } else {
+            // This means the notificationsdata JTable is not initialized. Check your GUI designer or initialization code.
+            System.err.println("notificationsdata JTable is null. Ensure it is initialized and matches the field name in the .form file.");
+        }
     }
 
     // Load all notifications into the notificationsdata table (admin/global view)
