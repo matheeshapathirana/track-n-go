@@ -87,6 +87,10 @@ public class adminView {
     private JLabel lblaveragecustomerratingnumber;
     private JLabel lbltotalshipments;
     private JLabel lbltotalshipmentsnumber;
+    private JButton btnrefreshshipments;
+    private JButton btnrefreshusers;
+    private JButton btnrefreshdrivers;
+    private JButton btnrefreshtrack;
 
     public adminView() {
         txtID.setEditable(false); // Make ID field non-editable
