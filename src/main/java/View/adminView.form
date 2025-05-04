@@ -118,7 +118,7 @@
                   <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="2" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <text value="All Shipments"/>
+                  <text value="All Shipments :"/>
                 </properties>
               </component>
               <component id="9d370" class="javax.swing.JToolBar$Separator">
