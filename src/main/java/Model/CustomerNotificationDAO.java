@@ -72,8 +72,6 @@ public class CustomerNotificationDAO {
         return notifications;
     }
 
-
-
     public int getNotificationIdByMessageAndUser(String message, int userId) {
         String sql = "SELECT notificationID FROM Notifications WHERE message = ? AND recipientID = ? AND recipientType = 'User'";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -125,5 +123,88 @@ public class CustomerNotificationDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    // --- Polling logic for TrackShipmentProgress changes ---
+    private List<TrackShipmentProgress> lastProgressCache = new ArrayList<>();
+
+    /**
+     * Polls the TrackShipmentProgress table for changes in estimatedDeliveryTime, delay, or status.
+     * If a change is detected, sends a notification to the user associated with the shipment.
+     * Call this method periodically (e.g., with a ScheduledExecutorService).
+     */
+    public void pollAndNotifyShipmentProgressChanges() {
+        List<TrackShipmentProgress> currentProgress = new ArrayList<>();
+        // Fetch all current shipment progress
+        try (Connection conn = DBConnection.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT * FROM TrackShipmentProgress")) {
+            while (rs.next()) {
+                TrackShipmentProgress progress = new TrackShipmentProgress();
+                progress.setTrackingID(rs.getInt("trackingID"));
+                progress.setShipmentID(rs.getInt("shipmentID"));
+                progress.setCurrentLocation(rs.getString("currentLocation"));
+                progress.setEstimatedDeliveryTime(rs.getString("estimatedDeliveryTime"));
+                progress.setDelay(rs.getInt("delay"));
+                progress.setStatus(rs.getString("status"));
+                currentProgress.add(progress);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        // Compare with last cache
+        for (TrackShipmentProgress curr : currentProgress) {
+            TrackShipmentProgress prev = lastProgressCache.stream()
+                .filter(p -> p.getTrackingID() == curr.getTrackingID())
+                .findFirst().orElse(null);
+            if (prev != null) {
+                // Check for changes in the specified columns
+                if (!safeEquals(curr.getEstimatedDeliveryTime(), prev.getEstimatedDeliveryTime())) {
+                    notifyUserOfChange(curr, "Estimated Delivery Time changed to: " + curr.getEstimatedDeliveryTime());
+                }
+                if (curr.getDelay() != prev.getDelay()) {
+                    notifyUserOfChange(curr, "Delay changed to: " + curr.getDelay() + " minutes");
+                }
+                if (!safeEquals(curr.getStatus(), prev.getStatus())) {
+                    notifyUserOfChange(curr, "Status changed to: " + curr.getStatus());
+                }
+            }
+        }
+        // Update cache
+        lastProgressCache = currentProgress;
+    }
+
+    // Helper to compare strings safely
+    private boolean safeEquals(String a, String b) {
+        if (a == null && b == null) return true;
+        if (a == null || b == null) return false;
+        return a.equals(b);
+    }
+
+    // Helper to send notification to user associated with the shipment
+    private void notifyUserOfChange(TrackShipmentProgress progress, String message) {
+        int shipmentID = progress.getShipmentID();
+        int userId = getAssignedDriverIdForShipment(shipmentID);
+        if (userId != -1) {
+            addNotification("user", userId, message);
+        }
+    }
+
+    // Helper to get assignedDriverID (userId) for a shipment
+    private int getAssignedDriverIdForShipment(int shipmentID) {
+        String sql = "SELECT assignedDriverID FROM Shipments WHERE shipmentID = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, shipmentID);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("assignedDriverID");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
     }
 }

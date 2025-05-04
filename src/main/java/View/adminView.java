@@ -89,6 +89,10 @@ public class adminView {
     private JLabel lbltotalshipmentsnumber;
 
     public adminView() {
+        // Initialize txtID if null to prevent NullPointerException
+        if (txtID == null) {
+            txtID = new JTextField();
+        }
         txtID.setEditable(false); // Make ID field non-editable
         txtshipmentid.setEditable(false);
         txttrackingid.setEditable(false); // trackingID should not be editable
