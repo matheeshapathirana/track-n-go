@@ -35,7 +35,7 @@ public class userView {
     public userView(int customerId) {
         // Initialize UI components (if using a GUI builder, this may be auto-generated)
         loadCustomerNotifications(customerId);
-        loadAllNotificationsTable();
+        // Removed loadAllNotificationsTable() to filter notifications by user only
     }
 
     // Default constructor for compatibility (optional)
@@ -61,12 +61,11 @@ public class userView {
     public void loadAllNotificationsTable() {
         CustomerNotificationDAO dao = new CustomerNotificationDAO();
         java.util.List<CustomerNotification> notifications = dao.getAllNotifications();
-        String[] columnNames = {"ID", "Recipient Type", "Recipient ID", "Message", "Timestamp"};
+        String[] columnNames = {"ID", "Recipient ID", "Message", "Timestamp"};
         javax.swing.table.DefaultTableModel model = new javax.swing.table.DefaultTableModel(columnNames, 0);
         for (CustomerNotification notification : notifications) {
             Object[] row = {
                 notification.getNotificationId(),
-                notification.getRecipientType(),
                 notification.getRecipientId(),
                 notification.getMessage(),
                 notification.getCreatedOn()
