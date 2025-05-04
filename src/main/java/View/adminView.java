@@ -118,6 +118,14 @@ public class adminView {
             }
         });
 
+        // Refresh tracking table
+        btnrefreshtrack.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                loadTrackTable();
+            }
+        });
+
         btnupdatetrack.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
