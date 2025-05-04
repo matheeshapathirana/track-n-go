@@ -34,6 +34,13 @@ public class userView {
         // Initialize UI components (if using a GUI builder, this may be auto-generated)
         loadCustomerNotifications(customerId);
         loadAllNotificationsTable();
+
+        btndeletenotification.addActionListener(e -> deleteSelectedNotification(customerId));
+        btnclearallnotifications.addActionListener(e -> clearAllNotifications(customerId));
+        btnclearfields.addActionListener(e -> {
+            clearNotificationsTable();
+            JOptionPane.showMessageDialog(null, "All notifications have been cleared from the display.");
+        });
     }
 
     // Default constructor for compatibility (optional)
@@ -46,8 +53,15 @@ public class userView {
     public void loadCustomerNotifications(int customerId) {
         CustomerNotificationDAO dao = new CustomerNotificationDAO();
         List<CustomerNotification> notifications = dao.getNotificationsByUserID(customerId);
+
         String[] columnNames = {"Message", "Timestamp"};
-        DefaultTableModel model = new DefaultTableModel(columnNames, 0);
+        DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // Make all cells non-editable
+            }
+        };
+
         for (CustomerNotification notification : notifications) {
             Object[] row = {notification.getMessage(), notification.getCreatedOn()};
             model.addRow(row);
@@ -58,20 +72,78 @@ public class userView {
     // Load all notifications into the notificationsdata table (admin/global view)
     public void loadAllNotificationsTable() {
         CustomerNotificationDAO dao = new CustomerNotificationDAO();
-        java.util.List<CustomerNotification> notifications = dao.getAllNotifications();
-        String[] columnNames = {"ID", "Recipient Type", "Recipient ID", "Message", "Timestamp"};
-        javax.swing.table.DefaultTableModel model = new javax.swing.table.DefaultTableModel(columnNames, 0);
+        List<CustomerNotification> notifications = dao.getAllNotifications();
+
+        String[] columnNames = {"Message", "Created On"};
+        DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // Make all cells non-editable
+            }
+        };
+
         for (CustomerNotification notification : notifications) {
-            Object[] row = {
-                notification.getNotificationId(),
-                notification.getRecipientType(),
-                notification.getRecipientId(),
-                notification.getMessage(),
-                notification.getCreatedOn()
-            };
+            Object[] row = {notification.getMessage(), notification.getCreatedOn()};
             model.addRow(row);
         }
+
         notificationsdata.setModel(model);
+    }
+
+    public void deleteSelectedNotification(int customerId) {
+        int selectedRow = notificationsdata.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(null, "Please select a notification to delete.");
+            return;
+        }
+
+        // Retrieve the message and timestamp from the selected row
+        String selectedMessage = (String) notificationsdata.getValueAt(selectedRow, 0);
+        String selectedTimestamp = (String) notificationsdata.getValueAt(selectedRow, 1);
+
+        // Debug: Log selected data
+        System.out.println("Selected Message: " + selectedMessage);
+        System.out.println("Selected Timestamp: " + selectedTimestamp);
+
+        // Retrieve the notification ID using the DAO
+        CustomerNotificationDAO dao = new CustomerNotificationDAO();
+        int notificationId = dao.getNotificationIdByMessageAndTimestamp(selectedMessage, selectedTimestamp, customerId);
+
+        if (notificationId != -1) {
+            // Delete the notification from the database
+            dao.deleteNotification(notificationId);
+
+            // Remove the row from the JTable
+            DefaultTableModel model = (DefaultTableModel) notificationsdata.getModel();
+            model.removeRow(selectedRow);
+
+            JOptionPane.showMessageDialog(null, "Notification deleted successfully.");
+        } else {
+            JOptionPane.showMessageDialog(null, "Failed to find the notification to delete.");
+        }
+    }
+
+
+    public void clearAllNotifications(int customerId) {
+        int confirmation = JOptionPane.showConfirmDialog(null, "Are you sure you want to clear all notifications?", "Confirm", JOptionPane.YES_NO_OPTION);
+        if (confirmation == JOptionPane.YES_OPTION) {
+            // Clear notifications from the database
+            CustomerNotificationDAO dao = new CustomerNotificationDAO();
+            dao.clearAllNotificationsForUser(customerId);
+
+            // Clear the JTable
+            DefaultTableModel model = (DefaultTableModel) notificationsdata.getModel();
+            model.setRowCount(0);
+
+            JOptionPane.showMessageDialog(null, "All notifications cleared successfully.");
+        }
+    }
+
+    public void clearNotificationsTable() {
+        DefaultTableModel model = (DefaultTableModel) notificationsdata.getModel();
+        if (model != null) {
+            model.setRowCount(0); // Clear all rows from the table
+        }
     }
 
     public static void main(String[] args) {
