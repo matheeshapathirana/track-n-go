@@ -51,9 +51,30 @@ public class loginView extends JFrame {
                         View.adminView.main(new String[]{});
                         dispose(); // Close the login window
                     } else if (role.equals("user")) {
-                        // Open userView if role is user
-                        View.userView.main(new String[]{});
-                        dispose(); // Close the login window
+                        // Fetch username and userId for the logged-in user
+                        Model.UsersDAO usersDAO = new Model.UsersDAO();
+                        java.util.List<Model.Users> users = usersDAO.getAllUsers();
+                        String username = null;
+                        int userId = -1;
+                        for (Model.Users user : users) {
+                            if (user.getEmail().equals(email)) {
+                                username = user.getUsername();
+                                userId = user.getUserId();
+                                break;
+                            }
+                        }
+                        if (username != null && userId != -1) {
+                            JFrame frame = new JFrame("User View");
+                            View.userView view = new View.userView(userId, username);
+                            frame.setContentPane(view.backpanel);
+                            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                            frame.pack();
+                            frame.setLocationRelativeTo(null);
+                            frame.setVisible(true);
+                            dispose(); // Close the login window
+                        } else {
+                            JOptionPane.showMessageDialog(loginbackpanel, "User not found.", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
                     }
                 } else {
                     JOptionPane.showMessageDialog(loginbackpanel, "Invalid credentials.", "Error", JOptionPane.ERROR_MESSAGE);
