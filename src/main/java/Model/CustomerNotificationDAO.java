@@ -14,7 +14,7 @@ public class CustomerNotificationDAO {
 
     public List<CustomerNotification> getNotificationsByUserID(int userId) {
         List<CustomerNotification> notifications = new ArrayList<>();
-        String sql = "SELECT * FROM Notifications WHERE recipientType = 'User' AND recipientID = ? ORDER BY createdOn DESC";
+        String sql = "SELECT * FROM Notifications WHERE recipientType = 'user' AND recipientID = ? ORDER BY createdOn DESC";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, userId);
