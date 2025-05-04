@@ -46,11 +46,11 @@ public class adminView {
     private JTextField txtassigneddriverid;
     private JLabel lblshipmentsshipmentid;
     private JLabel lblassigneddriverid;
-    private JLabel lblsendername;
+    private JLabel lblsenderid;
     private JLabel lblreceivername;
     private JLabel lblshipmentstatus;
     private JTextField txtshipmentshipmentid;
-    private JTextField txtsendername;
+    private JTextField txtsenderid;
     private JTextField txtreceivername;
     private JButton btnaddshipment;
     private JButton btnupdateshipment;
@@ -87,23 +87,22 @@ public class adminView {
     private JLabel lblaveragecustomerratingnumber;
     private JLabel lbltotalshipments;
     private JLabel lbltotalshipmentsnumber;
+    private JButton btnrefreshshipments;
+    private JButton btnrefreshusers;
+    private JButton btnrefreshdrivers;
+    private JButton btnrefreshtrack;
+    private Integer loggedInUserId;
 
-    public adminView() {
-        // Initialize txtID if null to prevent NullPointerException
-        if (txtID == null) {
-            txtID = new JTextField();
-        }
-        // Initialize txtshipmentid if null to prevent NullPointerException
-        if (txtshipmentid == null) {
-            txtshipmentid = new JTextField();
-        }
+    public adminView(String loggedInUserEmail) {
+        // Get the logged-in user's ID from the database
+        Model.UsersDAO usersDAO = new Model.UsersDAO();
+        this.loggedInUserId = usersDAO.getUserIdByEmail(loggedInUserEmail);
+
         txtID.setEditable(false); // Make ID field non-editable
         txtshipmentid.setEditable(false);
-        // Initialize txttrackingid if null to prevent NullPointerException
-        if (txttrackingid == null) {
-            txttrackingid = new JTextField();
-        }
         txttrackingid.setEditable(false); // trackingID should not be editable
+        txtemail.setEditable(false);
+
 
         // Initialize availability combo box options
         comboboxavailability.addItem("Available");
@@ -122,6 +121,14 @@ public class adminView {
             @Override
             public void actionPerformed(ActionEvent e) {
                 clearPersonnelFields();
+            }
+        });
+
+        // Refresh tracking table
+        btnrefreshtrack.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                loadTrackTable();
             }
         });
 
@@ -226,6 +233,29 @@ public class adminView {
             public void actionPerformed(ActionEvent e) {
                 try {
                     int personnelID = Integer.parseInt(txtID.getText());
+                    // Check if driver is assigned to any shipment
+                    boolean isAssigned = false;
+                    try {
+                        java.sql.Connection conn = Utility.DBConnection.getConnection();
+                        String sql = "SELECT COUNT(*) FROM Shipments WHERE assignedDriverID = ?";
+                        java.sql.PreparedStatement stmt = conn.prepareStatement(sql);
+                        stmt.setInt(1, personnelID);
+                        java.sql.ResultSet rs = stmt.executeQuery();
+                        if (rs.next() && rs.getInt(1) > 0) {
+                            isAssigned = true;
+                        }
+                        rs.close();
+                        stmt.close();
+                        conn.close();
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        JOptionPane.showMessageDialog(null, "Error checking driver assignment!", "Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                    if (isAssigned) {
+                        JOptionPane.showMessageDialog(null, "Driver already assigned to a shipment!", "Warning", JOptionPane.WARNING_MESSAGE);
+                        return;
+                    }
                     Controller.DeliveryPersonnelController controller = new Controller.DeliveryPersonnelController();
                     Model.DeliveryPersonnel p1 = new Model.DeliveryPersonnel();
                     p1.setPersonnelID(personnelID);
@@ -247,6 +277,14 @@ public class adminView {
                 txtusername.setText(userdata.getValueAt(selectedRow, 1).toString());
                 txtpassword.setText(userdata.getValueAt(selectedRow, 2).toString());
                 comboboxrole.setSelectedItem(userdata.getValueAt(selectedRow, 3).toString());
+            }
+        });
+        //Refresh the delivery personnel table
+        btnrefreshdrivers.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                loadPersonnelTable();
+                JOptionPane.showMessageDialog(null, "Driver table list refreshed");
             }
         });
 
@@ -324,6 +362,96 @@ public class adminView {
             @Override
             public void actionPerformed(ActionEvent e) {
                 clearUserFields();
+            }
+        });
+
+        // Load shipment data
+        loadShipmentTable();
+
+        // Shipment table row selection
+        shipmentdatatable.getSelectionModel().addListSelectionListener(e -> {
+            int selectedRow = shipmentdatatable.getSelectedRow();
+
+            if (selectedRow >= 0) {
+                txtshipmentshipmentid.setText(shipmentdatatable.getValueAt(selectedRow, 0).toString());
+                txtsenderid.setText(shipmentdatatable.getValueAt(selectedRow, 1).toString());
+                txtreceivername.setText(shipmentdatatable.getValueAt(selectedRow, 2).toString());
+                comboBox2.setSelectedItem(shipmentdatatable.getValueAt(selectedRow, 3).toString());
+                txtassigneddriverid.setText(shipmentdatatable.getValueAt(selectedRow, 4).toString());
+            }
+        });
+
+        // Add shipment button
+        btnaddshipment.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (txtreceivername.getText().isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Please fill required fields!", "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    String receiverName = txtreceivername.getText();
+                    String status = comboBox2.getSelectedItem().toString();
+                    Integer driverID = txtassigneddriverid.getText().isEmpty() ? null : Integer.parseInt(txtassigneddriverid.getText());
+
+                    Controller.ShipmentsController controller = new Controller.ShipmentsController();
+                    controller.addShipment(receiverName, status, driverID, loggedInUserId);
+                    JOptionPane.showMessageDialog(null, "Shipment added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    clearShipmentFields();
+                    loadShipmentTable();
+                }
+            }
+        });
+
+        // Update shipment button
+        btnupdateshipment.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (txtshipmentshipmentid.getText().isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Please select a shipment to update!", "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    try {
+                        int shipmentID = Integer.parseInt(txtshipmentshipmentid.getText());
+                        String receiverName = txtreceivername.getText();
+                        String status = comboBox2.getSelectedItem().toString();
+                        Integer driverID = txtassigneddriverid.getText().isEmpty() ? null : Integer.parseInt(txtassigneddriverid.getText());
+
+                        Controller.ShipmentsController controller = new Controller.ShipmentsController();
+                        controller.updateShipment(shipmentID, receiverName, status, driverID, loggedInUserId);
+                        JOptionPane.showMessageDialog(null, "Shipment updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                        clearShipmentFields();
+                        loadShipmentTable();
+                    } catch (NumberFormatException ex) {
+                        JOptionPane.showMessageDialog(null, "Invalid shipment ID!", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }
+        });
+
+        // Delete shipment button
+        btndeleteshipment.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (txtshipmentshipmentid.getText().isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Please select a shipment to delete!", "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    try {
+                        int shipmentID = Integer.parseInt(txtshipmentshipmentid.getText());
+                        Controller.ShipmentsController controller = new Controller.ShipmentsController();
+                        controller.deleteShipment(shipmentID);
+                        JOptionPane.showMessageDialog(null, "Shipment deleted successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                        clearShipmentFields();
+                        loadShipmentTable();
+                    } catch (NumberFormatException ex) {
+                        JOptionPane.showMessageDialog(null, "Invalid shipment ID!", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }
+        });
+
+        // Clear fields button
+        btnclearfields.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                clearShipmentFields();
             }
         });
     }
@@ -468,9 +596,39 @@ public class adminView {
         data[i][6] = personnel.getAvailability();
     }
 
+    // Add shipments methods
+    private void loadShipmentTable() {
+        Controller.ShipmentsController controller = new Controller.ShipmentsController();
+        List<Model.Shipments> list = controller.getAllShipments();
+
+        String[] columnNames = {"Shipment ID", "Sender ID", "Receiver Name", "Status", "Driver ID"};
+        String[][] data = new String[list.size()][columnNames.length];
+
+        for (int i = 0; i < list.size(); i++) {
+            Model.Shipments shipment = list.get(i);
+            data[i][0] = String.valueOf(shipment.getShipmentID());
+            data[i][1] = shipment.getUserid() != null ? String.valueOf(shipment.getUserid()) : "";
+            data[i][2] = shipment.getReceiverName();
+            data[i][3] = shipment.getShipmentStatus();
+            data[i][4] = shipment.getAssignedDriverID() != null ? String.valueOf(shipment.getAssignedDriverID()) : "";
+        }
+        shipmentdatatable.setModel(new DefaultTableModel(data, columnNames));
+    }
+
+    private void clearShipmentFields() {
+        txtshipmentshipmentid.setText("");
+        if (txtsenderid != null) {
+            txtsenderid.setText(String.valueOf(loggedInUserId));
+        }
+        txtreceivername.setText("");
+        txtassigneddriverid.setText("");
+        comboBox2.setSelectedIndex(0);
+    }
+
     public static void main(String[] args) {
+        // Example: pass a dummy logged-in user email (should be set from login/session)
         JFrame frame = new JFrame("Admin View");
-        adminView view = new adminView();
+        adminView view = new adminView("admin@admin.com"); // Replace with actual logged-in user email
         frame.setContentPane(view.tabbedPane1);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 600);
