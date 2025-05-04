@@ -92,6 +92,7 @@ public class adminView {
         txtID.setEditable(false); // Make ID field non-editable
         txtshipmentid.setEditable(false);
         txttrackingid.setEditable(false); // trackingID should not be editable
+        txtemail.setEditable(false);
 
         // Initialize availability combo box options
         comboboxavailability.addItem("Available");
@@ -214,6 +215,29 @@ public class adminView {
             public void actionPerformed(ActionEvent e) {
                 try {
                     int personnelID = Integer.parseInt(txtID.getText());
+                    // Check if driver is assigned to any shipment
+                    boolean isAssigned = false;
+                    try {
+                        java.sql.Connection conn = Utility.DBConnection.getConnection();
+                        String sql = "SELECT COUNT(*) FROM Shipments WHERE assignedDriverID = ?";
+                        java.sql.PreparedStatement stmt = conn.prepareStatement(sql);
+                        stmt.setInt(1, personnelID);
+                        java.sql.ResultSet rs = stmt.executeQuery();
+                        if (rs.next() && rs.getInt(1) > 0) {
+                            isAssigned = true;
+                        }
+                        rs.close();
+                        stmt.close();
+                        conn.close();
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        JOptionPane.showMessageDialog(null, "Error checking driver assignment!", "Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                    if (isAssigned) {
+                        JOptionPane.showMessageDialog(null, "Driver already assigned to a shipment!", "Warning", JOptionPane.WARNING_MESSAGE);
+                        return;
+                    }
                     Controller.DeliveryPersonnelController controller = new Controller.DeliveryPersonnelController();
                     Model.DeliveryPersonnel p1 = new Model.DeliveryPersonnel();
                     p1.setPersonnelID(personnelID);
