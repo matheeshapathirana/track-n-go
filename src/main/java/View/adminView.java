@@ -87,6 +87,10 @@ public class adminView {
     private JLabel lblaveragecustomerratingnumber;
     private JLabel lbltotalshipments;
     private JLabel lbltotalshipmentsnumber;
+    private JButton btnrefreshshipments;
+    private JButton btnrefreshusers;
+    private JButton btnrefreshdrivers;
+    private JButton btnrefreshtrack;
 
     public adminView() {
         txtID.setEditable(false); // Make ID field non-editable
@@ -338,6 +342,98 @@ public class adminView {
                 clearUserFields();
             }
         });
+
+        // Load shipment data
+        loadShipmentTable();
+
+        // Shipment table row selection
+        shipmentdatatable.getSelectionModel().addListSelectionListener(e -> {
+            int selectedRow = shipmentdatatable.getSelectedRow();
+
+            if (selectedRow >= 0) {
+                txtshipmentshipmentid.setText(shipmentdatatable.getValueAt(selectedRow, 0).toString());
+                txtsendername.setText(shipmentdatatable.getValueAt(selectedRow, 1).toString());
+                txtreceivername.setText(shipmentdatatable.getValueAt(selectedRow, 2).toString());
+                comboBox2.setSelectedItem(shipmentdatatable.getValueAt(selectedRow, 3).toString());
+                txtassigneddriverid.setText(shipmentdatatable.getValueAt(selectedRow, 4).toString());
+            }
+        });
+
+        // Add shipment button
+        btnaddshipment.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (txtsendername.getText().isEmpty() || txtreceivername.getText().isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Please fill required fields!", "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    String senderName = txtsendername.getText();
+                    String receiverName = txtreceivername.getText();
+                    String status = comboBox2.getSelectedItem().toString();
+                    Integer driverID = txtassigneddriverid.getText().isEmpty() ? null : Integer.parseInt(txtassigneddriverid.getText());
+
+                    Controller.ShipmentsController controller = new Controller.ShipmentsController();
+                    controller.addShipment(senderName, receiverName, status, driverID);
+                    JOptionPane.showMessageDialog(null, "Shipment added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    clearShipmentFields();
+                    loadShipmentTable();
+                }
+            }
+        });
+
+        // Update shipment button
+        btnupdateshipment.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (txtshipmentshipmentid.getText().isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Please select a shipment to update!", "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    try {
+                        int shipmentID = Integer.parseInt(txtshipmentshipmentid.getText());
+                        String senderName = txtsendername.getText();
+                        String receiverName = txtreceivername.getText();
+                        String status = comboBox2.getSelectedItem().toString();
+                        Integer driverID = txtassigneddriverid.getText().isEmpty() ? null : Integer.parseInt(txtassigneddriverid.getText());
+
+                        Controller.ShipmentsController controller = new Controller.ShipmentsController();
+                        controller.updateShipment(shipmentID, senderName, receiverName, status, driverID);
+                        JOptionPane.showMessageDialog(null, "Shipment updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                        clearShipmentFields();
+                        loadShipmentTable();
+                    } catch (NumberFormatException ex) {
+                        JOptionPane.showMessageDialog(null, "Invalid shipment ID!", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }
+        });
+
+        // Delete shipment button
+        btndeleteshipment.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (txtshipmentshipmentid.getText().isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Please select a shipment to delete!", "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    try {
+                        int shipmentID = Integer.parseInt(txtshipmentshipmentid.getText());
+                        Controller.ShipmentsController controller = new Controller.ShipmentsController();
+                        controller.deleteShipment(shipmentID);
+                        JOptionPane.showMessageDialog(null, "Shipment deleted successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                        clearShipmentFields();
+                        loadShipmentTable();
+                    } catch (NumberFormatException ex) {
+                        JOptionPane.showMessageDialog(null, "Invalid shipment ID!", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }
+        });
+
+        // Clear fields button
+        btnclearfields.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                clearShipmentFields();
+            }
+        });
     }
 
     // Load all shipment tracking data into the table
@@ -478,6 +574,33 @@ public class adminView {
         data[i][4] = personnel.getAssignedRoute();
         data[i][5] = personnel.getDeliveryHistory();
         data[i][6] = personnel.getAvailability();
+    }
+
+    // Add shipments methods
+    private void loadShipmentTable() {
+        Controller.ShipmentsController controller = new Controller.ShipmentsController();
+        List<Model.Shipments> list = controller.getAllShipments();
+
+        String[] columnNames = {"Shipment ID", "Sender Name", "Receiver Name", "Status", "Driver ID"};
+        String[][] data = new String[list.size()][columnNames.length];
+
+        for (int i = 0; i < list.size(); i++) {
+            Model.Shipments shipment = list.get(i);
+            data[i][0] = String.valueOf(shipment.getShipmentID());
+            data[i][1] = shipment.getSenderName();
+            data[i][2] = shipment.getReceiverName();
+            data[i][3] = shipment.getShipmentStatus();
+            data[i][4] = shipment.getAssignedDriverID() != null ? String.valueOf(shipment.getAssignedDriverID()) : "";
+        }
+        shipmentdatatable.setModel(new DefaultTableModel(data, columnNames));
+    }
+
+    private void clearShipmentFields() {
+        txtshipmentshipmentid.setText("");
+        txtsendername.setText("");
+        txtreceivername.setText("");
+        txtassigneddriverid.setText("");
+        comboBox2.setSelectedIndex(0);
     }
 
     public static void main(String[] args) {
