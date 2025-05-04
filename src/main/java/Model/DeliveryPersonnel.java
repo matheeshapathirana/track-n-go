@@ -7,15 +7,32 @@ public class DeliveryPersonnel {
     private String schedule;
     private String assignedRoute;
     private String deliveryHistory;
+    private String availability;
+    private String createdOn;
+    private String lastUpdated;
 
     //constructor
-    public DeliveryPersonnel(int personnelID, String personnelName, String personnelContact, String schedule, String assignedRoute, String deliveryHistory) {
+    public DeliveryPersonnel(int personnelID, String personnelName, String personnelContact, String schedule, String assignedRoute, String deliveryHistory, String availability, String createdOn, String lastUpdated) {
         this.personnelID = personnelID;
         this.personnelName = personnelName;
         this.personnelContact = personnelContact;
         this.schedule = schedule;
         this.assignedRoute = assignedRoute;
         this.deliveryHistory = deliveryHistory;
+        this.availability = availability;
+        this.createdOn = createdOn;
+        this.lastUpdated = lastUpdated;
+    }
+
+    //overloaded constructor for backward compatibility and DAO usage
+    public DeliveryPersonnel(int personnelID, String personnelName, String personnelContact, String schedule, String assignedRoute, String deliveryHistory, String availability) {
+        this.personnelID = personnelID;
+        this.personnelName = personnelName;
+        this.personnelContact = personnelContact;
+        this.schedule = schedule;
+        this.assignedRoute = assignedRoute;
+        this.deliveryHistory = deliveryHistory;
+        this.availability = availability;
     }
 
     //default constructor for delete in views
@@ -71,6 +88,30 @@ public class DeliveryPersonnel {
         this.deliveryHistory = deliveryHistory;
     }
 
+    public String getAvailability() {
+        return availability;
+    }
+
+    public void setAvailability(String availability) {
+        this.availability = availability;
+    }
+
+    public String getCreatedOn() {
+        return createdOn;
+    }
+
+    public void setCreatedOn(String createdOn) {
+        this.createdOn = createdOn;
+    }
+
+    public String getLastUpdated() {
+        return lastUpdated;
+    }
+
+    public void setLastUpdated(String lastUpdated) {
+        this.lastUpdated = lastUpdated;
+    }
+
     //to string for table in view
     @Override
     public String toString() {
@@ -80,7 +121,8 @@ public class DeliveryPersonnel {
                 ", Personnel Contact = '" + personnelContact + '\'' +
                 ", Schedule = '" + schedule + '\'' +
                 ", Assigned Route = '" + assignedRoute + '\'' +
-                ", Delivery History = '" + deliveryHistory;
+                ", Delivery History = '" + deliveryHistory + '\'' +
+                "Availability = " + availability;
     }
 }
 
