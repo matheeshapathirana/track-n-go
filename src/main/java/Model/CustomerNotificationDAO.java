@@ -71,5 +71,59 @@ public class CustomerNotificationDAO {
         }
         return notifications;
     }
-}
 
+
+
+    public int getNotificationIdByMessageAndUser(String message, int userId) {
+        String sql = "SELECT notificationID FROM Notifications WHERE message = ? AND recipientID = ? AND recipientType = 'User'";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, message);
+            stmt.setInt(2, userId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("notificationID");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1; // Return -1 if no matching notification is found
+    }
+
+    public int getNotificationIdByMessageAndTimestamp(String message, String timestamp, int userId) {
+        String sql = "SELECT notificationID FROM Notifications WHERE message = ? AND createdOn = ? AND recipientID = ? AND recipientType = 'User'";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, message);
+            stmt.setString(2, timestamp);
+            stmt.setInt(3, userId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("notificationID");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1; // Return -1 if no matching notification is found
+    }
+
+    public void deleteNotification(int notificationId) {
+        String sql = "DELETE FROM Notifications WHERE notificationID = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, notificationId);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void clearAllNotificationsForUser(int userId) {
+        String sql = "DELETE FROM Notifications WHERE recipientType = 'User' AND recipientID = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            int rowsAffected = stmt.executeUpdate();
+            System.out.println("Rows affected by clear all: " + rowsAffected);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}
