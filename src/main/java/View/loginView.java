@@ -27,9 +27,13 @@ public class loginView extends JFrame {
 
     public loginView() {
         Connection conn = DBConnection.getConnection();
-        // Ensure GUI components are initialized before adding listeners
-        // This is important if using IntelliJ GUI Designer
-        // The following code should be called after setContentPane in main
+
+        // Initialize the tabs component to avoid null reference
+        tabs = new JTabbedPane();
+
+        // Add login and register panels to the tabs
+        tabs.addTab("Login", loginbackpanel);
+        tabs.addTab("Register", registerbackpanel);
     }
 
     private void setupListeners() {
