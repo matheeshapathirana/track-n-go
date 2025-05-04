@@ -46,11 +46,11 @@ public class adminView {
     private JTextField txtassigneddriverid;
     private JLabel lblshipmentsshipmentid;
     private JLabel lblassigneddriverid;
-    private JLabel lblsendername;
+    private JLabel lblsenderid;
     private JLabel lblreceivername;
     private JLabel lblshipmentstatus;
     private JTextField txtshipmentshipmentid;
-    private JTextField txtsendername;
+    private JTextField txtsenderid;
     private JTextField txtreceivername;
     private JButton btnaddshipment;
     private JButton btnupdateshipment;
@@ -91,12 +91,18 @@ public class adminView {
     private JButton btnrefreshusers;
     private JButton btnrefreshdrivers;
     private JButton btnrefreshtrack;
+    private Integer loggedInUserId;
 
-    public adminView() {
+    public adminView(String loggedInUserEmail) {
+        // Get the logged-in user's ID from the database
+        Model.UsersDAO usersDAO = new Model.UsersDAO();
+        this.loggedInUserId = usersDAO.getUserIdByEmail(loggedInUserEmail);
+
         txtID.setEditable(false); // Make ID field non-editable
         txtshipmentid.setEditable(false);
         txttrackingid.setEditable(false); // trackingID should not be editable
         txtemail.setEditable(false);
+
 
         // Initialize availability combo box options
         comboboxavailability.addItem("Available");
@@ -368,7 +374,7 @@ public class adminView {
 
             if (selectedRow >= 0) {
                 txtshipmentshipmentid.setText(shipmentdatatable.getValueAt(selectedRow, 0).toString());
-                txtsendername.setText(shipmentdatatable.getValueAt(selectedRow, 1).toString());
+                txtsenderid.setText(shipmentdatatable.getValueAt(selectedRow, 1).toString());
                 txtreceivername.setText(shipmentdatatable.getValueAt(selectedRow, 2).toString());
                 comboBox2.setSelectedItem(shipmentdatatable.getValueAt(selectedRow, 3).toString());
                 txtassigneddriverid.setText(shipmentdatatable.getValueAt(selectedRow, 4).toString());
@@ -379,16 +385,15 @@ public class adminView {
         btnaddshipment.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (txtsendername.getText().isEmpty() || txtreceivername.getText().isEmpty()) {
+                if (txtreceivername.getText().isEmpty()) {
                     JOptionPane.showMessageDialog(null, "Please fill required fields!", "Error", JOptionPane.ERROR_MESSAGE);
                 } else {
-                    String senderName = txtsendername.getText();
                     String receiverName = txtreceivername.getText();
                     String status = comboBox2.getSelectedItem().toString();
                     Integer driverID = txtassigneddriverid.getText().isEmpty() ? null : Integer.parseInt(txtassigneddriverid.getText());
 
                     Controller.ShipmentsController controller = new Controller.ShipmentsController();
-                    controller.addShipment(senderName, receiverName, status, driverID);
+                    controller.addShipment(receiverName, status, driverID, loggedInUserId);
                     JOptionPane.showMessageDialog(null, "Shipment added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
                     clearShipmentFields();
                     loadShipmentTable();
@@ -405,13 +410,12 @@ public class adminView {
                 } else {
                     try {
                         int shipmentID = Integer.parseInt(txtshipmentshipmentid.getText());
-                        String senderName = txtsendername.getText();
                         String receiverName = txtreceivername.getText();
                         String status = comboBox2.getSelectedItem().toString();
                         Integer driverID = txtassigneddriverid.getText().isEmpty() ? null : Integer.parseInt(txtassigneddriverid.getText());
 
                         Controller.ShipmentsController controller = new Controller.ShipmentsController();
-                        controller.updateShipment(shipmentID, senderName, receiverName, status, driverID);
+                        controller.updateShipment(shipmentID, receiverName, status, driverID, loggedInUserId);
                         JOptionPane.showMessageDialog(null, "Shipment updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
                         clearShipmentFields();
                         loadShipmentTable();
@@ -597,13 +601,13 @@ public class adminView {
         Controller.ShipmentsController controller = new Controller.ShipmentsController();
         List<Model.Shipments> list = controller.getAllShipments();
 
-        String[] columnNames = {"Shipment ID", "Sender Name", "Receiver Name", "Status", "Driver ID"};
+        String[] columnNames = {"Shipment ID", "Sender ID", "Receiver Name", "Status", "Driver ID"};
         String[][] data = new String[list.size()][columnNames.length];
 
         for (int i = 0; i < list.size(); i++) {
             Model.Shipments shipment = list.get(i);
             data[i][0] = String.valueOf(shipment.getShipmentID());
-            data[i][1] = shipment.getSenderName();
+            data[i][1] = shipment.getUserid() != null ? String.valueOf(shipment.getUserid()) : "";
             data[i][2] = shipment.getReceiverName();
             data[i][3] = shipment.getShipmentStatus();
             data[i][4] = shipment.getAssignedDriverID() != null ? String.valueOf(shipment.getAssignedDriverID()) : "";
@@ -613,15 +617,18 @@ public class adminView {
 
     private void clearShipmentFields() {
         txtshipmentshipmentid.setText("");
-        txtsendername.setText("");
+        if (txtsenderid != null) {
+            txtsenderid.setText(String.valueOf(loggedInUserId));
+        }
         txtreceivername.setText("");
         txtassigneddriverid.setText("");
         comboBox2.setSelectedIndex(0);
     }
 
     public static void main(String[] args) {
+        // Example: pass a dummy logged-in user email (should be set from login/session)
         JFrame frame = new JFrame("Admin View");
-        adminView view = new adminView();
+        adminView view = new adminView("admin@admin.com"); // Replace with actual logged-in user email
         frame.setContentPane(view.tabbedPane1);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 600);

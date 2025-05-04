@@ -88,4 +88,39 @@ public class UsersDAO {
         }
         return null;
     }
+
+    // Get username by email
+    public String getUsernameByEmail(String email) {
+        String username = null;
+        String sql = "SELECT username FROM Users WHERE email=?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, email);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    username = rs.getString("username");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return username;
+    }
+
+    // Get user ID by email
+    public int getUserIdByEmail(String email) {
+        String sql = "SELECT userid FROM Users WHERE email=?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, email);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("userid");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
 }

@@ -9,18 +9,22 @@ public class ShipmentsDAO {
     // Add a new shipment
     public void addShipment(Shipments shipment) {
         long startTime = System.currentTimeMillis();
-        String sql = "INSERT INTO Shipments (senderName, receiverName, shipmentStatus, assignedDriverID) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO Shipments (receiverName, shipmentStatus, assignedDriverID, userid) VALUES (?, ?, ?, ?)";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement s = conn.prepareStatement(sql)) {
             long connTime = System.currentTimeMillis();
             System.out.println("[DB Timing] addShipment - DB connection time: " + (connTime - startTime) + " ms");
 
-            s.setString(1, shipment.getSenderName());
-            s.setString(2, shipment.getReceiverName());
-            s.setString(3, shipment.getShipmentStatus());
+            s.setString(1, shipment.getReceiverName());
+            s.setString(2, shipment.getShipmentStatus());
             if (shipment.getAssignedDriverID() != null) {
-                s.setInt(4, shipment.getAssignedDriverID());
+                s.setInt(3, shipment.getAssignedDriverID());
+            } else {
+                s.setNull(3, Types.INTEGER);
+            }
+            if (shipment.getUserid() != null) {
+                s.setInt(4, shipment.getUserid());
             } else {
                 s.setNull(4, Types.INTEGER);
             }
@@ -40,18 +44,22 @@ public class ShipmentsDAO {
     // Update an existing shipment
     public void updateShipment(Shipments shipment) {
         long startTime = System.currentTimeMillis();
-        String sql = "UPDATE Shipments SET senderName = ?, receiverName = ?, shipmentStatus = ?, assignedDriverID = ? WHERE shipmentID = ?";
+        String sql = "UPDATE Shipments SET receiverName = ?, shipmentStatus = ?, assignedDriverID = ?, userid = ? WHERE shipmentID = ?";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement s = conn.prepareStatement(sql)) {
             long connTime = System.currentTimeMillis();
             System.out.println("[DB Timing] updateShipment - DB connection time: " + (connTime - startTime) + " ms");
 
-            s.setString(1, shipment.getSenderName());
-            s.setString(2, shipment.getReceiverName());
-            s.setString(3, shipment.getShipmentStatus());
+            s.setString(1, shipment.getReceiverName());
+            s.setString(2, shipment.getShipmentStatus());
             if (shipment.getAssignedDriverID() != null) {
-                s.setInt(4, shipment.getAssignedDriverID());
+                s.setInt(3, shipment.getAssignedDriverID());
+            } else {
+                s.setNull(3, Types.INTEGER);
+            }
+            if (shipment.getUserid() != null) {
+                s.setInt(4, shipment.getUserid());
             } else {
                 s.setNull(4, Types.INTEGER);
             }
@@ -109,12 +117,12 @@ public class ShipmentsDAO {
             while (result.next()) {
                 Shipments shipment = new Shipments(
                         result.getInt("shipmentID"),
-                        result.getString("senderName"),
                         result.getString("receiverName"),
                         result.getString("shipmentStatus"),
-                        result.getInt("assignedDriverID"),
+                        result.getObject("assignedDriverID") != null ? result.getInt("assignedDriverID") : null,
                         result.getTimestamp("createdOn"),
-                        result.getTimestamp("lastUpdated")
+                        result.getTimestamp("lastUpdated"),
+                        result.getObject("userid") != null ? result.getInt("userid") : null
                 );
                 list.add(shipment);
             }
@@ -147,12 +155,12 @@ public class ShipmentsDAO {
             while (result.next()) {
                 Shipments shipment = new Shipments(
                         result.getInt("shipmentID"),
-                        result.getString("senderName"),
                         result.getString("receiverName"),
                         result.getString("shipmentStatus"),
-                        result.getInt("assignedDriverID"),
+                        result.getObject("assignedDriverID") != null ? result.getInt("assignedDriverID") : null,
                         result.getTimestamp("createdOn"),
-                        result.getTimestamp("lastUpdated")
+                        result.getTimestamp("lastUpdated"),
+                        result.getObject("userid") != null ? result.getInt("userid") : null
                 );
                 list.add(shipment);
             }

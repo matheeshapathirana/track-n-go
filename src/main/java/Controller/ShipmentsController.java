@@ -11,13 +11,13 @@ public class ShipmentsController {
         this.shipmentsDAO = new ShipmentsDAO();
     }
 
-    public void addShipment(String senderName, String receiverName, String status, Integer driverID) {
-        Shipments shipment = new Shipments(senderName, receiverName, status, driverID);
+    public void addShipment(String receiverName, String status, Integer driverID, Integer userid) {
+        Shipments shipment = new Shipments(receiverName, status, driverID, userid);
         shipmentsDAO.addShipment(shipment);
     }
 
-    public void updateShipment(int shipmentID, String senderName, String receiverName, String status, Integer driverID) {
-        Shipments shipment = new Shipments(shipmentID, senderName, receiverName, status, driverID, null, null);
+    public void updateShipment(int shipmentID, String receiverName, String status, Integer driverID, Integer userid) {
+        Shipments shipment = new Shipments(shipmentID, receiverName, status, driverID, null, null, userid);
         shipmentsDAO.updateShipment(shipment);
     }
 
