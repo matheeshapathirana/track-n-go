@@ -265,6 +265,14 @@ public class adminView {
                 comboboxrole.setSelectedItem(userdata.getValueAt(selectedRow, 3).toString());
             }
         });
+        //Refresh the delivery personnel table
+        btnrefreshdrivers.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                loadPersonnelTable();
+                JOptionPane.showMessageDialog(null, "Driver table list refreshed");
+            }
+        });
 
         // Add User
         btnadduser.addActionListener(new ActionListener() {
