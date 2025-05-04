@@ -2,6 +2,8 @@ package View;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.util.List;
 import Model.CustomerNotification;
 import Model.CustomerNotificationDAO;
@@ -30,12 +32,35 @@ public class userView {
     private JLabel lbltimeslot;
     private JTable table1;
     private JComboBox comboBox1;
+    private JLabel lblwelcome;
+    private JLabel lblusername;
 
-    // Constructor to initialize userView with customerId
-    public userView(int customerId) {
-        // Initialize UI components (if using a GUI builder, this may be auto-generated)
-        loadCustomerNotifications(customerId);
-        loadAllNotificationsTable();
+    // Store the logged-in customerId as a field
+    private int customerId = -1;
+
+    private String username = "";
+
+    // Updated constructor to accept username
+    public userView(int customerId, String username) {
+        this.customerId = customerId;
+        this.username = username;
+        if (lblusername != null) {
+            lblusername.setText(username);
+        }
+        loadCustomerNotifications(customerId); // Only load notifications for this user
+
+        // Add ChangeListener to refresh notifications when Notifications tab is selected
+        if (backpanel != null && notificationstab != null) {
+            backpanel.addChangeListener(new ChangeListener() {
+                @Override
+                public void stateChanged(ChangeEvent e) {
+                    int selectedIndex = backpanel.getSelectedIndex();
+                    if (selectedIndex != -1 && backpanel.getComponentAt(selectedIndex) == notificationstab) {
+                        loadCustomerNotifications(customerId);
+                    }
+                }
+            });
+        }
 
         btndeletenotification.addActionListener(e -> deleteSelectedNotification(customerId));
         btnclearallnotifications.addActionListener(e -> clearAllNotifications(customerId));
@@ -43,6 +68,16 @@ public class userView {
             clearNotificationsTable();
             JOptionPane.showMessageDialog(null, "All notifications have been cleared from the display.");
         });
+    }
+
+    // Optionally, provide a method to get the logged-in user ID
+    public int getCustomerId() {
+        return customerId;
+    }
+
+    // Optionally, provide a method to get the logged-in username
+    public String getUsername() {
+        return username;
     }
 
     // Default constructor for compatibility (optional)
@@ -148,10 +183,33 @@ public class userView {
         }
     }
 
+    // Public getter for the main panel
+    public JTabbedPane getMainPanel() {
+        return backpanel;
+    }
+
     public static void main(String[] args) {
+        // Check if user is logged in (simulate by checking args or environment)
+        // In real app, this should be session-based or passed from loginView
+        int customerId = -1;
+        String username = null;
+        if (args.length >= 2) {
+            try {
+                customerId = Integer.parseInt(args[0]);
+                username = args[1];
+            } catch (Exception e) {
+                customerId = -1;
+                username = null;
+            }
+        }
+        if (customerId == -1 || username == null || username.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Not logged in. Please login first.", "Error", JOptionPane.ERROR_MESSAGE);
+            // Redirect to loginView
+            loginView.main(new String[]{});
+            return;
+        }
         JFrame frame = new JFrame("User View");
-        int customerId = 1; // Replace with actual customer ID from login/session
-        userView view = new userView(customerId);
+        userView view = new userView(customerId, username);
         frame.setContentPane(view.backpanel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
