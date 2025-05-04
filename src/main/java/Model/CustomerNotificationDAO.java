@@ -50,6 +50,26 @@ public class CustomerNotificationDAO {
         }
     }
 
+    // Add a notification for a shipment progress event, matching recipientID to userid in TrackShipmentProgress
+    public void addNotificationForShipmentProgress(int trackingID, String message) {
+        // Get userid from TrackShipmentProgress
+        int userId = -1;
+        String sql = "SELECT userid FROM TrackShipmentProgress WHERE trackingID = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, trackingID);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                userId = rs.getInt("userid");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        if (userId != -1 && userId != 0) {
+            addNotification("user", userId, message);
+        }
+    }
+
     // Fetch all notifications (for admin or global view)
     public List<CustomerNotification> getAllNotifications() {
         List<CustomerNotification> notifications = new ArrayList<>();
@@ -147,6 +167,7 @@ public class CustomerNotificationDAO {
                 progress.setEstimatedDeliveryTime(rs.getString("estimatedDeliveryTime"));
                 progress.setDelay(rs.getInt("delay"));
                 progress.setStatus(rs.getString("status"));
+                try { progress.setUserid(rs.getInt("userid")); } catch (Exception ignore) {}
                 currentProgress.add(progress);
             }
         } catch (SQLException e) {
@@ -160,19 +181,17 @@ public class CustomerNotificationDAO {
                 .filter(p -> p.getTrackingID() == curr.getTrackingID())
                 .findFirst().orElse(null);
             if (prev != null) {
-                // Check for changes in the specified columns
                 if (!safeEquals(curr.getEstimatedDeliveryTime(), prev.getEstimatedDeliveryTime())) {
-                    notifyUserOfChange(curr, "Estimated Delivery Time changed to: " + curr.getEstimatedDeliveryTime());
+                    notifyUserOfChange(curr, "estimatedDeliveryTime");
                 }
                 if (curr.getDelay() != prev.getDelay()) {
-                    notifyUserOfChange(curr, "Delay changed to: " + curr.getDelay() + " minutes");
+                    notifyUserOfChange(curr, "delay");
                 }
                 if (!safeEquals(curr.getStatus(), prev.getStatus())) {
-                    notifyUserOfChange(curr, "Status changed to: " + curr.getStatus());
+                    notifyUserOfChange(curr, "status");
                 }
             }
         }
-        // Update cache
         lastProgressCache = currentProgress;
     }
 
@@ -184,11 +203,27 @@ public class CustomerNotificationDAO {
     }
 
     // Helper to send notification to user associated with the shipment
-    private void notifyUserOfChange(TrackShipmentProgress progress, String message) {
-        int shipmentID = progress.getShipmentID();
-        int userId = getAssignedDriverIdForShipment(shipmentID);
-        if (userId != -1) {
-            addNotification("user", userId, message);
+    private void notifyUserOfChange(TrackShipmentProgress progress, String changeType) {
+        int userId = progress.getUserid(); // Use userid from TrackShipmentProgress
+        if (userId == -1 || userId == 0) {
+            userId = getAssignedDriverIdForShipment(progress.getShipmentID()); // fallback
+        }
+        if (userId != -1 && userId != 0) {
+            String message = "";
+            switch (changeType) {
+                case "estimatedDeliveryTime":
+                    message = "estimated delivery time changed to " + progress.getEstimatedDeliveryTime();
+                    break;
+                case "delay":
+                    message = "shipment is delayed by " + progress.getDelay();
+                    break;
+                case "status":
+                    message = "shipment status changed: " + progress.getStatus();
+                    break;
+            }
+            if (!message.isEmpty()) {
+                addNotification("user", userId, message);
+            }
         }
     }
 

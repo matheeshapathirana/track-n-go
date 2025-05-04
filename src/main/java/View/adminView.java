@@ -93,8 +93,16 @@ public class adminView {
         if (txtID == null) {
             txtID = new JTextField();
         }
+        // Initialize txtshipmentid if null to prevent NullPointerException
+        if (txtshipmentid == null) {
+            txtshipmentid = new JTextField();
+        }
         txtID.setEditable(false); // Make ID field non-editable
         txtshipmentid.setEditable(false);
+        // Initialize txttrackingid if null to prevent NullPointerException
+        if (txttrackingid == null) {
+            txttrackingid = new JTextField();
+        }
         txttrackingid.setEditable(false); // trackingID should not be editable
 
         // Initialize availability combo box options
