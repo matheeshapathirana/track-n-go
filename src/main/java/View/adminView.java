@@ -626,6 +626,8 @@ public class adminView {
     }
 
     public static void main(String[] args) {
+        // Start scheduled polling for shipment progress changes
+        new Model.TrackShipmentProgressPoller().startPolling();
         // Example: pass a dummy logged-in user email (should be set from login/session)
         JFrame frame = new JFrame("Admin View");
         adminView view = new adminView("admin@admin.com"); // Replace with actual logged-in user email
