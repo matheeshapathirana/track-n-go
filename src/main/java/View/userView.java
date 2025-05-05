@@ -66,12 +66,24 @@ public class userView {
             });
         }
 
-        btndeletenotification.addActionListener(e -> deleteSelectedNotification(customerId));
-        btnclearallnotifications.addActionListener(e -> clearAllNotifications(customerId));
-        btnclearfields.addActionListener(e -> {
-            clearNotificationsTable();
-            JOptionPane.showMessageDialog(null, "All notifications have been cleared from the display.");
-        });
+        if (btndeletenotification != null) {
+            btndeletenotification.addActionListener(e -> deleteSelectedNotification(customerId));
+        } else {
+            System.err.println("btndeletenotification is null. Check your form bindings.");
+        }
+        if (btnclearallnotifications != null) {
+            btnclearallnotifications.addActionListener(e -> clearAllNotifications(customerId));
+        } else {
+            System.err.println("btnclearallnotifications is null. Check your form bindings.");
+        }
+        if (btnclearfields != null) {
+            btnclearfields.addActionListener(e -> {
+                clearNotificationsTable();
+                JOptionPane.showMessageDialog(null, "All notifications have been cleared from the display.");
+            });
+        } else {
+            System.err.println("btnclearfields is null. Check your form bindings.");
+        }
     }
 
     // Optionally, provide a method to get the logged-in user ID
