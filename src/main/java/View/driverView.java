@@ -76,6 +76,10 @@ public class driverView {
         return clearAllNotificationsButton;
     }
 
+    public JTabbedPane getTabbedPane() {
+        return tabbedPane1;
+    }
+
     // Main method to run and test the driverView GUI
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {

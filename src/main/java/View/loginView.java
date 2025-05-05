@@ -63,6 +63,16 @@ public class loginView extends JFrame {
                         frame.setLocationRelativeTo(null);
                         frame.setVisible(true);
                         dispose();
+                    } else if (role.equals("driver")) {
+                        // Redirect to driverView
+                        driverView view = new driverView();
+                        JFrame frame = new JFrame("Driver View");
+                        frame.setContentPane(view.getTabbedPane()); // Use the getter for tabbedPane1
+                        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                        frame.pack();
+                        frame.setLocationRelativeTo(null);
+                        frame.setVisible(true);
+                        dispose();
                     }
                 } else {
                     JOptionPane.showMessageDialog(loginbackpanel, "Invalid credentials.", "Error", JOptionPane.ERROR_MESSAGE);
