@@ -30,11 +30,13 @@ public class userView {
     private JLabel lblcreatenewshipment;
     private JLabel lbladdress;
     private JLabel lbltimeslot;
-    private JTable table1;
-    private JComboBox comboBox1;
     private JLabel lblwelcome;
     private JLabel lblusernamegoeshere;
     private JLabel lblusername;
+
+    // Components for available drivers
+    private JComboBox availableDriversDropdown; // Add this to your form and link
+    private JTable availableDriversTable; // Add this to your form and link
 
     // Store the logged-in customerId as a field
     private int customerId = -1;
@@ -84,6 +86,49 @@ public class userView {
         } else {
             System.err.println("btnclearfields is null. Check your form bindings.");
         }
+        btndeletenotification.addActionListener(e -> deleteSelectedNotification(customerId));
+        btnclearallnotifications.addActionListener(e -> clearAllNotifications(customerId));
+        btnclearfields.addActionListener(e -> {
+            clearNotificationsTable();
+            JOptionPane.showMessageDialog(null, "All notifications have been cleared from the display.");
+        });
+
+        // Load available drivers on startup
+        loadAvailableDrivers();
+
+        btnaddshipment.addActionListener(e -> {
+            try {
+                String receiverName = txtreceivername.getText();
+                String status = "Pending";
+                Integer driverID = null;
+                if (availableDriversDropdown != null && availableDriversDropdown.getSelectedItem() != null) {
+                    String selected = availableDriversDropdown.getSelectedItem().toString();
+                    // Always look up by name
+                    Model.DeliveryPersonnelDAO dao = new Model.DeliveryPersonnelDAO();
+                    java.util.List<Model.DeliveryPersonnel> all = dao.getAllPersonnel();
+                    for (Model.DeliveryPersonnel p : all) {
+                        if (selected.equals(p.getPersonnelName())) {
+                            driverID = p.getPersonnelID();
+                            break;
+                        }
+                    }
+                }
+                System.out.println("Selected driver: " + (availableDriversDropdown != null ? availableDriversDropdown.getSelectedItem() : "null"));
+                System.out.println("Parsed driverID: " + driverID);
+                if (receiverName.isEmpty() || driverID == null) {
+                    JOptionPane.showMessageDialog(null, "Please fill all required fields and select a driver!", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                Controller.ShipmentsController controller = new Controller.ShipmentsController();
+                controller.addShipment(receiverName, status, driverID, customerId);
+                JOptionPane.showMessageDialog(null, "Shipment added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                txtreceivername.setText("");
+                loadAvailableDrivers();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Error adding shipment: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
     }
 
     // Optionally, provide a method to get the logged-in user ID
@@ -201,6 +246,46 @@ public class userView {
         DefaultTableModel model = (DefaultTableModel) notificationsdata.getModel();
         if (model != null) {
             model.setRowCount(0); // Clear all rows from the table
+        }
+    }
+
+    // Helper to load available drivers into dropdown and table
+    private void loadAvailableDrivers() {
+        Model.DeliveryPersonnelDAO dao = new Model.DeliveryPersonnelDAO();
+        java.util.List<Model.DeliveryPersonnel> all = dao.getAllPersonnel();
+        java.util.List<Model.DeliveryPersonnel> available = new java.util.ArrayList<>();
+        for (Model.DeliveryPersonnel p : all) {
+            if ("Available".equalsIgnoreCase(p.getAvailability())) {
+                available.add(p);
+            }
+        }
+        // Debug print
+        System.out.println("Available drivers found: " + available.size());
+        // Populate dropdown with only names
+        if (availableDriversDropdown != null) {
+            availableDriversDropdown.removeAllItems();
+            for (Model.DeliveryPersonnel p : available) {
+                availableDriversDropdown.addItem(p.getPersonnelName());
+            }
+        } else {
+            System.out.println("availableDriversDropdown is null");
+        }
+        // Populate table
+        if (availableDriversTable != null) {
+            String[] columns = {"ID", "Name", "Contact", "Schedule", "Route", "Availability"};
+            String[][] data = new String[available.size()][columns.length];
+            for (int i = 0; i < available.size(); i++) {
+                Model.DeliveryPersonnel p = available.get(i);
+                data[i][0] = String.valueOf(p.getPersonnelID());
+                data[i][1] = p.getPersonnelName();
+                data[i][2] = p.getPersonnelContact();
+                data[i][3] = p.getSchedule();
+                data[i][4] = p.getAssignedRoute();
+                data[i][5] = p.getAvailability();
+            }
+            availableDriversTable.setModel(new javax.swing.table.DefaultTableModel(data, columns));
+        } else {
+            System.out.println("availableDriversTable is null");
         }
     }
 

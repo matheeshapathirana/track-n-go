@@ -147,7 +147,7 @@
                   </model>
                 </properties>
               </component>
-              <component id="64ecf" class="javax.swing.JTable" binding="table1" default-binding="true">
+              <component id="64ecf" class="javax.swing.JTable" binding="availableDriversTable">
                 <constraints>
                   <grid row="9" column="0" row-span="1" col-span="9" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="50"/>
@@ -171,7 +171,7 @@
                   <text value="Driver"/>
                 </properties>
               </component>
-              <component id="d87d0" class="javax.swing.JComboBox" binding="comboBox1" default-binding="true">
+              <component id="d87d0" class="javax.swing.JComboBox" binding="availableDriversDropdown">
                 <constraints>
                   <grid row="8" column="3" row-span="1" col-span="2" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
