@@ -28,13 +28,6 @@ public class loginView extends JFrame {
 
     public loginView() {
         Connection conn = DBConnection.getConnection();
-
-        // Initialize the tabs component to avoid null reference
-        tabs = new JTabbedPane();
-
-        // Add login and register panels to the tabs
-        tabs.addTab("Login", loginbackpanel);
-        tabs.addTab("Register", registerbackpanel);
     }
 
     private void setupListeners() {
