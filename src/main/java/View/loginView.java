@@ -89,12 +89,20 @@ public class loginView extends JFrame {
 
     public static void main(String[] args) {
         loginView view = new loginView();
-        view.setContentPane(view.tabs);
+        if (view.tabs != null) {
+            view.setContentPane(view.tabs);
+        } else if (view.loginbackpanel != null) {
+            view.setContentPane(view.loginbackpanel);
+        } else if (view.registerbackpanel != null) {
+            view.setContentPane(view.registerbackpanel);
+        } else {
+            throw new IllegalStateException("No valid content pane found! All are null.");
+        }
         view.setTitle("Login/Register");
         view.setSize(600, 400);
         view.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         view.setLocationRelativeTo(null);
-        view.setupListeners(); // Ensure listeners are set up after GUI is initialized
+        view.setupListeners();
         view.setVisible(true);
     }
 }
