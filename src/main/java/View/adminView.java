@@ -91,6 +91,7 @@ public class adminView {
     private JButton btnrefreshusers;
     private JButton btnrefreshdrivers;
     private JButton btnrefreshtrack;
+    private JComboBox comboBoxtimeslot;
     private Integer loggedInUserId;
 
     public adminView(String loggedInUserEmail) {
