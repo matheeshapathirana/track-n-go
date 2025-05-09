@@ -664,7 +664,6 @@
                   <model>
                     <item value="user"/>
                     <item value="admin"/>
-                    <item value="driver"/>
                   </model>
                 </properties>
               </component>
