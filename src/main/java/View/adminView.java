@@ -574,7 +574,7 @@ public class adminView {
     }
 
     // Set txttrackingid to next available tracking ID
-    private void setNextTrackingID() {
+    public void setNextTrackingID() {
         txttrackingid.setText(String.valueOf(getNextTrackingID()));
     }
 
@@ -637,4 +637,26 @@ public class adminView {
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
+
+    // Declare components matching your GUI
+    public JComboBox<String> comboBoxMonth;
+    public JComboBox<Integer> comboBoxYear;
+    public JButton btnGenerate;
+    public JLabel lblTotalDeliveriesNumber;
+    public JLabel lblDelayedDeliveriesNumber;
+    public JLabel lblAverageRatingNumber;
+    public JLabel lblTotalShipmentsNumber;
+
+    // Add getters for components
+    public JComboBox<String> getComboBoxMonth() { return comboBoxMonth; }
+    public JComboBox<Integer> getComboBoxYear() { return comboBoxYear; }
+    public JButton getBtnGenerate() { return btnGenerate; }
+    public JLabel getLblTotalDeliveriesNumber() { return lblTotalDeliveriesNumber; }
+    public JLabel getLblDelayedDeliveriesNumber() { return lblDelayedDeliveriesNumber; }
+    public JLabel getLblAverageRatingNumber() { return lblAverageRatingNumber; }
+    public JLabel getLblTotalShipmentsNumber() { return lblTotalShipmentsNumber; }
+
 }
+
+
+
