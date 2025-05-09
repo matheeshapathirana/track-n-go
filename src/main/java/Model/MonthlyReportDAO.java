@@ -1,4 +1,4 @@
-package model;
+package Model;
 
 import Model.MonthlyReport;
 import Utility.DBConnection;
@@ -16,8 +16,8 @@ public class MonthlyReportDAO {
         MonthlyReport report = new MonthlyReport();
 
         try {
-            // Total Deliveries
-            String sqlDeliveries = "SELECT COUNT(*) FROM shipments WHERE YEAR(delivery_date) = ? AND MONTHNAME(delivery_date) = ?";
+            // Total Deliveries (Delivered status)
+            String sqlDeliveries = "SELECT COUNT(*) FROM Shipments WHERE YEAR(createdOn) = ? AND MONTHNAME(createdOn) = ? AND shipmentStatus = 'Delivered'";
             try (PreparedStatement stmt = conn.prepareStatement(sqlDeliveries)) {
                 stmt.setInt(1, year);
                 stmt.setString(2, month);
@@ -25,8 +25,8 @@ public class MonthlyReportDAO {
                 if(rs.next()) report.setTotalDeliveries(rs.getInt(1));
             }
 
-            // Delayed Deliveries
-            String sqlDelayed = "SELECT COUNT(*) FROM shipments WHERE YEAR(delivery_date) = ? AND MONTHNAME(delivery_date) = ? AND is_delayed = true";
+            // Delayed Deliveries (Delayed status from TrackShipmentProgress)
+            String sqlDelayed = "SELECT COUNT(*) FROM TrackShipmentProgress tsp JOIN Shipments s ON tsp.shipmentID = s.shipmentID WHERE YEAR(s.createdOn) = ? AND MONTHNAME(s.createdOn) = ? AND tsp.status = 'Delayed'";
             try (PreparedStatement stmt = conn.prepareStatement(sqlDelayed)) {
                 stmt.setInt(1, year);
                 stmt.setString(2, month);
@@ -34,17 +34,11 @@ public class MonthlyReportDAO {
                 if(rs.next()) report.setDelayedDeliveries(rs.getInt(1));
             }
 
-            // Average Rating
-            String sqlRating = "SELECT AVG(rating) FROM customer_feedback WHERE YEAR(feedback_date) = ? AND MONTHNAME(feedback_date) = ?";
-            try (PreparedStatement stmt = conn.prepareStatement(sqlRating)) {
-                stmt.setInt(1, year);
-                stmt.setString(2, month);
-                ResultSet rs = stmt.executeQuery();
-                if(rs.next()) report.setAverageRating(rs.getDouble(1));
-            }
+            // Average Rating (skip if no customer_feedback table)
+            // report.setAverageRating(0.0); // Set to 0 or fetch if table exists
 
-            // Total Shipments
-            String sqlShipments = "SELECT COUNT(*) FROM shipments WHERE YEAR(delivery_date) = ? AND MONTHNAME(delivery_date) = ?";
+            // Total Shipments (all statuses)
+            String sqlShipments = "SELECT COUNT(*) FROM Shipments WHERE YEAR(createdOn) = ? AND MONTHNAME(createdOn) = ?";
             try (PreparedStatement stmt = conn.prepareStatement(sqlShipments)) {
                 stmt.setInt(1, year);
                 stmt.setString(2, month);
