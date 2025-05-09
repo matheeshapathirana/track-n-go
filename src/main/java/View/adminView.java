@@ -652,6 +652,7 @@ public class adminView {
     public JLabel lblTotalDeliveriesNumber;
     public JLabel lblDelayedDeliveriesNumber;
     public JLabel lblTotalShipmentsNumber;
+    private JComboBox comboBoxtimeslot;
 
     // Add getters for components
     public JComboBox<String> getComboBoxMonth() { return comboBoxMonth; }

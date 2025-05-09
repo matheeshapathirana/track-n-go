@@ -285,14 +285,6 @@
                 </constraints>
                 <properties/>
               </component>
-              <component id="9b841" class="javax.swing.JTextField" binding="txtSchedule">
-                <constraints>
-                  <grid row="3" column="1" row-span="1" col-span="4" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                    <preferred-size width="150" height="-1"/>
-                  </grid>
-                </constraints>
-                <properties/>
-              </component>
               <component id="85b12" class="javax.swing.JTextField" binding="txtRoute">
                 <constraints>
                   <grid row="4" column="1" row-span="1" col-span="4" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
@@ -391,6 +383,19 @@
                 </constraints>
                 <properties>
                   <text value="Refresh"/>
+                </properties>
+              </component>
+              <component id="ecc32" class="javax.swing.JComboBox" binding="comboBoxtimeslot">
+                <constraints>
+                  <grid row="3" column="1" row-span="1" col-span="4" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <model>
+                    <item value="8AM - 10AM"/>
+                    <item value="10AM - 12PM"/>
+                    <item value="12PM - 2PM"/>
+                    <item value="2PM - 4PM"/>
+                  </model>
                 </properties>
               </component>
             </children>
