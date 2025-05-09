@@ -38,11 +38,11 @@ public class adminView {
     private JTextArea txtAreaHistory;
     private JTable AllDriversView;
     private JLabel alllDriverslbl;
-    private JComboBox comboBox1;
+    private JComboBox<String> comboBox1;
     private JButton clearbtn;
     private JTextField txttrackingid;
     private JLabel lbltrackingid;
-    private JComboBox comboBox2;
+    private JComboBox<String> comboBox2;
     private JTextField txtassigneddriverid;
     private JLabel lblshipmentsshipmentid;
     private JLabel lblassigneddriverid;
@@ -58,7 +58,7 @@ public class adminView {
     private JButton btnclearfields;
     private JTable shipmentdatatable;
     private JLabel availabilitylbl;
-    private JComboBox comboboxavailability;
+    private JComboBox<String> comboboxavailability;
     private JLabel lblemail;
     private JLabel lblusername;
     private JLabel lblpassword;
@@ -66,27 +66,21 @@ public class adminView {
     private JTextField txtemail;
     private JTextField txtusername;
     private JTextField txtpassword;
-    private JComboBox comboboxrole;
+    private JComboBox<String> comboboxrole;
     private JButton btnadduser;
     private JButton btnupdateuser;
     private JButton btndeleteuser;
     private JButton btnclearuserfields;
     private JTable userdata;
-    private JComboBox comboBoxyear;
-    private JComboBox comboBoxmonth;
-    private JButton btngenerate;
+    private JComboBox<String> comboBoxYear;
+    private JComboBox<String> comboBoxMonth;
     private JPanel reportsbackpanel;
     private JLabel lblgeneratemonthlyreports;
     private JLabel lblyear;
     private JLabel lblmonth;
     private JLabel lbltotaldeliveries;
-    private JLabel lbltotaldeliveriesnumber;
     private JLabel lbldelayeddeliveries;
-    private JLabel lbldelayeddeliveriesnumber;
-    private JLabel lblaveragecustomerrating;
-    private JLabel lblaveragecustomerratingnumber;
     private JLabel lbltotalshipments;
-    private JLabel lbltotalshipmentsnumber;
     private JButton btnrefreshshipments;
     private JButton btnrefreshusers;
     private JButton btnrefreshdrivers;
@@ -454,6 +448,21 @@ public class adminView {
                 clearShipmentFields();
             }
         });
+
+        // Initialize Monthly Report Controller (connects button and dropdowns)
+        new Controller.MonthlyReportController(this);
+
+        // Populate year and month dropdowns for reports (if not already populated)
+        if (comboBoxYear.getItemCount() == 0) {
+            int currentYear = java.time.Year.now().getValue();
+            for (int y = currentYear - 5; y <= currentYear + 1; y++) {
+                comboBoxYear.addItem(String.valueOf(y));
+            }
+        }
+        if (comboBoxMonth.getItemCount() == 0) {
+            String[] months = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
+            for (String m : months) comboBoxMonth.addItem(m);
+        }
     }
 
     // Load all shipment tracking data into the table
@@ -574,7 +583,7 @@ public class adminView {
     }
 
     // Set txttrackingid to next available tracking ID
-    private void setNextTrackingID() {
+    public void setNextTrackingID() {
         txttrackingid.setText(String.valueOf(getNextTrackingID()));
     }
 
@@ -637,4 +646,22 @@ public class adminView {
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
+
+    // Declare components matching your GUI
+    public JButton btnGenerate;
+    public JLabel lblTotalDeliveriesNumber;
+    public JLabel lblDelayedDeliveriesNumber;
+    public JLabel lblTotalShipmentsNumber;
+
+    // Add getters for components
+    public JComboBox<String> getComboBoxMonth() { return comboBoxMonth; }
+    public JComboBox<String> getComboBoxYear() { return comboBoxYear; }
+    public JButton getBtnGenerate() { return btnGenerate; }
+    public JLabel getLblTotalDeliveriesNumber() { return lblTotalDeliveriesNumber; }
+    public JLabel getLblDelayedDeliveriesNumber() { return lblDelayedDeliveriesNumber; }
+    public JLabel getLblTotalShipmentsNumber() { return lblTotalShipmentsNumber; }
+
 }
+
+
+
