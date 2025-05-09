@@ -29,7 +29,6 @@ public class adminView {
     private JLabel AssignedRoutelbl;
     private JTextField txtName;
     private JTextField txtContact;
-    private JTextField txtSchedule;
     private JTextField txtRoute;
     private JButton addDriverButton;
     private JButton updateDriverButton;
@@ -88,23 +87,9 @@ public class adminView {
     private Integer loggedInUserId;
 
     public adminView(String loggedInUserEmail) {
-        // MANUAL MINIMAL INITIALIZATION to prevent NullPointerException
-        txtID = new JTextField();
-        txtshipmentid = new JTextField();
-        txttrackingid = new JTextField();
-        txtemail = new JTextField();
-        txtName = new JTextField();
-        txtContact = new JTextField();
-        txtSchedule = new JTextField();
-        txtRoute = new JTextField();
-        txtAreaHistory = new JTextArea();
-        comboboxavailability = new JComboBox<>();
-        clearbtn = new JButton();
-        btnrefreshtrack = new JButton();
-        addDriverButton = new JButton();
-        updateDriverButton = new JButton();
-        deleteDriverButton = new JButton();
-        AllDriversView = new JTable();
+        // Remove manual initialization of GUI components!
+        // The GUI designer (adminView.form) already initializes these fields.
+        // If you get NullPointerException, ensure the form is loaded properly.
 
         // Get the logged-in user's ID from the database
         Model.UsersDAO usersDAO = new Model.UsersDAO();
@@ -183,7 +168,6 @@ public class adminView {
                 txtID.setText(AllDriversView.getValueAt(selectedRow, 0).toString());
                 txtName.setText(AllDriversView.getValueAt(selectedRow, 1).toString());
                 txtContact.setText(AllDriversView.getValueAt(selectedRow, 2).toString());
-                txtSchedule.setText(AllDriversView.getValueAt(selectedRow, 3).toString());
                 txtRoute.setText(AllDriversView.getValueAt(selectedRow, 4).toString());
                 txtAreaHistory.setText(AllDriversView.getValueAt(selectedRow, 5).toString());
                 comboboxavailability.setSelectedItem(AllDriversView.getValueAt(selectedRow, 6).toString());
@@ -194,19 +178,18 @@ public class adminView {
         addDriverButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(txtName.getText().isEmpty() || txtContact.getText().isEmpty() || txtSchedule.getText().isEmpty()) {
+                if(txtName.getText().isEmpty() || txtContact.getText().isEmpty() /*|| txtSchedule.getText().isEmpty()*/) {
                     JOptionPane.showMessageDialog(null, "Please fill required fields!", "Error", JOptionPane.ERROR_MESSAGE);
                 } else {
                     // Get next available ID
                     int nextID = getNextPersonnelID();
                     String personnelName = txtName.getText();
                     String personnelContact = txtContact.getText();
-                    String schedule = txtSchedule.getText();
                     String assignedRoute = txtRoute.getText();
                     String deliveryHistory = txtAreaHistory.getText();
                     String availability = comboboxavailability.getSelectedItem() != null ? comboboxavailability.getSelectedItem().toString() : "";
                     Controller.DeliveryPersonnelController controller = new Controller.DeliveryPersonnelController();
-                    Model.DeliveryPersonnel p1 = new Model.DeliveryPersonnel(nextID, personnelName, personnelContact, schedule, assignedRoute, deliveryHistory, availability);
+                    Model.DeliveryPersonnel p1 = new Model.DeliveryPersonnel(nextID, personnelName, personnelContact, null, assignedRoute, deliveryHistory, availability);
                     controller.addDeliveryPersonnel(p1);
                     JOptionPane.showMessageDialog(null, "Driver added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
                     clearPersonnelFields();
@@ -223,12 +206,11 @@ public class adminView {
                     int personnelID = Integer.parseInt(txtID.getText());
                     String personnelName = txtName.getText();
                     String personnelContact = txtContact.getText();
-                    String schedule = txtSchedule.getText();
                     String assignedRoute = txtRoute.getText();
                     String deliveryHistory = txtAreaHistory.getText();
                     String availability = comboboxavailability.getSelectedItem() != null ? comboboxavailability.getSelectedItem().toString() : "";
                     Controller.DeliveryPersonnelController controller = new Controller.DeliveryPersonnelController();
-                    Model.DeliveryPersonnel p1 = new Model.DeliveryPersonnel(personnelID, personnelName, personnelContact, schedule, assignedRoute, deliveryHistory, availability);
+                    Model.DeliveryPersonnel p1 = new Model.DeliveryPersonnel(personnelID, personnelName, personnelContact, null, assignedRoute, deliveryHistory, availability);
                     controller.updateDeliveryPersonnel(p1);
                     JOptionPane.showMessageDialog(null, "Driver updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
                     clearPersonnelFields();
@@ -505,7 +487,7 @@ public class adminView {
     private void loadPersonnelTable() {
         Model.DeliveryPersonnelDAO dao = new Model.DeliveryPersonnelDAO();
         java.util.List<Model.DeliveryPersonnel> list = dao.getAllPersonnel();
-        String[] columnNames = {"ID", "Name", "Contact", "Schedule", "Route", "Deliveries", "Availability"};
+        String[] columnNames = {"ID", "Name", "Contact", "Route", "Deliveries", "Availability"};
         String[][] data = new String[list.size()][columnNames.length];
         for (int i = 0; i < list.size(); i++) {
             Model.DeliveryPersonnel personnel = list.get(i);
@@ -553,7 +535,6 @@ public class adminView {
         txtID.setText(String.valueOf(getNextPersonnelID()));
         txtName.setText("");
         txtContact.setText("");
-        txtSchedule.setText("");
         txtRoute.setText("");
         txtAreaHistory.setText("");
         comboboxavailability.setSelectedItem("Available");
@@ -617,10 +598,9 @@ public class adminView {
         data[i][0] = String.valueOf(personnel.getPersonnelID());
         data[i][1] = personnel.getPersonnelName();
         data[i][2] = personnel.getPersonnelContact();
-        data[i][3] = personnel.getSchedule();
-        data[i][4] = personnel.getAssignedRoute();
-        data[i][5] = personnel.getDeliveryHistory();
-        data[i][6] = personnel.getAvailability();
+        data[i][3] = personnel.getAssignedRoute();
+        data[i][4] = personnel.getDeliveryHistory();
+        data[i][5] = personnel.getAvailability();
     }
 
     // Add shipments methods
