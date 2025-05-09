@@ -88,6 +88,24 @@ public class adminView {
     private Integer loggedInUserId;
 
     public adminView(String loggedInUserEmail) {
+        // MANUAL MINIMAL INITIALIZATION to prevent NullPointerException
+        txtID = new JTextField();
+        txtshipmentid = new JTextField();
+        txttrackingid = new JTextField();
+        txtemail = new JTextField();
+        txtName = new JTextField();
+        txtContact = new JTextField();
+        txtSchedule = new JTextField();
+        txtRoute = new JTextField();
+        txtAreaHistory = new JTextArea();
+        comboboxavailability = new JComboBox<>();
+        clearbtn = new JButton();
+        btnrefreshtrack = new JButton();
+        addDriverButton = new JButton();
+        updateDriverButton = new JButton();
+        deleteDriverButton = new JButton();
+        AllDriversView = new JTable();
+
         // Get the logged-in user's ID from the database
         Model.UsersDAO usersDAO = new Model.UsersDAO();
         this.loggedInUserId = usersDAO.getUserIdByEmail(loggedInUserEmail);
