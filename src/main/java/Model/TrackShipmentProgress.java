@@ -9,6 +9,7 @@ public class TrackShipmentProgress {
     private int delay;
     private String status;
     private int trackingID;
+    private int userid;
 
     // Getters and setters
     public int getShipmentID() {
@@ -57,5 +58,13 @@ public class TrackShipmentProgress {
 
     public void setTrackingID(int trackingID) {
         this.trackingID = trackingID;
+    }
+
+    public int getUserid() {
+        return userid;
+    }
+
+    public void setUserid(int userid) {
+        this.userid = userid;
     }
 }

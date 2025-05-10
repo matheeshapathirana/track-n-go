@@ -23,6 +23,7 @@ public class CustomerNotificationDAO {
             while (rs.next()) {
                 CustomerNotification notification = new CustomerNotification(
                         rs.getInt("notificationID"),
+                        null, // recipientType removed
                         rs.getInt("recipientID"),
                         rs.getString("message"),
                         rs.getString("createdOn")
@@ -36,7 +37,7 @@ public class CustomerNotificationDAO {
         return notifications;
     }
 
-    public void addNotification(int recipientId, String message) {
+    public void addNotification(String recipientType, int recipientId, String message) {
         String sql = "INSERT INTO Notifications (recipientID, message) VALUES (?, ?)";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -57,6 +58,7 @@ public class CustomerNotificationDAO {
             while (rs.next()) {
                 CustomerNotification notification = new CustomerNotification(
                         rs.getInt("notificationID"),
+                        null, // recipientType removed
                         rs.getInt("recipientID"),
                         rs.getString("message"),
                         rs.getString("createdOn")
@@ -68,5 +70,57 @@ public class CustomerNotificationDAO {
         }
         return notifications;
     }
-}
 
+    public int getNotificationIdByMessageAndUser(String message, int userId) {
+        String sql = "SELECT notificationID FROM Notifications WHERE message = ? AND recipientID = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, message);
+            stmt.setInt(2, userId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("notificationID");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1; // Return -1 if no matching notification is found
+    }
+
+    public int getNotificationIdByMessageAndTimestamp(String message, String timestamp, int userId) {
+        String sql = "SELECT notificationID FROM Notifications WHERE message = ? AND createdOn = ? AND recipientID = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, message);
+            stmt.setString(2, timestamp);
+            stmt.setInt(3, userId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("notificationID");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1; // Return -1 if no matching notification is found
+    }
+
+    public void deleteNotification(int notificationId) {
+        String sql = "DELETE FROM Notifications WHERE notificationID = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, notificationId);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void clearAllNotificationsForUser(int userId) {
+        String sql = "DELETE FROM Notifications WHERE recipientID = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            int rowsAffected = stmt.executeUpdate();
+            System.out.println("Rows affected by clear all: " + rowsAffected);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}

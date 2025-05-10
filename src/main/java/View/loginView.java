@@ -2,6 +2,7 @@ package View;
 
 import Controller.LoginController;
 import Utility.DBConnection;
+import Model.UsersDAO;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -47,18 +48,22 @@ public class loginView extends JFrame {
                 if (role != null) {
                     JOptionPane.showMessageDialog(loginbackpanel, "Login successful!");
                     if (role.equals("admin")) {
-                        // Open adminView if role is admin
                         View.adminView.main(new String[]{});
-                        dispose(); // Close the login window
+                        dispose();
                     } else if (role.equals("user")) {
-                        // Open userView if role is user
-                        View.userView.main(new String[]{});
-                        dispose(); // Close the login window
-                     } //else if (role.equals("driver")) {
-                         // Open driverView if role is driver
-                         //View.driverView.main(new String[]{});
-                         //dispose(); // Close the login window
-                     //}
+                        // Get username and userId from DB
+                        UsersDAO usersDAO = new UsersDAO();
+                        String username = usersDAO.getUsernameByEmail(email);
+                        int customerId = usersDAO.getUserIdByEmail(email);
+                        userView view = new userView(customerId, username);
+                        JFrame frame = new JFrame("User View");
+                        frame.setContentPane(view.getMainPanel());
+                        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                        frame.pack();
+                        frame.setLocationRelativeTo(null);
+                        frame.setVisible(true);
+                        dispose();
+                    }
                 } else {
                     JOptionPane.showMessageDialog(loginbackpanel, "Invalid credentials.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
