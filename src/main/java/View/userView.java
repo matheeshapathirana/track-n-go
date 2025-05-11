@@ -7,6 +7,8 @@ import javax.swing.event.ChangeListener;
 import java.util.List;
 import Model.CustomerNotification;
 import Model.CustomerNotificationDAO;
+import Controller.ScheduleDeliveriesController;
+import Model.TrackShipmentProgress;
 
 public class userView {
     private JTabbedPane backpanel;
@@ -33,6 +35,10 @@ public class userView {
     private JLabel lblwelcome;
     private JLabel lblusernamegoeshere;
     private JLabel lblusername;
+    private JTextField customerNameField, packageDetailsField, slotField;
+    private JButton scheduleButton, updateStatusButton;
+    private JTable deliveryTable;
+    private DefaultTableModel tableModel;
 
     // Components for available drivers
     private JComboBox availableDriversDropdown; // Add this to your form and link
@@ -43,10 +49,13 @@ public class userView {
 
     private String username = "";
 
+    private ScheduleDeliveriesController scheduleDeliveriesController;
+
     // Updated constructor to accept username
     public userView(int customerId, String username) {
         this.customerId = customerId;
         this.username = username;
+        scheduleDeliveriesController = new ScheduleDeliveriesController();
         if (lblusername != null) {
             lblusername.setText(username);
         }
@@ -143,6 +152,7 @@ public class userView {
 
     // Default constructor for compatibility (optional)
     public userView() {
+        scheduleDeliveriesController = new ScheduleDeliveriesController();
         // You may want to set a default or prompt for customerId here
         // For now, do nothing
     }
@@ -286,6 +296,23 @@ public class userView {
             availableDriversTable.setModel(new javax.swing.table.DefaultTableModel(data, columns));
         } else {
             System.out.println("availableDriversTable is null");
+        }
+    }
+
+    public void populateTrackShipmentsTable(int userId) {
+        List<TrackShipmentProgress> progressList = scheduleDeliveriesController.getTrackShipmentProgressForUser(userId);
+        DefaultTableModel model = (DefaultTableModel) trackshipmentsdata.getModel();
+        model.setRowCount(0); // Clear existing rows
+
+        for (TrackShipmentProgress progress : progressList) {
+            model.addRow(new Object[]{
+                progress.getTrackingID(),
+                progress.getShipmentID(),
+                progress.getCurrentLocation(),
+                progress.getEstimatedDeliveryTime(),
+                progress.getDelay(),
+                progress.getStatus()
+            });
         }
     }
 
