@@ -7,6 +7,8 @@ import javax.swing.event.ChangeListener;
 import java.util.List;
 import Model.CustomerNotification;
 import Model.CustomerNotificationDAO;
+import Controller.ScheduleDeliveriesController;
+import Model.TrackShipmentProgress;
 
 public class userView {
     private JTabbedPane backpanel;
@@ -33,6 +35,10 @@ public class userView {
     private JLabel lblwelcome;
     private JLabel lblusernamegoeshere;
     private JLabel lblusername;
+    private JTextField customerNameField, packageDetailsField, slotField;
+    private JButton scheduleButton, updateStatusButton;
+    private JTable deliveryTable;
+    private DefaultTableModel tableModel;
 
     // Components for available drivers
     private JComboBox availableDriversDropdown; // Add this to your form and link
@@ -43,10 +49,13 @@ public class userView {
 
     private String username = "";
 
+    private ScheduleDeliveriesController scheduleDeliveriesController;
+
     // Updated constructor to accept username
     public userView(int customerId, String username) {
         this.customerId = customerId;
         this.username = username;
+        scheduleDeliveriesController = new ScheduleDeliveriesController();
         if (lblusername != null) {
             lblusername.setText(username);
         }
@@ -129,6 +138,20 @@ public class userView {
                 JOptionPane.showMessageDialog(null, "Error adding shipment: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
+
+        // Load TrackShipmentProgress table for this user on startup
+        loadTrackShipmentProgressTable(customerId);
+        // Add ChangeListener to refresh table when Track Shipments tab is selected
+        if (backpanel != null && trackshipmenttab != null) {
+            backpanel.addChangeListener(new ChangeListener() {
+                @Override
+                public void stateChanged(ChangeEvent e) {
+                    if (backpanel.getSelectedComponent() == trackshipmenttab) {
+                        loadTrackShipmentProgressTable(customerId);
+                    }
+                }
+            });
+        }
     }
 
     // Optionally, provide a method to get the logged-in user ID
@@ -143,6 +166,7 @@ public class userView {
 
     // Default constructor for compatibility (optional)
     public userView() {
+        scheduleDeliveriesController = new ScheduleDeliveriesController();
         // You may want to set a default or prompt for customerId here
         // For now, do nothing
     }
@@ -289,6 +313,34 @@ public class userView {
         }
     }
 
+    // Add this method to load and display TrackShipmentProgress data for the logged-in user
+    public void loadTrackShipmentProgressTable(int userId) {
+        String[] columnNames = {"Tracking ID", "Shipment ID", "Current Location", "Estimated Delivery Time", "Delay", "Status"};
+        DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        List<TrackShipmentProgress> progressList = scheduleDeliveriesController.getTrackShipmentProgressForUser(userId);
+        for (TrackShipmentProgress progress : progressList) {
+            Object[] row = {
+                progress.getTrackingID(),
+                progress.getShipmentID(),
+                progress.getCurrentLocation(),
+                progress.getEstimatedDeliveryTime(),
+                progress.getDelay(),
+                progress.getStatus()
+            };
+            model.addRow(row);
+        }
+        if (trackshipmentsdata != null) {
+            trackshipmentsdata.setModel(model);
+        } else {
+            System.err.println("trackshipmentsdata JTable is null. Ensure it is initialized and matches the field name in the .form file.");
+        }
+    }
+
     // Public getter for the main panel
     public JTabbedPane getMainPanel() {
         return backpanel;
@@ -312,7 +364,7 @@ public class userView {
             JOptionPane.showMessageDialog(null, "Not logged in. Please login first.", "Error", JOptionPane.ERROR_MESSAGE);
             // Redirect to loginView
             loginView.main(new String[]{});
-            return;
+            return; // Prevent further execution if not logged in
         }
         JFrame frame = new JFrame("User View");
         userView view = new userView(customerId, username);
