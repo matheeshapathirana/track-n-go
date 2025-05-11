@@ -138,6 +138,20 @@ public class userView {
                 JOptionPane.showMessageDialog(null, "Error adding shipment: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
+
+        // Load TrackShipmentProgress table for this user on startup
+        loadTrackShipmentProgressTable(customerId);
+        // Add ChangeListener to refresh table when Track Shipments tab is selected
+        if (backpanel != null && trackshipmenttab != null) {
+            backpanel.addChangeListener(new ChangeListener() {
+                @Override
+                public void stateChanged(ChangeEvent e) {
+                    if (backpanel.getSelectedComponent() == trackshipmenttab) {
+                        loadTrackShipmentProgressTable(customerId);
+                    }
+                }
+            });
+        }
     }
 
     // Optionally, provide a method to get the logged-in user ID
@@ -299,20 +313,31 @@ public class userView {
         }
     }
 
-    public void populateTrackShipmentsTable(int userId) {
+    // Add this method to load and display TrackShipmentProgress data for the logged-in user
+    public void loadTrackShipmentProgressTable(int userId) {
+        String[] columnNames = {"Tracking ID", "Shipment ID", "Current Location", "Estimated Delivery Time", "Delay", "Status"};
+        DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
         List<TrackShipmentProgress> progressList = scheduleDeliveriesController.getTrackShipmentProgressForUser(userId);
-        DefaultTableModel model = (DefaultTableModel) trackshipmentsdata.getModel();
-        model.setRowCount(0); // Clear existing rows
-
         for (TrackShipmentProgress progress : progressList) {
-            model.addRow(new Object[]{
+            Object[] row = {
                 progress.getTrackingID(),
                 progress.getShipmentID(),
                 progress.getCurrentLocation(),
                 progress.getEstimatedDeliveryTime(),
                 progress.getDelay(),
                 progress.getStatus()
-            });
+            };
+            model.addRow(row);
+        }
+        if (trackshipmentsdata != null) {
+            trackshipmentsdata.setModel(model);
+        } else {
+            System.err.println("trackshipmentsdata JTable is null. Ensure it is initialized and matches the field name in the .form file.");
         }
     }
 
@@ -339,7 +364,7 @@ public class userView {
             JOptionPane.showMessageDialog(null, "Not logged in. Please login first.", "Error", JOptionPane.ERROR_MESSAGE);
             // Redirect to loginView
             loginView.main(new String[]{});
-            return;
+            return; // Prevent further execution if not logged in
         }
         JFrame frame = new JFrame("User View");
         userView view = new userView(customerId, username);
