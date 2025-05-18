@@ -8,17 +8,15 @@ public class Shipments {
     private String shipmentStatus;
     private Integer assignedDriverID;
     private Timestamp createdOn;
-    private Timestamp lastUpdated;
     private Integer userid;
 
     // Constructor
-    public Shipments(int shipmentID, String receiverName, String shipmentStatus, Integer assignedDriverID, Timestamp createdOn, Timestamp lastUpdated, Integer userid) {
+    public Shipments(int shipmentID, String receiverName, String shipmentStatus, Integer assignedDriverID, Timestamp createdOn, Integer userid) {
         this.shipmentID = shipmentID;
         this.receiverName = receiverName;
         this.shipmentStatus = shipmentStatus;
         this.assignedDriverID = assignedDriverID;
         this.createdOn = createdOn;
-        this.lastUpdated = lastUpdated;
         this.userid = userid;
     }
 
@@ -45,9 +43,6 @@ public class Shipments {
     }
     public Timestamp getCreatedOn() {
         return createdOn;
-    }
-    public Timestamp getLastUpdated() {
-        return lastUpdated;
     }
     public Integer getUserid() {
         return userid;

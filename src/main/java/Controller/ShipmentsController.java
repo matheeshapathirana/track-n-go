@@ -17,7 +17,7 @@ public class ShipmentsController {
     }
 
     public void updateShipment(int shipmentID, String receiverName, String status, Integer driverID, Integer userid) {
-        Shipments shipment = new Shipments(shipmentID, receiverName, status, driverID, null, null, userid);
+        Shipments shipment = new Shipments(shipmentID, receiverName, status, driverID, null, userid);
         shipmentsDAO.updateShipment(shipment);
     }
 

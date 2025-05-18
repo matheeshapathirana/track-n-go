@@ -14,59 +14,59 @@ import java.util.concurrent.TimeUnit;
 import Utility.DBConnection;
 
 public class TrackShipmentProgressPoller {
-private final Connection conn;
-private final CustomerNotificationDAO notificationDAO;
-private final Map<Integer, TrackShipmentProgressSnapshot> lastSnapshot = new HashMap<>();
+    private final Connection conn;
+    private final CustomerNotificationDAO notificationDAO;
+    private final Map<Integer, TrackShipmentProgressSnapshot> lastSnapshot = new HashMap<>();
 
-public TrackShipmentProgressPoller() {
-    conn = DBConnection.getConnection();
-    notificationDAO = new CustomerNotificationDAO();
-}
+    public TrackShipmentProgressPoller() {
+        conn = DBConnection.getConnection();
+        notificationDAO = new CustomerNotificationDAO();
+    }
 
-public void startPolling() {
-    ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-    scheduler.scheduleAtFixedRate(this::poll, 0, 3, TimeUnit.SECONDS); // Poll every 3 seconds
-}
+    public void startPolling() {
+        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+        scheduler.scheduleAtFixedRate(this::poll, 0, 3, TimeUnit.SECONDS); // Poll every 3 seconds
+    }
 
-private void poll() {
-    String sql = "SELECT trackingID, estimatedDeliveryTime, delay, status, userid FROM TrackShipmentProgress";
-    try (Statement stmt = conn.createStatement();
-         ResultSet rs = stmt.executeQuery(sql)) {
-        while (rs.next()) {
-            int trackingID = rs.getInt("trackingID");
-            String estimatedDeliveryTime = rs.getString("estimatedDeliveryTime");
-            int delay = rs.getInt("delay");
-            String status = rs.getString("status");
-            int userid = rs.getInt("userid");
+    private void poll() {
+        String sql = "SELECT shipmentID, estimatedDeliveryTime, delay, shipmentStatus, userid FROM Shipments";
+        try (Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                int shipmentID = rs.getInt("shipmentID");
+                String estimatedDeliveryTime = rs.getString("estimatedDeliveryTime");
+                int delay = rs.getObject("delay") != null ? rs.getInt("delay") : 0;
+                String status = rs.getString("shipmentStatus");
+                int userid = rs.getObject("userid") != null ? rs.getInt("userid") : 0;
 
-            TrackShipmentProgressSnapshot prev = lastSnapshot.get(trackingID);
-            if (prev != null) {
-                if (!Objects.equals(prev.estimatedDeliveryTime, estimatedDeliveryTime)) {
-                    notificationDAO.addNotification(null, userid, "Estimated arival time changed to: " + estimatedDeliveryTime);
+                TrackShipmentProgressSnapshot prev = lastSnapshot.get(shipmentID);
+                if (prev != null) {
+                    if (!Objects.equals(prev.estimatedDeliveryTime, estimatedDeliveryTime)) {
+                        notificationDAO.addNotification(null, userid, "Estimated arrival time changed to: " + estimatedDeliveryTime);
+                    }
+                    if (prev.delay != delay) {
+                        notificationDAO.addNotification(null, userid, "A delay has occurred: " + delay + " days");
+                    }
+                    if (!Objects.equals(prev.status, status)) {
+                        notificationDAO.addNotification(null, userid, "Status has been changed to: " + status);
+                    }
                 }
-                if (prev.delay != delay) {
-                    notificationDAO.addNotification(null, userid, "A delay has occoured: " + delay +" days");
-                }
-                if (!Objects.equals(prev.status, status)) {
-                    notificationDAO.addNotification(null, userid, "Status had been changed to:" + status);
-                }
+                lastSnapshot.put(shipmentID, new TrackShipmentProgressSnapshot(estimatedDeliveryTime, delay, status));
             }
-            lastSnapshot.put(trackingID, new TrackShipmentProgressSnapshot(estimatedDeliveryTime, delay, status));
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
     }
-}
 
-private static class TrackShipmentProgressSnapshot {
-    String estimatedDeliveryTime;
-    int delay;
-    String status;
+    private static class TrackShipmentProgressSnapshot {
+        String estimatedDeliveryTime;
+        int delay;
+        String status;
 
-    TrackShipmentProgressSnapshot(String estimatedDeliveryTime, int delay, String status) {
-        this.estimatedDeliveryTime = estimatedDeliveryTime;
-        this.delay = delay;
-        this.status = status;
+        TrackShipmentProgressSnapshot(String estimatedDeliveryTime, int delay, String status) {
+            this.estimatedDeliveryTime = estimatedDeliveryTime;
+            this.delay = delay;
+            this.status = status;
+        }
     }
-}
 }

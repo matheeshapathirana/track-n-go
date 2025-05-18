@@ -11,7 +11,7 @@ public class ScheduleDeliveriesDAO {
 
     public List<TrackShipmentProgress> getTrackShipmentProgressByUserId(int userId) {
         List<TrackShipmentProgress> progressList = new ArrayList<>();
-        String query = "SELECT * FROM TrackShipmentProgress WHERE userid = ?";
+        String query = "SELECT * FROM Shipments WHERE userid = ?";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -21,13 +21,14 @@ public class ScheduleDeliveriesDAO {
 
             while (rs.next()) {
                 TrackShipmentProgress progress = new TrackShipmentProgress();
-                progress.setTrackingID(rs.getInt("trackingID"));
+                progress.setTrackingID(rs.getInt("shipmentID")); // Use shipmentID as trackingID
                 progress.setShipmentID(rs.getInt("shipmentID"));
                 progress.setCurrentLocation(rs.getString("currentLocation"));
-                progress.setEstimatedDeliveryTime(rs.getTimestamp("estimatedDeliveryTime").toString());
-                progress.setDelay(rs.getInt("delay"));
-                progress.setStatus(rs.getString("status"));
-                progress.setUserid(rs.getInt("userid"));
+                java.sql.Timestamp estTime = rs.getTimestamp("estimatedDeliveryTime");
+                progress.setEstimatedDeliveryTime(estTime != null ? estTime.toString() : null);
+                progress.setDelay(rs.getObject("delay") != null ? rs.getInt("delay") : 0);
+                progress.setStatus(rs.getString("shipmentStatus"));
+                progress.setUserid(rs.getObject("userid") != null ? rs.getInt("userid") : 0);
                 progressList.add(progress);
             }
         } catch (Exception e) {

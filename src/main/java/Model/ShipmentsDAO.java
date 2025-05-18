@@ -121,7 +121,6 @@ public class ShipmentsDAO {
                         result.getString("shipmentStatus"),
                         result.getObject("assignedDriverID") != null ? result.getInt("assignedDriverID") : null,
                         result.getTimestamp("createdOn"),
-                        result.getTimestamp("lastUpdated"),
                         result.getObject("userid") != null ? result.getInt("userid") : null
                 );
                 list.add(shipment);
@@ -159,7 +158,6 @@ public class ShipmentsDAO {
                         result.getString("shipmentStatus"),
                         result.getObject("assignedDriverID") != null ? result.getInt("assignedDriverID") : null,
                         result.getTimestamp("createdOn"),
-                        result.getTimestamp("lastUpdated"),
                         result.getObject("userid") != null ? result.getInt("userid") : null
                 );
                 list.add(shipment);
