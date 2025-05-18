@@ -25,6 +25,7 @@ public class loginView extends JFrame {
     private JLabel lblregisterpassword;
     private JPanel registerbackpanel;
     private JPanel loginbackpanel;
+    private JPanel signin;
 
     public loginView() {
         Connection conn = DBConnection.getConnection();
