@@ -96,6 +96,10 @@ public class adminView {
 
     //pt2:load drivers to combo box (personnel part)
     private void loadDriverUsers() {
+        if (comboUserDrivers == null) {
+            System.err.println("comboUserDrivers is null. Check your form bindings or initialization.");
+            return;
+        }
         try (Connection conn = Utility.DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement("SELECT userID, username FROM Users WHERE role = 'driver'");
              ResultSet rs = stmt.executeQuery()) {
@@ -179,15 +183,24 @@ public class adminView {
         btnupdatetrack.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (txttrackingid.getText().isEmpty() || txtshipmentid.getText().isEmpty() || txtlocation.getText().isEmpty() || txtdeliverytimes.getText().isEmpty() || txtdelays.getText().isEmpty()) {
+                if (txttrackingid.getText().isEmpty() || txtshipmentid.getText().isEmpty() || txtlocation.getText().isEmpty() || txtdelays.getText().isEmpty()) {
                     JOptionPane.showMessageDialog(null, "Please fill all fields!", "Error", JOptionPane.ERROR_MESSAGE);
                 } else {
                     String trackingID = txttrackingid.getText();
                     String shipmentID = txtshipmentid.getText();
                     String location = txtlocation.getText();
-                    String deliveryTime = txtdeliverytimes.getText();
                     String delay = txtdelays.getText();
                     String status = comboBox1.getSelectedItem() != null ? comboBox1.getSelectedItem().toString() : "";
+                    // Build delivery date string from spinnerday, comboBoxmonth, comboBoxyear
+                    int day = (int) spinnerday.getValue();
+                    String month = comboBoxmonth.getSelectedItem() != null ? comboBoxmonth.getSelectedItem().toString() : "";
+                    String year = comboBoxyear.getSelectedItem() != null ? comboBoxyear.getSelectedItem().toString() : "";
+                    String deliveryTime = "";
+                    if (!month.isEmpty() && !year.isEmpty()) {
+                        // Convert month name to month number (1-12)
+                        int monthNum = java.time.Month.valueOf(month.toUpperCase()).getValue();
+                        deliveryTime = String.format("%s-%02d-%02d 00:00:00", year, monthNum, day);
+                    }
                     Controller.TrackShipmentProgressController controller = new Controller.TrackShipmentProgressController();
                     controller.updateShipmentProgress(trackingID, shipmentID, location, deliveryTime, delay, status);
                     loadTrackTable(); // Refresh table after update
@@ -199,11 +212,32 @@ public class adminView {
         tracktable.getSelectionModel().addListSelectionListener(e -> {
             int selectedRow = tracktable.getSelectedRow();
             if (selectedRow >= 0) {
-                txttrackingid.setText(tracktable.getValueAt(selectedRow, 0).toString());
-                txtshipmentid.setText(tracktable.getValueAt(selectedRow, 1).toString());
-                txtlocation.setText(tracktable.getValueAt(selectedRow, 2).toString());
-                txtdeliverytimes.setText(tracktable.getValueAt(selectedRow, 3).toString());
-                txtdelays.setText(tracktable.getValueAt(selectedRow, 4).toString());
+                Object val0 = tracktable.getValueAt(selectedRow, 0);
+                Object val1 = tracktable.getValueAt(selectedRow, 1);
+                Object val2 = tracktable.getValueAt(selectedRow, 2);
+                Object val3 = tracktable.getValueAt(selectedRow, 3);
+                Object val4 = tracktable.getValueAt(selectedRow, 4);
+                txttrackingid.setText(val0 != null ? val0.toString() : "");
+                txtshipmentid.setText(val1 != null ? val1.toString() : "");
+                txtlocation.setText(val2 != null ? val2.toString() : "");
+                // Parse delivery time string and set spinnerday, comboBoxmonth, comboBoxyear
+                if (val3 != null && !val3.toString().isEmpty()) {
+                    try {
+                        String[] parts = val3.toString().split("[ -:]");
+                        if (parts.length >= 3) {
+                            comboBoxyear.setSelectedItem(parts[0]);
+                            int monthNum = Integer.parseInt(parts[1]);
+                            String[] months = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
+                            if (monthNum >= 1 && monthNum <= 12) {
+                                comboBoxmonth.setSelectedItem(months[monthNum - 1]);
+                            }
+                            spinnerday.setValue(Integer.parseInt(parts[2]));
+                        }
+                    } catch (Exception ex) {
+                        // Ignore parse errors
+                    }
+                }
+                txtdelays.setText(val4 != null ? val4.toString() : "");
                 // status is not editable, but you can add a field if needed
             }
         });
@@ -746,6 +780,9 @@ public class adminView {
     public JLabel lblDelayedDeliveriesNumber;
     public JLabel lblTotalShipmentsNumber;
     private JComboBox comboBoxtimeslot;
+    private JSpinner spinnerday;
+    private JComboBox comboBoxmonth;
+    private JComboBox comboBoxyear;
 
 
     // Add getters for components
