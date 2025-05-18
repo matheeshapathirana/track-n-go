@@ -213,7 +213,7 @@
               </component>
             </children>
           </grid>
-          <grid id="d42df" binding="PersonnelManagerPanel" layout-manager="GridLayoutManager" row-count="10" column-count="6" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="d42df" binding="PersonnelManagerPanel" layout-manager="GridLayoutManager" row-count="12" column-count="6" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="10" left="10" bottom="10" right="10"/>
             <constraints>
               <tabbedpane title="Personnel"/>
@@ -268,14 +268,6 @@
                 <properties>
                   <text value="Delivery History:"/>
                 </properties>
-              </component>
-              <component id="798cc" class="javax.swing.JTextField" binding="txtName">
-                <constraints>
-                  <grid row="1" column="1" row-span="1" col-span="4" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                    <preferred-size width="150" height="-1"/>
-                  </grid>
-                </constraints>
-                <properties/>
               </component>
               <component id="6388" class="javax.swing.JTextField" binding="txtContact">
                 <constraints>
@@ -335,7 +327,7 @@
               </component>
               <component id="cdbc2" class="javax.swing.JTable" binding="AllDriversView">
                 <constraints>
-                  <grid row="9" column="0" row-span="1" col-span="5" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="2" use-parent-layout="false">
+                  <grid row="11" column="0" row-span="1" col-span="5" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="2" use-parent-layout="false">
                     <preferred-size width="150" height="50"/>
                   </grid>
                 </constraints>
@@ -343,7 +335,7 @@
               </component>
               <component id="1abb2" class="javax.swing.JLabel" binding="alllDriverslbl">
                 <constraints>
-                  <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="2" use-parent-layout="false"/>
+                  <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="2" use-parent-layout="false"/>
                 </constraints>
                 <properties>
                   <text value="All registered drivers : "/>
@@ -397,6 +389,22 @@
                     <item value="2PM - 4PM"/>
                   </model>
                 </properties>
+              </component>
+              <vspacer id="cddfb">
+                <constraints>
+                  <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                </constraints>
+              </vspacer>
+              <vspacer id="6e74f">
+                <constraints>
+                  <grid row="10" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                </constraints>
+              </vspacer>
+              <component id="e112d" class="javax.swing.JComboBox" binding="comboUserDrivers">
+                <constraints>
+                  <grid row="1" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties/>
               </component>
             </children>
           </grid>

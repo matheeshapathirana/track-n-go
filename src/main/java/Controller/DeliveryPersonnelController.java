@@ -17,5 +17,9 @@ public class DeliveryPersonnelController {
     public void deleteDeliveryPersonnel(DeliveryPersonnel p) {
         DAO.deletePersonnel(p.getPersonnelID());
     }
+    //get all personnel
+    public java.util.List<DeliveryPersonnel> getAllPersonnel() {
+        return DAO.getAllPersonnel();
+    }
 
 }

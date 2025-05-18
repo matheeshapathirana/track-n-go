@@ -9,25 +9,21 @@ import Utility.DBConnection;
 public class DeliveryPersonnelDAO {
     //add drivers using sql
     public void addPersonnel(DeliveryPersonnel p) {
-        long startTime = System.currentTimeMillis();
-        String sql = "INSERT INTO DeliveryPersonnel(personnelName, personnelContact, schedule, assignedRoute, deliveryHistory,availability) VALUES (?, ?, ?, ?, ?,?)";
-        try (Connection conn = DBConnection.getConnection(); //opens a connection to the sql database
-             PreparedStatement s = conn.prepareStatement(sql)) {
-            long connTime = System.currentTimeMillis();
-            System.out.println("[DB Timing] addPersonnel - DB connection time: " + (connTime - startTime) + " ms");
-            s.setString(1, p.getPersonnelName());
-            s.setString(2, p.getPersonnelContact());
-            s.setString(3, p.getSchedule());
-            s.setString(4, p.getAssignedRoute());
-            s.setString(5, p.getDeliveryHistory());
-            s.setString(6, p.getAvailability());
-            long execStart = System.currentTimeMillis();
-            s.executeUpdate();
-            long execEnd = System.currentTimeMillis();
-            System.out.println("[DB Timing] addPersonnel - Query execution time: " + (execEnd - execStart) + " ms");
+        long startTime = System.currentTimeMillis();  //Declare startTime at the beginning
+        String sql = "INSERT INTO DeliveryPersonnel(personnelID, personnelName, personnelContact, schedule, assignedRoute, deliveryHistory, availability) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, p.getPersonnelID());         // userID
+            stmt.setString(2, p.getPersonnelName());    // username
+            stmt.setString(3, p.getPersonnelContact());
+            stmt.setString(4, p.getSchedule());
+            stmt.setString(5, p.getAssignedRoute());
+            stmt.setString(6, p.getDeliveryHistory());
+            stmt.setString(7, p.getAvailability());
+
+            stmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println("Error adding personnel: " + e.getMessage());
-            e.printStackTrace();
         }
         long endTime = System.currentTimeMillis();
         System.out.println("[DB Timing] addPersonnel - Total time: " + (endTime - startTime) + " ms");
@@ -36,19 +32,19 @@ public class DeliveryPersonnelDAO {
     //updating delivery personnel
     public void updatePersonnel(DeliveryPersonnel p) {
         long startTime = System.currentTimeMillis();
-        String sql = "UPDATE DeliveryPersonnel SET personnelName = ?, personnelContact = ?, schedule = ?, assignedRoute = ?, deliveryHistory = ?, availability = ? WHERE personnelID = ?";
+        String sql = "UPDATE DeliveryPersonnel SET personnelContact = ?, schedule = ?, assignedRoute = ?, deliveryHistory = ?, availability = ? WHERE personnelID = ?";
         try(Connection conn = DBConnection.getConnection();
             PreparedStatement s = conn.prepareStatement(sql))
         {
             long connTime = System.currentTimeMillis();
             System.out.println("[DB Timing] updatePersonnel - DB connection time: " + (connTime - startTime) + " ms");
-            s.setString(1, p.getPersonnelName());
-            s.setString(2, p.getPersonnelContact());
-            s.setString(3, p.getSchedule());
-            s.setString(4, p.getAssignedRoute());
-            s.setString(5, p.getDeliveryHistory());
-            s.setString(6, p.getAvailability());
-            s.setInt(7, p.getPersonnelID());
+            s.setString(2, p.getPersonnelName());
+            s.setString(1, p.getPersonnelContact());
+            s.setString(2, p.getSchedule());
+            s.setString(3, p.getAssignedRoute());
+            s.setString(4, p.getDeliveryHistory());
+            s.setString(5, p.getAvailability());
+            s.setInt(6, p.getPersonnelID());
             long execStart = System.currentTimeMillis();
             s.executeUpdate();
             long execEnd = System.currentTimeMillis();
@@ -85,7 +81,7 @@ public class DeliveryPersonnelDAO {
     public List <DeliveryPersonnel> getAllPersonnel() {
         long startTime = System.currentTimeMillis();
         List<DeliveryPersonnel> list = new ArrayList<>();
-        String sql = "SELECT * FROM DeliveryPersonnel";
+        String sql = "SELECT dp.*, u.username FROM DeliveryPersonnel dp JOIN Users u ON dp.personnelID = u.userID";
 
         try(Connection conn = DBConnection.getConnection();
         Statement stmt = conn.createStatement();
@@ -96,7 +92,7 @@ public class DeliveryPersonnelDAO {
             while(result.next()){
                 DeliveryPersonnel p = new DeliveryPersonnel();
                 p.setPersonnelID(result.getInt("personnelID"));
-                p.setPersonnelName(result.getString("personnelName"));
+                p.setPersonnelName(result.getString("username")); // from Users
                 p.setPersonnelContact(result.getString("personnelContact"));
                 p.setSchedule(result.getString("schedule"));
                 p.setAssignedRoute(result.getString("assignedRoute"));
