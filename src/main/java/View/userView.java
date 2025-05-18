@@ -43,6 +43,7 @@ public class userView {
     // Components for available drivers
     private JComboBox availableDriversDropdown; // Add this to your form and link
     private JTable availableDriversTable; // Add this to your form and link
+    private JCheckBox urgentDeliveryCheckBox;
 
     // Store the logged-in customerId as a field
     private int customerId = -1;
