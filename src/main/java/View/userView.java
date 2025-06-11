@@ -122,14 +122,40 @@ public class userView {
                         }
                     }
                 }
-                System.out.println("Selected driver: " + (availableDriversDropdown != null ? availableDriversDropdown.getSelectedItem() : "null"));
-                System.out.println("Parsed driverID: " + driverID);
+                // Get estimated delivery date from comboBoxyear, comboBoxmonth, spinnerday
+                int year = Integer.parseInt(comboBoxyear.getSelectedItem().toString());
+                String monthName = comboBoxmonth.getSelectedItem().toString();
+                int month = java.time.Month.valueOf(monthName.toUpperCase()).getValue(); // 1-based
+                int day = Integer.parseInt(spinnerday.getValue().toString());
+                // Optionally, get time from comboBoxtimeslot if you want to support time slots
+                String timeSlot = (comboBoxtimeslot != null && comboBoxtimeslot.getSelectedItem() != null) ? comboBoxtimeslot.getSelectedItem().toString() : "12:00:00";
+                // Convert time slot to 24-hour format for DB
+                String timeForDb;
+                switch (timeSlot) {
+                    case "8AM - 10AM":
+                        timeForDb = "08:00:00";
+                        break;
+                    case "10AM - 12PM":
+                        timeForDb = "10:00:00";
+                        break;
+                    case "12PM - 2PM":
+                        timeForDb = "12:00:00";
+                        break;
+                    case "2PM - 4PM":
+                        timeForDb = "14:00:00";
+                        break;
+                    default:
+                        timeForDb = "12:00:00";
+                }
+                // Build estimatedDeliveryTime as yyyy-MM-dd HH:mm:ss
+                String estimatedDeliveryTime = String.format("%04d-%02d-%02d %s", year, month, day, timeForDb);
+                System.out.println("Estimated Delivery Time: " + estimatedDeliveryTime);
                 if (receiverName.isEmpty() || driverID == null) {
                     JOptionPane.showMessageDialog(null, "Please fill all required fields and select a driver!", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
                 Controller.ShipmentsController controller = new Controller.ShipmentsController();
-                controller.addShipment(receiverName, status, driverID, customerId);
+                controller.addShipment(receiverName, status, driverID, customerId, estimatedDeliveryTime);
                 JOptionPane.showMessageDialog(null, "Shipment added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
                 txtreceivername.setText("");
                 loadAvailableDrivers();

@@ -502,9 +502,15 @@ public class adminView {
                     String receiverName = txtreceivername.getText();
                     String status = comboBox2.getSelectedItem().toString();
                     Integer driverID = txtassigneddriverid.getText().isEmpty() ? null : Integer.parseInt(txtassigneddriverid.getText());
-
+                    // Get estimated delivery date from comboBoxyear, comboBoxmonth, spinnerday
+                    int year = Integer.parseInt(comboBoxyear.getSelectedItem().toString());
+                    String monthName = comboBoxmonth.getSelectedItem().toString();
+                    int month = java.time.Month.valueOf(monthName.toUpperCase()).getValue(); // 1-based
+                    int day = Integer.parseInt(spinnerday.getValue().toString());
+                    String timeSlot = (comboBoxtimeslot != null && comboBoxtimeslot.getSelectedItem() != null) ? comboBoxtimeslot.getSelectedItem().toString() : "12:00:00";
+                    String estimatedDeliveryTime = String.format("%04d-%02d-%02d %s", year, month, day, timeSlot);
                     Controller.ShipmentsController controller = new Controller.ShipmentsController();
-                    controller.addShipment(receiverName, status, driverID, loggedInUserId);
+                    controller.addShipment(receiverName, status, driverID, loggedInUserId, estimatedDeliveryTime);
                     JOptionPane.showMessageDialog(null, "Shipment added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
                     clearShipmentFields();
                     loadShipmentTable();

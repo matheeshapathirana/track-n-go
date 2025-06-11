@@ -9,6 +9,7 @@ public class Shipments {
     private Integer assignedDriverID;
     private Timestamp createdOn;
     private Integer userid;
+    private String estimatedDeliveryTime;
 
     // Constructor
     public Shipments(int shipmentID, String receiverName, String shipmentStatus, Integer assignedDriverID, Timestamp createdOn, Integer userid) {
@@ -21,11 +22,12 @@ public class Shipments {
     }
 
     // Constructor for adding new shipments
-    public Shipments(String receiverName, String shipmentStatus, Integer assignedDriverID, Integer userid) {
+    public Shipments(String receiverName, String shipmentStatus, Integer assignedDriverID, Integer userid, String estimatedDeliveryTime) {
         this.receiverName = receiverName;
         this.shipmentStatus = shipmentStatus;
         this.assignedDriverID = assignedDriverID;
         this.userid = userid;
+        this.estimatedDeliveryTime = estimatedDeliveryTime;
     }
 
     // Getters
@@ -47,6 +49,9 @@ public class Shipments {
     public Integer getUserid() {
         return userid;
     }
+    public String getEstimatedDeliveryTime() {
+        return estimatedDeliveryTime;
+    }
 
     // Setters
     public void setShipmentStatus(String shipmentStatus) {
@@ -57,5 +62,8 @@ public class Shipments {
     }
     public void setUserid(Integer userid) {
         this.userid = userid;
+    }
+    public void setEstimatedDeliveryTime(String estimatedDeliveryTime) {
+        this.estimatedDeliveryTime = estimatedDeliveryTime;
     }
 }

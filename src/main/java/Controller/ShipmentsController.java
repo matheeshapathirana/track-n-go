@@ -11,8 +11,8 @@ public class ShipmentsController {
         this.shipmentsDAO = new ShipmentsDAO();
     }
 
-    public void addShipment(String receiverName, String status, Integer driverID, Integer userid) {
-        Shipments shipment = new Shipments(receiverName, status, driverID, userid);
+    public void addShipment(String receiverName, String status, Integer driverID, Integer userid, String estimatedDeliveryTime) {
+        Shipments shipment = new Shipments(receiverName, status, driverID, userid, estimatedDeliveryTime);
         shipmentsDAO.addShipment(shipment);
     }
 

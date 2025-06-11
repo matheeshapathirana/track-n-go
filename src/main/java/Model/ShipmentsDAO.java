@@ -9,7 +9,7 @@ public class ShipmentsDAO {
     // Add a new shipment
     public void addShipment(Shipments shipment) {
         long startTime = System.currentTimeMillis();
-        String sql = "INSERT INTO Shipments (receiverName, shipmentStatus, assignedDriverID, userid) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO Shipments (receiverName, shipmentStatus, assignedDriverID, userid, estimatedDeliveryTime) VALUES (?, ?, ?, ?, ?)";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement s = conn.prepareStatement(sql)) {
@@ -28,6 +28,7 @@ public class ShipmentsDAO {
             } else {
                 s.setNull(4, Types.INTEGER);
             }
+            s.setString(5, shipment.getEstimatedDeliveryTime());
 
             long execStart = System.currentTimeMillis();
             s.executeUpdate();
