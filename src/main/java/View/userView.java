@@ -156,6 +156,12 @@ public class userView {
                 }
                 Controller.ShipmentsController controller = new Controller.ShipmentsController();
                 controller.addShipment(receiverName, status, driverID, customerId, estimatedDeliveryTime);
+                // Notify the driver after assignment (add to DriverNotifications table)
+                if (driverID != null) {
+                    Model.DriverNotificationDAO driverNotificationDAO = new Model.DriverNotificationDAO();
+                    String message = "A new shipment has been assigned to you. Please check your dashboard.";
+                    driverNotificationDAO.addNotification(driverID, message);
+                }
                 JOptionPane.showMessageDialog(null, "Shipment added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
                 txtreceivername.setText("");
                 loadAvailableDrivers();

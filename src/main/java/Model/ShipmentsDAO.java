@@ -122,7 +122,11 @@ public class ShipmentsDAO {
                         result.getString("shipmentStatus"),
                         result.getObject("assignedDriverID") != null ? result.getInt("assignedDriverID") : null,
                         result.getTimestamp("createdOn"),
-                        result.getObject("userid") != null ? result.getInt("userid") : null
+                        result.getObject("userid") != null ? result.getInt("userid") : null,
+                        result.getObject("urgent") != null ? result.getInt("urgent") : null,
+                        result.getString("currentLocation"),
+                        result.getString("estimatedDeliveryTime"),
+                        result.getObject("delay") != null ? String.valueOf(result.getObject("delay")) : null
                 );
                 list.add(shipment);
             }
@@ -159,7 +163,11 @@ public class ShipmentsDAO {
                         result.getString("shipmentStatus"),
                         result.getObject("assignedDriverID") != null ? result.getInt("assignedDriverID") : null,
                         result.getTimestamp("createdOn"),
-                        result.getObject("userid") != null ? result.getInt("userid") : null
+                        result.getObject("userid") != null ? result.getInt("userid") : null,
+                        result.getObject("urgent") != null ? result.getInt("urgent") : null,
+                        result.getString("currentLocation"),
+                        result.getString("estimatedDeliveryTime"),
+                        result.getObject("delay") != null ? String.valueOf(result.getObject("delay")) : null
                 );
                 list.add(shipment);
             }
@@ -172,5 +180,25 @@ public class ShipmentsDAO {
         long endTime = System.currentTimeMillis();
         System.out.println("[DB Timing] getShipmentsByStatus - Total time: " + (endTime - startTime) + " ms");
         return list;
+    }
+
+    // Update only location, estimatedDeliveryTime, delay, urgent for a shipment
+    public void updateShipmentFields(int shipmentID, String currentLocation, String estimatedDeliveryTime, String delay, int urgent) {
+        long startTime = System.currentTimeMillis();
+        String sql = "UPDATE Shipments SET currentLocation = ?, estimatedDeliveryTime = ?, delay = ?, urgent = ? WHERE shipmentID = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement s = conn.prepareStatement(sql)) {
+            s.setString(1, currentLocation);
+            s.setString(2, estimatedDeliveryTime);
+            s.setString(3, delay);
+            s.setInt(4, urgent);
+            s.setInt(5, shipmentID);
+            s.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Error updating shipment fields: " + e.getMessage());
+            e.printStackTrace();
+        }
+        long endTime = System.currentTimeMillis();
+        System.out.println("[DB Timing] updateShipmentFields - Total time: " + (endTime - startTime) + " ms");
     }
 }

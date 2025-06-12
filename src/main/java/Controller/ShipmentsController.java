@@ -32,4 +32,29 @@ public class ShipmentsController {
     public List<Shipments> getShipmentsByStatus(String status) {
         return shipmentsDAO.getShipmentsByStatus(status);
     }
+
+    public void updateShipmentFields(int shipmentID, String currentLocation, String estimatedDeliveryTime, String delay, int urgent) {
+        // Get the userId for notification
+        Model.Shipments shipment = null;
+        for (Model.Shipments s : getAllShipments()) {
+            if (s.getShipmentID() == shipmentID) {
+                shipment = s;
+                break;
+            }
+        }
+        Integer userId = (shipment != null) ? shipment.getUserid() : null;
+        Integer driverId = (shipment != null) ? shipment.getAssignedDriverID() : null;
+        shipmentsDAO.updateShipmentFields(shipmentID, currentLocation, estimatedDeliveryTime, delay, urgent);
+        // Notify user if userId is found
+        if (userId != null) {
+            Model.CustomerNotificationDAO notificationDAO = new Model.CustomerNotificationDAO();
+            String message = "Your shipment (ID: " + shipmentID + ") has been updated by the driver.";
+            notificationDAO.addNotification("user", userId, message);
+        }
+        // Notify driver in the same Notification table (not DriverNotifications)
+        if (driverId != null) {
+            // Do NOT add a notification for the driver, only for the user
+            // (recipientID should always be the user ID)
+        }
+    }
 }

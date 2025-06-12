@@ -57,6 +57,18 @@ public class loginView extends JFrame {
                         frame.setLocationRelativeTo(null);
                         frame.setVisible(true);
                         dispose();
+                    } else if (role.equals("driver")) {
+                        UsersDAO usersDAO = new UsersDAO();
+                        String driverName = usersDAO.getUsernameByEmail(email);
+                        int driverId = usersDAO.getUserIdByEmail(email);
+                        driverView view = new driverView(driverId, driverName);
+                        JFrame frame = new JFrame("Driver View");
+                        frame.setContentPane(view.getMainPanel());
+                        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                        frame.pack();
+                        frame.setLocationRelativeTo(null);
+                        frame.setVisible(true);
+                        dispose();
                     }
                 } else {
                     JOptionPane.showMessageDialog(loginbackpanel, "Invalid credentials.", "Error", JOptionPane.ERROR_MESSAGE);
