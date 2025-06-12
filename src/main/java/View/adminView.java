@@ -588,6 +588,16 @@ public class adminView {
             String[] months = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
             for (String m : months) comboBoxMonth.addItem(m);
         }
+
+        if (btnrefreshshipments != null) {
+            btnrefreshshipments.addActionListener(new java.awt.event.ActionListener() {
+                @Override
+                public void actionPerformed(java.awt.event.ActionEvent e) {
+                    loadShipmentTable();
+                    JOptionPane.showMessageDialog(null, "Shipment table refreshed");
+                }
+            });
+        }
     }
 
     // Load all shipment tracking data into the table
