@@ -54,7 +54,7 @@ public class UsersDAO {
     // Get all users
     public List<Users> getAllUsers() {
         List<Users> users = new ArrayList<>();
-        String sql = "SELECT email, username, password FROM Users";
+        String sql = "SELECT email, username, password, userid FROM Users";
         try (Connection conn = DBConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
@@ -62,7 +62,8 @@ public class UsersDAO {
                 users.add(new Users(
                         rs.getString("email"),
                         rs.getString("username"),
-                        rs.getString("password")
+                        rs.getString("password"),
+                        rs.getInt("userid")
                 ));
             }
         } catch (SQLException e) {
@@ -86,5 +87,40 @@ public class UsersDAO {
             e.printStackTrace();
         }
         return null;
+    }
+
+    // Get username by email
+    public String getUsernameByEmail(String email) {
+        String username = null;
+        String sql = "SELECT username FROM Users WHERE email=?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, email);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    username = rs.getString("username");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return username;
+    }
+
+    // Get user ID by email
+    public int getUserIdByEmail(String email) {
+        String sql = "SELECT userid FROM Users WHERE email=?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, email);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("userid");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
     }
 }

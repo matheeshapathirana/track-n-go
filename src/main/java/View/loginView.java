@@ -2,6 +2,7 @@ package View;
 
 import Controller.LoginController;
 import Utility.DBConnection;
+import Model.UsersDAO;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -24,12 +25,10 @@ public class loginView extends JFrame {
     private JLabel lblregisterpassword;
     private JPanel registerbackpanel;
     private JPanel loginbackpanel;
+    private JPanel signin;
 
     public loginView() {
         Connection conn = DBConnection.getConnection();
-        // Ensure GUI components are initialized before adding listeners
-        // This is important if using IntelliJ GUI Designer
-        // The following code should be called after setContentPane in main
     }
 
     private void setupListeners() {
@@ -43,9 +42,21 @@ public class loginView extends JFrame {
                 if (role != null) {
                     JOptionPane.showMessageDialog(loginbackpanel, "Login successful!");
                     if (role.equals("admin")) {
-                        // Open adminView if role is admin
                         View.adminView.main(new String[]{});
-                        dispose(); // Close the login window
+                        dispose();
+                    } else if (role.equals("user")) {
+                        // Get username and userId from DB
+                        UsersDAO usersDAO = new UsersDAO();
+                        String username = usersDAO.getUsernameByEmail(email);
+                        int customerId = usersDAO.getUserIdByEmail(email);
+                        userView view = new userView(customerId, username);
+                        JFrame frame = new JFrame("User View");
+                        frame.setContentPane(view.getMainPanel());
+                        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                        frame.pack();
+                        frame.setLocationRelativeTo(null);
+                        frame.setVisible(true);
+                        dispose();
                     }
                 } else {
                     JOptionPane.showMessageDialog(loginbackpanel, "Invalid credentials.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -79,12 +90,20 @@ public class loginView extends JFrame {
 
     public static void main(String[] args) {
         loginView view = new loginView();
-        view.setContentPane(view.tabs);
+        if (view.tabs != null) {
+            view.setContentPane(view.tabs);
+        } else if (view.loginbackpanel != null) {
+            view.setContentPane(view.loginbackpanel);
+        } else if (view.registerbackpanel != null) {
+            view.setContentPane(view.registerbackpanel);
+        } else {
+            throw new IllegalStateException("No valid content pane found! All are null.");
+        }
         view.setTitle("Login/Register");
         view.setSize(600, 400);
         view.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         view.setLocationRelativeTo(null);
-        view.setupListeners(); // Ensure listeners are set up after GUI is initialized
+        view.setupListeners();
         view.setVisible(true);
     }
 }

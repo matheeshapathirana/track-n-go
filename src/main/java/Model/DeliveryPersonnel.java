@@ -8,8 +8,23 @@ public class DeliveryPersonnel {
     private String assignedRoute;
     private String deliveryHistory;
     private String availability;
+    private String createdOn;
+    private String lastUpdated;
 
     //constructor
+    public DeliveryPersonnel(int personnelID, String personnelName , String personnelContact, String schedule, String assignedRoute, String deliveryHistory, String availability, String createdOn, String lastUpdated) {
+        this.personnelID = personnelID;
+        this.personnelName = personnelName;
+        this.personnelContact = personnelContact;
+        this.schedule = schedule;
+        this.assignedRoute = assignedRoute;
+        this.deliveryHistory = deliveryHistory;
+        this.availability = availability;
+        this.createdOn = createdOn;
+        this.lastUpdated = lastUpdated;
+    }
+
+    //overloaded constructor for backward compatibility and DAO usage
     public DeliveryPersonnel(int personnelID, String personnelName, String personnelContact, String schedule, String assignedRoute, String deliveryHistory, String availability) {
         this.personnelID = personnelID;
         this.personnelName = personnelName;
@@ -28,68 +43,87 @@ public class DeliveryPersonnel {
     public int getPersonnelID() {
         return personnelID;
     }
-
-    public void setPersonnelID(int personnelID) {
-        this.personnelID = personnelID;
-    }
-
     public String getPersonnelName() {
         return personnelName;
     }
-
-    public void setPersonnelName(String personnelName) {
-        this.personnelName = personnelName;
-    }
-
     public String getPersonnelContact() {
         return personnelContact;
-    }
-
-    public void setPersonnelContact(String personnelContact) {
-        this.personnelContact = personnelContact;
     }
 
     public String getSchedule() {
         return schedule;
     }
 
-    public void setSchedule(String schedule) {
-        this.schedule = schedule;
-    }
-
     public String getAssignedRoute() {
         return assignedRoute;
-    }
-
-    public void setAssignedRoute(String assignedRoute) {
-        this.assignedRoute = assignedRoute;
     }
 
     public String getDeliveryHistory() {
         return deliveryHistory;
     }
 
-    public void setDeliveryHistory(String deliveryHistory) {
-        this.deliveryHistory = deliveryHistory;
-    }
     public String getAvailability() {
         return availability;
     }
+
+    public String getCreatedOn() {
+        return createdOn;
+    }
+
+    public String getLastUpdated() {
+        return lastUpdated;
+    }
+
+    //setters
+    public void setPersonnelID(int personnelID) {
+        this.personnelID = personnelID;
+    }
+    public void setPersonnelName(String personnelName) {
+        this.personnelName = personnelName;
+    }
+    public void setPersonnelContact(String personnelContact) {
+        this.personnelContact = personnelContact;
+    }
+
+    public void setSchedule(String schedule) {
+        this.schedule = schedule;
+    }
+
+    public void setAssignedRoute(String assignedRoute) {
+        this.assignedRoute = assignedRoute;
+    }
+
+    public void setDeliveryHistory(String deliveryHistory) {
+        this.deliveryHistory = deliveryHistory;
+    }
+
     public void setAvailability(String availability) {
         this.availability = availability;
     }
 
+    public void setCreatedOn(String createdOn) {
+        this.createdOn = createdOn;
+    }
+
+    public void setLastUpdated(String lastUpdated) {
+        this.lastUpdated = lastUpdated;
+    }
+
     //to string for table in view
+
     @Override
     public String toString() {
-        return "DeliveryPersonnel : " +
-                "Personnel ID = " + personnelID +
-                ", Personnel Name = '" + personnelName + '\'' +
-                ", Personnel Contact = '" + personnelContact + '\'' +
-                ", Schedule = '" + schedule + '\'' +
-                ", Assigned Route = '" + assignedRoute + '\'' +
-                ", Delivery History = '" + deliveryHistory + '\'' +
-                "Availability = " + availability;
+        return "DeliveryPersonnel{" +
+                "personnelID=" + personnelID +
+                ", personnelName='" + personnelName + '\'' +
+                ", personnelContact='" + personnelContact + '\'' +
+                ", schedule='" + schedule + '\'' +
+                ", assignedRoute='" + assignedRoute + '\'' +
+                ", deliveryHistory='" + deliveryHistory + '\'' +
+                ", availability='" + availability + '\'' +
+                ", createdOn='" + createdOn + '\'' +
+                ", lastUpdated='" + lastUpdated + '\'' +
+                '}';
     }
 }
 
