@@ -39,31 +39,23 @@ public class driverView {
         this.driverName = driverName;
         this.driverShipmentsController = new Controller.DriverShipmentsController();
         loadAssignedShipmentsTable(driverId);
-        // Add refresh button action
         if (refreshButton != null) {
             refreshButton.addActionListener(e -> loadAssignedShipmentsTable(this.driverId));
         }
-        // Load driver notifications on startup
         loadDriverNotifications(driverId);
-        // Optionally, set driver name somewhere in the UI
-        // Example: setTitle("Driver View - " + driverName);
-        // Show the current logged in driver name
         if (txtdriver != null) {
             txtdriver.setText(driverName);
         }
-        // Increase the window size for better visibility
         javax.swing.SwingUtilities.invokeLater(() -> {
             JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(tabbedPane1);
             if (frame != null) {
-                frame.setSize(800, 500); // Set to a larger size
-                frame.setLocationRelativeTo(null); // Center the window
+                frame.setSize(800, 500);
+                frame.setLocationRelativeTo(null);
             }
         });
-        // Set spinnerday min/max to 1 and 31
         if (spinnerday != null) {
             spinnerday.setModel(new javax.swing.SpinnerNumberModel(1, 1, 31, 1));
         }
-        // Set availableCheckBox state from DB
         try {
             Model.DeliveryPersonnelDAO dao = new Model.DeliveryPersonnelDAO();
             java.util.List<Model.DeliveryPersonnel> personnelList = dao.getAllPersonnel();
@@ -76,9 +68,7 @@ public class driverView {
                 }
             }
         } catch (Exception ex) {
-            // Ignore errors
         }
-        // Add listener to availableCheckBox to update DB
         if (availableCheckBox != null) {
             availableCheckBox.addActionListener(e -> {
                 String newAvailability = availableCheckBox.isSelected() ? "Available" : "Unavailable";
@@ -86,9 +76,7 @@ public class driverView {
                     Model.DeliveryPersonnel p = new Model.DeliveryPersonnel();
                     p.setPersonnelID(this.driverId);
                     p.setAvailability(newAvailability);
-                    // Only update availability field in DB
                     Controller.DeliveryPersonnelController controller = new Controller.DeliveryPersonnelController();
-                    // Fetch current personnel info to avoid overwriting other fields
                     Model.DeliveryPersonnelDAO dao = new Model.DeliveryPersonnelDAO();
                     java.util.List<Model.DeliveryPersonnel> personnelList = dao.getAllPersonnel();
                     for (Model.DeliveryPersonnel dp : personnelList) {
@@ -136,13 +124,11 @@ public class driverView {
         if (tracktable != null) {
             tracktable.setModel(model);
             tracktable.getTableHeader().setVisible(true);
-            // Add row selection listener to fill fields
             tracktable.getSelectionModel().addListSelectionListener(e -> {
                 int selectedRow = tracktable.getSelectedRow();
                 if (selectedRow >= 0) {
                     txtshipmentid.setText(String.valueOf(tracktable.getValueAt(selectedRow, 0)));
                     txtlocation.setText(String.valueOf(tracktable.getValueAt(selectedRow, 6)));
-                    // Parse estimated delivery time to set comboBoxyear, comboBoxmonth, spinnerday
                     String estDelivery = String.valueOf(tracktable.getValueAt(selectedRow, 7));
                     if (estDelivery != null && !estDelivery.isEmpty() && !estDelivery.equals("null")) {
                         try {
@@ -155,7 +141,6 @@ public class driverView {
                                 spinnerday.setValue(Integer.parseInt(dateParts[2]));
                             }
                         } catch (Exception ex) {
-                            // Ignore parse errors
                         }
                     }
                     txtdelays.setText(String.valueOf(tracktable.getValueAt(selectedRow, 8)));
@@ -184,18 +169,15 @@ public class driverView {
         }
     }
 
-    // Optionally, provide a getter for the main panel
     public JTabbedPane getMainPanel() {
         return tabbedPane1;
     }
 
     public static void main(String[] args) {
-        // Prevent direct access: show warning and redirect to login
         JOptionPane.showMessageDialog(null, "Please login as a driver to access this view.", "Access Denied", JOptionPane.WARNING_MESSAGE);
         loginView.main(new String[]{});
     }
 
-    // Add update button logic
     {
         if (btnupdatetrack != null) {
             btnupdatetrack.addActionListener(e -> {
@@ -211,7 +193,6 @@ public class driverView {
                     int urgent = urgentCheckBox.isSelected() ? 1 : 0;
                     String status = comboBox1.getSelectedItem() != null ? comboBox1.getSelectedItem().toString() : "";
                     Controller.ShipmentsController controller = new Controller.ShipmentsController();
-                    // Update all fields including status
                     controller.updateShipmentStatusAndFields(shipmentId, location, deliveryTime, delay, urgent, status);
                     loadAssignedShipmentsTable(driverId);
                     JOptionPane.showMessageDialog(null, "Shipment updated successfully.");
@@ -220,11 +201,9 @@ public class driverView {
                 }
             });
         }
-        // Add refresh button action for notifications
         if (refreshButton != null) {
             refreshButton.addActionListener(e -> loadDriverNotifications(this.driverId));
         }
-        // Add clear all button action for notifications
         if (clearAllButton != null) {
             clearAllButton.addActionListener(e -> {
                 int confirm = JOptionPane.showConfirmDialog(null, "Are you sure you want to clear all notifications?", "Confirm", JOptionPane.YES_NO_OPTION);
@@ -236,7 +215,6 @@ public class driverView {
                 }
             });
         }
-        // Add delete button action for notifications
         if (deleteButton != null) {
             deleteButton.addActionListener(e -> {
                 int selectedRow = table1.getSelectedRow();
@@ -257,11 +235,9 @@ public class driverView {
                 }
             });
         }
-        // Add refresh button for tracktable
         if (btnrefreshtrack != null) {
             btnrefreshtrack.addActionListener(e -> loadAssignedShipmentsTable(this.driverId));
         }
-        // Add clear fields button action for tracktable fields
         if (btnclearfields != null) {
             btnclearfields.addActionListener(e -> {
                 txtshipmentid.setText("");

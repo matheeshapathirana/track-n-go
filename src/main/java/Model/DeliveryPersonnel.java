@@ -11,7 +11,6 @@ public class DeliveryPersonnel {
     private String createdOn;
     private String lastUpdated;
 
-    //constructor
     public DeliveryPersonnel(int personnelID, String personnelName , String personnelContact, String schedule, String assignedRoute, String deliveryHistory, String availability, String createdOn, String lastUpdated) {
         this.personnelID = personnelID;
         this.personnelName = personnelName;
@@ -24,7 +23,6 @@ public class DeliveryPersonnel {
         this.lastUpdated = lastUpdated;
     }
 
-    //overloaded constructor for backward compatibility and DAO usage
     public DeliveryPersonnel(int personnelID, String personnelName, String personnelContact, String schedule, String assignedRoute, String deliveryHistory, String availability) {
         this.personnelID = personnelID;
         this.personnelName = personnelName;
@@ -35,11 +33,9 @@ public class DeliveryPersonnel {
         this.availability = availability;
     }
 
-    //default constructor for delete in views
     public DeliveryPersonnel() {
     }
 
-    //setters and getters
     public int getPersonnelID() {
         return personnelID;
     }
@@ -49,32 +45,24 @@ public class DeliveryPersonnel {
     public String getPersonnelContact() {
         return personnelContact;
     }
-
     public String getSchedule() {
         return schedule;
     }
-
     public String getAssignedRoute() {
         return assignedRoute;
     }
-
     public String getDeliveryHistory() {
         return deliveryHistory;
     }
-
     public String getAvailability() {
         return availability;
     }
-
     public String getCreatedOn() {
         return createdOn;
     }
-
     public String getLastUpdated() {
         return lastUpdated;
     }
-
-    //setters
     public void setPersonnelID(int personnelID) {
         this.personnelID = personnelID;
     }
@@ -84,33 +72,24 @@ public class DeliveryPersonnel {
     public void setPersonnelContact(String personnelContact) {
         this.personnelContact = personnelContact;
     }
-
     public void setSchedule(String schedule) {
         this.schedule = schedule;
     }
-
     public void setAssignedRoute(String assignedRoute) {
         this.assignedRoute = assignedRoute;
     }
-
     public void setDeliveryHistory(String deliveryHistory) {
         this.deliveryHistory = deliveryHistory;
     }
-
     public void setAvailability(String availability) {
         this.availability = availability;
     }
-
     public void setCreatedOn(String createdOn) {
         this.createdOn = createdOn;
     }
-
     public void setLastUpdated(String lastUpdated) {
         this.lastUpdated = lastUpdated;
     }
-
-    //to string for table in view
-
     @Override
     public String toString() {
         return "DeliveryPersonnel{" +

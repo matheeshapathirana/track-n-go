@@ -25,7 +25,7 @@ public class TrackShipmentProgressPoller {
 
     public void startPolling() {
         ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-        scheduler.scheduleAtFixedRate(this::poll, 0, 3, TimeUnit.SECONDS); // Poll every 3 seconds
+        scheduler.scheduleAtFixedRate(this::poll, 0, 3, TimeUnit.SECONDS);
     }
 
     private void poll() {

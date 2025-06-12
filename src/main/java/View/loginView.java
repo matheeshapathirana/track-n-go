@@ -38,20 +38,19 @@ public class loginView extends JFrame {
                 String email = txtloginemail.getText();
                 String password = new String(txtloginpassword.getPassword());
                 LoginController controller = new LoginController();
-                String role = controller.login(email, password); // Get the user's role
+                String role = controller.login(email, password);
                 if (role != null) {
                     JOptionPane.showMessageDialog(loginbackpanel, "Login successful!");
                     if (role.equals("admin")) {
                         adminView view = new adminView(email);
                         JFrame frame = new JFrame("Admin View");
-                        frame.setContentPane(view.getMainPanel()); // use public getter
+                        frame.setContentPane(view.getMainPanel());
                         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                         frame.setSize(800, 600);
                         frame.setLocationRelativeTo(null);
                         frame.setVisible(true);
                         dispose();
                     } else if (role.equals("user")) {
-                        // Get username and userId from DB
                         UsersDAO usersDAO = new UsersDAO();
                         String username = usersDAO.getUsernameByEmail(email);
                         int customerId = usersDAO.getUserIdByEmail(email);
@@ -88,16 +87,14 @@ public class loginView extends JFrame {
                 String username = txtregisterusername.getText();
                 String email = txtregisteremail.getText();
                 String password = new String(txtregisterpassword.getPassword());
-                // Default role is 'user'. Do not set admin role automatically.
                 String role = "user";
                 LoginController controller = new LoginController();
                 boolean registered = controller.register(username, email, password, role);
                 if (registered) {
                     JOptionPane.showMessageDialog(registerbackpanel, "Registration successful!");
                     if (role.equals("admin")) {
-                        // Open adminView if role is admin
                         View.adminView.main(new String[]{});
-                        dispose(); // Close the login window
+                        dispose();
                     }
                 } else {
                     JOptionPane.showMessageDialog(registerbackpanel, "Registration failed. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -115,7 +112,7 @@ public class loginView extends JFrame {
         } else if (view.registerbackpanel != null) {
             view.setContentPane(view.registerbackpanel);
         } else {
-            throw new IllegalStateException("No valid content pane found! All are null.");
+            throw new IllegalStateException("No valid content pane found.");
         }
         view.setTitle("Login/Register");
         view.setSize(600, 400);

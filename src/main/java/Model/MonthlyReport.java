@@ -6,7 +6,6 @@ public class MonthlyReport {
     private double averageRating;
     private int totalShipments;
 
-    // Getters and Setters
     public int getTotalDeliveries() { return totalDeliveries; }
     public void setTotalDeliveries(int totalDeliveries) { this.totalDeliveries = totalDeliveries; }
 

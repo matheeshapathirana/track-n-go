@@ -17,7 +17,7 @@ public class DBConnection {
         config.setJdbcUrl(URL);
         config.setUsername(USER);
         config.setPassword(PASSWORD);
-        config.setMaximumPoolSize(10); // You can adjust pool size as needed
+        config.setMaximumPoolSize(10);
         config.setDriverClassName("com.mysql.cj.jdbc.Driver");
         dataSource = new HikariDataSource(config);
     }

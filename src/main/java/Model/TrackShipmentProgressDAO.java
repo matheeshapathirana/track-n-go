@@ -1,13 +1,11 @@
 package Model;
 
+import Utility.DBConnection;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import Utility.DBConnection;
 
 public class TrackShipmentProgressDAO {
-
-    // Add a new shipment progress record (actually updates the shipment row)
     public void addShipmentProgress(TrackShipmentProgress progress) {
         long startTime = System.currentTimeMillis();
         String sql = "UPDATE Shipments SET currentLocation = ?, estimatedDeliveryTime = ?, delay = ?, shipmentStatus = ? WHERE shipmentID = ?";
@@ -31,12 +29,10 @@ public class TrackShipmentProgressDAO {
         System.out.println("[DB Timing] addShipmentProgress - Total time: " + (endTime - startTime) + " ms");
     }
 
-    // Update an existing shipment progress record (same as add, since it's an update)
     public void updateShipmentProgress(TrackShipmentProgress progress) {
         addShipmentProgress(progress);
     }
 
-    // Delete a shipment progress record (set progress fields to NULL/default, not delete the shipment)
     public void deleteShipmentProgress(int shipmentID) {
         long startTime = System.currentTimeMillis();
         String sql = "UPDATE Shipments SET currentLocation = NULL, estimatedDeliveryTime = NULL, delay = NULL, shipmentStatus = 'Pending' WHERE shipmentID = ?";
@@ -56,7 +52,6 @@ public class TrackShipmentProgressDAO {
         System.out.println("[DB Timing] deleteShipmentProgress - Total time: " + (endTime - startTime) + " ms");
     }
 
-    // Retrieve all shipment progress records
     public List<TrackShipmentProgress> getAllShipmentProgress() {
         long startTime = System.currentTimeMillis();
         List<TrackShipmentProgress> list = new ArrayList<>();
@@ -89,7 +84,6 @@ public class TrackShipmentProgressDAO {
         return list;
     }
 
-    // Retrieve a shipment progress record by shipmentID
     public TrackShipmentProgress getShipmentProgressByTrackingId(int shipmentID) {
         long startTime = System.currentTimeMillis();
         String sql = "SELECT * FROM Shipments WHERE shipmentID = ?";

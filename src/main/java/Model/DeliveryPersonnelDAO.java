@@ -5,22 +5,19 @@ import java.util.ArrayList;
 import java.util.List;
 import Utility.DBConnection;
 
-//setting up the connection to the db created
 public class DeliveryPersonnelDAO {
-    //add drivers using sql
     public void addPersonnel(DeliveryPersonnel p) {
-        long startTime = System.currentTimeMillis();  //Declare startTime at the beginning
+        long startTime = System.currentTimeMillis();
         String sql = "INSERT INTO DeliveryPersonnel(personnelID, personnelName, personnelContact, schedule, assignedRoute, deliveryHistory, availability) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, p.getPersonnelID());         // userID
-            stmt.setString(2, p.getPersonnelName());    // username
+            stmt.setInt(1, p.getPersonnelID());
+            stmt.setString(2, p.getPersonnelName());
             stmt.setString(3, p.getPersonnelContact());
             stmt.setString(4, p.getSchedule());
             stmt.setString(5, p.getAssignedRoute());
             stmt.setString(6, p.getDeliveryHistory());
             stmt.setString(7, p.getAvailability());
-
             stmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println("Error adding personnel: " + e.getMessage());
@@ -29,7 +26,6 @@ public class DeliveryPersonnelDAO {
         System.out.println("[DB Timing] addPersonnel - Total time: " + (endTime - startTime) + " ms");
     }
 
-    //updating delivery personnel
     public void updatePersonnel(DeliveryPersonnel p) {
         long startTime = System.currentTimeMillis();
         String sql = "UPDATE DeliveryPersonnel SET personnelContact = ?, schedule = ?, assignedRoute = ?, deliveryHistory = ?, availability = ? WHERE personnelID = ?";
@@ -56,7 +52,6 @@ public class DeliveryPersonnelDAO {
         System.out.println("[DB Timing] updatePersonnel - Total time: " + (endTime - startTime) + " ms");
     }
 
-    //deleting personnel
     public void deletePersonnel(int personnelID) {
         long startTime = System.currentTimeMillis();
         String sql = "DELETE FROM DeliveryPersonnel WHERE personnelID = ?";
@@ -77,7 +72,6 @@ public class DeliveryPersonnelDAO {
         System.out.println("[DB Timing] deletePersonnel - Total time: " + (endTime - startTime) + " ms");
     }
 
-    //getting all saved records from the database
     public List <DeliveryPersonnel> getAllPersonnel() {
         long startTime = System.currentTimeMillis();
         List<DeliveryPersonnel> list = new ArrayList<>();
@@ -92,7 +86,7 @@ public class DeliveryPersonnelDAO {
             while(result.next()){
                 DeliveryPersonnel p = new DeliveryPersonnel();
                 p.setPersonnelID(result.getInt("personnelID"));
-                p.setPersonnelName(result.getString("username")); // from Users
+                p.setPersonnelName(result.getString("username"));
                 p.setPersonnelContact(result.getString("personnelContact"));
                 p.setSchedule(result.getString("schedule"));
                 p.setAssignedRoute(result.getString("assignedRoute"));

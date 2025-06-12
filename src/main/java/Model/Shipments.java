@@ -14,7 +14,6 @@ public class Shipments {
     private String currentLocation;
     private String delay;
 
-    // Constructor
     public Shipments(int shipmentID, String receiverName, String shipmentStatus, Integer assignedDriverID, Timestamp createdOn, Integer userid) {
         this.shipmentID = shipmentID;
         this.receiverName = receiverName;
@@ -24,7 +23,6 @@ public class Shipments {
         this.userid = userid;
     }
 
-    // Constructor for adding new shipments
     public Shipments(String receiverName, String shipmentStatus, Integer assignedDriverID, Integer userid, String estimatedDeliveryTime) {
         this.receiverName = receiverName;
         this.shipmentStatus = shipmentStatus;
@@ -33,7 +31,6 @@ public class Shipments {
         this.estimatedDeliveryTime = estimatedDeliveryTime;
     }
 
-    // Updated constructor to include all fields
     public Shipments(int shipmentID, String receiverName, String shipmentStatus, Integer assignedDriverID, Timestamp createdOn, Integer userid, Integer urgent, String currentLocation, String estimatedDeliveryTime, String delay) {
         this.shipmentID = shipmentID;
         this.receiverName = receiverName;
@@ -47,7 +44,6 @@ public class Shipments {
         this.delay = delay;
     }
 
-    // Getters
     public int getShipmentID() {
         return shipmentID;
     }
@@ -73,7 +69,6 @@ public class Shipments {
     public String getCurrentLocation() { return currentLocation; }
     public String getDelay() { return delay; }
 
-    // Setters
     public void setShipmentStatus(String shipmentStatus) {
         this.shipmentStatus = shipmentStatus;
     }
