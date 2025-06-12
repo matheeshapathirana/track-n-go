@@ -44,6 +44,8 @@ public class userView {
     private JComboBox availableDriversDropdown; // Add this to your form and link
     private JTable availableDriversTable; // Add this to your form and link
     private JButton refreshButton;
+    private JButton refreshButton1;
+    private JCheckBox urgentCheckBox;
 
     // Store the logged-in customerId as a field
     private int customerId = -1;
@@ -109,12 +111,16 @@ public class userView {
         if (refreshButton != null) {
             refreshButton.addActionListener(e -> loadAvailableDrivers());
         }
+        if (refreshButton1 != null) {
+            refreshButton1.addActionListener(e -> loadTrackShipmentProgressTable(customerId));
+        }
 
         btnaddshipment.addActionListener(e -> {
             try {
                 String receiverName = txtreceivername.getText();
                 String status = "Pending";
                 Integer driverID = null;
+                int urgent = (urgentCheckBox != null && urgentCheckBox.isSelected()) ? 1 : 0;
                 if (availableDriversDropdown != null && availableDriversDropdown.getSelectedItem() != null) {
                     String selected = availableDriversDropdown.getSelectedItem().toString();
                     // Always look up by name
@@ -160,7 +166,7 @@ public class userView {
                     return;
                 }
                 Controller.ShipmentsController controller = new Controller.ShipmentsController();
-                controller.addShipment(receiverName, status, driverID, customerId, estimatedDeliveryTime);
+                controller.addShipment(receiverName, status, driverID, customerId, estimatedDeliveryTime, urgent);
                 // Notify the driver after assignment (add to DriverNotifications table)
                 if (driverID != null) {
                     Model.DriverNotificationDAO driverNotificationDAO = new Model.DriverNotificationDAO();
