@@ -54,10 +54,14 @@ public class driverView {
         javax.swing.SwingUtilities.invokeLater(() -> {
             JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(tabbedPane1);
             if (frame != null) {
-                frame.setSize(1200, 800); // Set to a larger size
+                frame.setSize(800, 500); // Set to a larger size
                 frame.setLocationRelativeTo(null); // Center the window
             }
         });
+        // Set spinnerday min/max to 1 and 31
+        if (spinnerday != null) {
+            spinnerday.setModel(new javax.swing.SpinnerNumberModel(1, 1, 31, 1));
+        }
     }
 
     private void loadAssignedShipmentsTable(int driverId) {

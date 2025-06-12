@@ -598,6 +598,11 @@ public class adminView {
                 }
             });
         }
+
+        // Set spinnerday min/max to 1 and 31
+        if (spinnerday != null) {
+            spinnerday.setModel(new javax.swing.SpinnerNumberModel(1, 1, 31, 1));
+        }
     }
 
     // Load all shipment tracking data into the table

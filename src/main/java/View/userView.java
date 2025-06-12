@@ -184,6 +184,11 @@ public class userView {
                 }
             });
         }
+
+        // Set spinnerday min/max to 1 and 31
+        if (spinnerday != null) {
+            spinnerday.setModel(new javax.swing.SpinnerNumberModel(1, 1, 31, 1));
+        }
     }
 
     // Optionally, provide a method to get the logged-in user ID
