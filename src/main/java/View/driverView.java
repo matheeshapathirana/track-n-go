@@ -26,6 +26,7 @@ public class driverView {
     private JTextField txtdelays;
     private JLabel lblwelcome;
     private JLabel txtdriver;
+    private JCheckBox availableCheckBox;
     private JButton btnclearfields;
 
     private int driverId = -1;
@@ -61,6 +62,51 @@ public class driverView {
         // Set spinnerday min/max to 1 and 31
         if (spinnerday != null) {
             spinnerday.setModel(new javax.swing.SpinnerNumberModel(1, 1, 31, 1));
+        }
+        // Set availableCheckBox state from DB
+        try {
+            Model.DeliveryPersonnelDAO dao = new Model.DeliveryPersonnelDAO();
+            java.util.List<Model.DeliveryPersonnel> personnelList = dao.getAllPersonnel();
+            for (Model.DeliveryPersonnel p : personnelList) {
+                if (p.getPersonnelID() == this.driverId) {
+                    if (availableCheckBox != null) {
+                        availableCheckBox.setSelected("Available".equalsIgnoreCase(p.getAvailability()));
+                    }
+                    break;
+                }
+            }
+        } catch (Exception ex) {
+            // Ignore errors
+        }
+        // Add listener to availableCheckBox to update DB
+        if (availableCheckBox != null) {
+            availableCheckBox.addActionListener(e -> {
+                String newAvailability = availableCheckBox.isSelected() ? "Available" : "Unavailable";
+                try {
+                    Model.DeliveryPersonnel p = new Model.DeliveryPersonnel();
+                    p.setPersonnelID(this.driverId);
+                    p.setAvailability(newAvailability);
+                    // Only update availability field in DB
+                    Controller.DeliveryPersonnelController controller = new Controller.DeliveryPersonnelController();
+                    // Fetch current personnel info to avoid overwriting other fields
+                    Model.DeliveryPersonnelDAO dao = new Model.DeliveryPersonnelDAO();
+                    java.util.List<Model.DeliveryPersonnel> personnelList = dao.getAllPersonnel();
+                    for (Model.DeliveryPersonnel dp : personnelList) {
+                        if (dp.getPersonnelID() == this.driverId) {
+                            p.setPersonnelName(dp.getPersonnelName());
+                            p.setPersonnelContact(dp.getPersonnelContact());
+                            p.setSchedule(dp.getSchedule());
+                            p.setAssignedRoute(dp.getAssignedRoute());
+                            p.setDeliveryHistory(dp.getDeliveryHistory());
+                            break;
+                        }
+                    }
+                    controller.updateDeliveryPersonnel(p);
+                    JOptionPane.showMessageDialog(null, "Availability updated to: " + newAvailability);
+                } catch (Exception ex2) {
+                    JOptionPane.showMessageDialog(null, "Error updating availability: " + ex2.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            });
         }
     }
 
