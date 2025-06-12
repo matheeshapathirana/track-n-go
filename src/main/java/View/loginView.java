@@ -42,7 +42,13 @@ public class loginView extends JFrame {
                 if (role != null) {
                     JOptionPane.showMessageDialog(loginbackpanel, "Login successful!");
                     if (role.equals("admin")) {
-                        View.adminView.main(new String[]{});
+                        adminView view = new adminView(email);
+                        JFrame frame = new JFrame("Admin View");
+                        frame.setContentPane(view.getMainPanel()); // use public getter
+                        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                        frame.setSize(800, 600);
+                        frame.setLocationRelativeTo(null);
+                        frame.setVisible(true);
                         dispose();
                     } else if (role.equals("user")) {
                         // Get username and userId from DB

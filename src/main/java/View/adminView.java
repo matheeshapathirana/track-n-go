@@ -143,8 +143,6 @@ public class adminView {
         txtID.setEditable(false); // Make ID field non-editable
         txtshipmentid.setEditable(false);
         txttrackingid.setEditable(false); // trackingID should not be editable
-        txtemail.setEditable(false);
-
 
         // Initialize availability combo box options
         comboboxavailability.addItem("Available");
@@ -603,6 +601,18 @@ public class adminView {
         if (spinnerday != null) {
             spinnerday.setModel(new javax.swing.SpinnerNumberModel(1, 1, 31, 1));
         }
+
+        txtContact.setDocument(new javax.swing.text.PlainDocument() {
+            @Override
+            public void insertString(int offs, String str, javax.swing.text.AttributeSet a) throws javax.swing.text.BadLocationException {
+                if (str == null) return;
+                String current = getText(0, getLength());
+                // Only allow digits and max 10 characters
+                if ((current + str).matches("\\d{0,10}") && str.matches("\\d+")) {
+                    super.insertString(offs, str, a);
+                }
+            }
+        });
     }
 
     // Load all shipment tracking data into the table
@@ -783,16 +793,10 @@ public class adminView {
     }
 
     public static void main(String[] args) {
-        // Start scheduled polling for shipment progress changes
-        new Model.TrackShipmentProgressPoller().startPolling();
-        // Example: pass a dummy logged-in user email (should be set from login/session)
-        JFrame frame = new JFrame("Admin View");
-        adminView view = new adminView("admin@admin.com"); // Replace with actual logged-in user email
-        frame.setContentPane(view.tabbedPane1);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(800, 600);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+        // Prevent direct execution of adminView
+        JOptionPane.showMessageDialog(null, "Access Denied. Please login first.", "Access Denied", JOptionPane.WARNING_MESSAGE);
+        // Redirect to loginView
+        View.loginView.main(args); // Assuming loginView has a main method
     }
 
     // Declare components matching your GUI
@@ -813,6 +817,9 @@ public class adminView {
     public JLabel getLblTotalDeliveriesNumber() { return lblTotalDeliveriesNumber; }
     public JLabel getLblDelayedDeliveriesNumber() { return lblDelayedDeliveriesNumber; }
     public JLabel getLblTotalShipmentsNumber() { return lblTotalShipmentsNumber; }
+    public JTabbedPane getMainPanel() {
+        return tabbedPane1;
+    }
 
 }
 
