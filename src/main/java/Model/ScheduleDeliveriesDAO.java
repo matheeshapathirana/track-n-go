@@ -21,7 +21,7 @@ public class ScheduleDeliveriesDAO {
 
             while (rs.next()) {
                 TrackShipmentProgress progress = new TrackShipmentProgress();
-                progress.setTrackingID(rs.getInt("shipmentID")); // Use shipmentID as trackingID
+                progress.setTrackingID(rs.getInt("shipmentID"));
                 progress.setShipmentID(rs.getInt("shipmentID"));
                 progress.setCurrentLocation(rs.getString("currentLocation"));
                 java.sql.Timestamp estTime = rs.getTimestamp("estimatedDeliveryTime");

@@ -23,7 +23,7 @@ public class CustomerNotificationDAO {
             while (rs.next()) {
                 CustomerNotification notification = new CustomerNotification(
                         rs.getInt("notificationID"),
-                        null, // recipientType removed
+                        null,
                         rs.getInt("recipientID"),
                         rs.getString("message"),
                         rs.getString("createdOn")
@@ -49,7 +49,6 @@ public class CustomerNotificationDAO {
         }
     }
 
-    // Fetch all notifications (for admin or global view)
     public List<CustomerNotification> getAllNotifications() {
         List<CustomerNotification> notifications = new ArrayList<>();
         String sql = "SELECT * FROM Notifications ORDER BY createdOn DESC";
@@ -58,7 +57,7 @@ public class CustomerNotificationDAO {
             while (rs.next()) {
                 CustomerNotification notification = new CustomerNotification(
                         rs.getInt("notificationID"),
-                        null, // recipientType removed
+                        null,
                         rs.getInt("recipientID"),
                         rs.getString("message"),
                         rs.getString("createdOn")
@@ -83,7 +82,7 @@ public class CustomerNotificationDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return -1; // Return -1 if no matching notification is found
+        return -1;
     }
 
     public int getNotificationIdByMessageAndTimestamp(String message, String timestamp, int userId) {
@@ -100,7 +99,7 @@ public class CustomerNotificationDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return -1; // Return -1 if no matching notification is found
+        return -1;
     }
 
     public void deleteNotification(int notificationId) {

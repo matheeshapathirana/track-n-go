@@ -16,7 +16,6 @@ public class MonthlyReportDAO {
         MonthlyReport report = new MonthlyReport();
 
         try {
-            // Total Deliveries (Delivered status)
             String sqlDeliveries = "SELECT COUNT(*) FROM Shipments WHERE YEAR(createdOn) = ? AND MONTHNAME(createdOn) = ? AND shipmentStatus = 'Delivered'";
             try (PreparedStatement stmt = conn.prepareStatement(sqlDeliveries)) {
                 stmt.setInt(1, year);
@@ -25,7 +24,6 @@ public class MonthlyReportDAO {
                 if(rs.next()) report.setTotalDeliveries(rs.getInt(1));
             }
 
-            // Delayed Deliveries (Delayed status from TrackShipmentProgress)
             String sqlDelayed = "SELECT COUNT(*) FROM TrackShipmentProgress tsp JOIN Shipments s ON tsp.shipmentID = s.shipmentID WHERE YEAR(s.createdOn) = ? AND MONTHNAME(s.createdOn) = ? AND tsp.status = 'Delayed'";
             try (PreparedStatement stmt = conn.prepareStatement(sqlDelayed)) {
                 stmt.setInt(1, year);
@@ -34,10 +32,6 @@ public class MonthlyReportDAO {
                 if(rs.next()) report.setDelayedDeliveries(rs.getInt(1));
             }
 
-            // Average Rating (skip if no customer_feedback table)
-            // report.setAverageRating(0.0); // Set to 0 or fetch if table exists
-
-            // Total Shipments (all statuses)
             String sqlShipments = "SELECT COUNT(*) FROM Shipments WHERE YEAR(createdOn) = ? AND MONTHNAME(createdOn) = ?";
             try (PreparedStatement stmt = conn.prepareStatement(sqlShipments)) {
                 stmt.setInt(1, year);

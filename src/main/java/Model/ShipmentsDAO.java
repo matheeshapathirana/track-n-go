@@ -1,12 +1,11 @@
 package Model;
 
+import Utility.DBConnection;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import Utility.DBConnection;
 
 public class ShipmentsDAO {
-    // Add a new shipment
     public void addShipment(Shipments shipment) {
         long startTime = System.currentTimeMillis();
         String sql = "INSERT INTO Shipments (receiverName, shipmentStatus, assignedDriverID, userid, estimatedDeliveryTime) VALUES (?, ?, ?, ?, ?)";
@@ -42,7 +41,6 @@ public class ShipmentsDAO {
         System.out.println("[DB Timing] addShipment - Total time: " + (endTime - startTime) + " ms");
     }
 
-    // Update an existing shipment
     public void updateShipment(Shipments shipment) {
         long startTime = System.currentTimeMillis();
         String sql = "UPDATE Shipments SET receiverName = ?, shipmentStatus = ?, assignedDriverID = ?, userid = ? WHERE shipmentID = ?";
@@ -78,7 +76,6 @@ public class ShipmentsDAO {
         System.out.println("[DB Timing] updateShipment - Total time: " + (endTime - startTime) + " ms");
     }
 
-    // Delete a shipment
     public void deleteShipment(int shipmentID) {
         long startTime = System.currentTimeMillis();
         String sql = "DELETE FROM Shipments WHERE shipmentID = ?";
@@ -102,7 +99,6 @@ public class ShipmentsDAO {
         System.out.println("[DB Timing] deleteShipment - Total time: " + (endTime - startTime) + " ms");
     }
 
-    // Get all shipments
     public List<Shipments> getAllShipments() {
         long startTime = System.currentTimeMillis();
         List<Shipments> list = new ArrayList<>();
@@ -122,7 +118,11 @@ public class ShipmentsDAO {
                         result.getString("shipmentStatus"),
                         result.getObject("assignedDriverID") != null ? result.getInt("assignedDriverID") : null,
                         result.getTimestamp("createdOn"),
-                        result.getObject("userid") != null ? result.getInt("userid") : null
+                        result.getObject("userid") != null ? result.getInt("userid") : null,
+                        result.getObject("urgent") != null ? result.getInt("urgent") : null,
+                        result.getString("currentLocation"),
+                        result.getString("estimatedDeliveryTime"),
+                        result.getObject("delay") != null ? String.valueOf(result.getObject("delay")) : null
                 );
                 list.add(shipment);
             }
@@ -137,7 +137,6 @@ public class ShipmentsDAO {
         return list;
     }
 
-    // Get shipments by status
     public List<Shipments> getShipmentsByStatus(String status) {
         long startTime = System.currentTimeMillis();
         List<Shipments> list = new ArrayList<>();
@@ -159,7 +158,11 @@ public class ShipmentsDAO {
                         result.getString("shipmentStatus"),
                         result.getObject("assignedDriverID") != null ? result.getInt("assignedDriverID") : null,
                         result.getTimestamp("createdOn"),
-                        result.getObject("userid") != null ? result.getInt("userid") : null
+                        result.getObject("userid") != null ? result.getInt("userid") : null,
+                        result.getObject("urgent") != null ? result.getInt("urgent") : null,
+                        result.getString("currentLocation"),
+                        result.getString("estimatedDeliveryTime"),
+                        result.getObject("delay") != null ? String.valueOf(result.getObject("delay")) : null
                 );
                 list.add(shipment);
             }
@@ -172,5 +175,24 @@ public class ShipmentsDAO {
         long endTime = System.currentTimeMillis();
         System.out.println("[DB Timing] getShipmentsByStatus - Total time: " + (endTime - startTime) + " ms");
         return list;
+    }
+
+    public void updateShipmentFields(int shipmentID, String currentLocation, String estimatedDeliveryTime, String delay, int urgent) {
+        long startTime = System.currentTimeMillis();
+        String sql = "UPDATE Shipments SET currentLocation = ?, estimatedDeliveryTime = ?, delay = ?, urgent = ? WHERE shipmentID = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement s = conn.prepareStatement(sql)) {
+            s.setString(1, currentLocation);
+            s.setString(2, estimatedDeliveryTime);
+            s.setString(3, delay);
+            s.setInt(4, urgent);
+            s.setInt(5, shipmentID);
+            s.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Error updating shipment fields: " + e.getMessage());
+            e.printStackTrace();
+        }
+        long endTime = System.currentTimeMillis();
+        System.out.println("[DB Timing] updateShipmentFields - Total time: " + (endTime - startTime) + " ms");
     }
 }

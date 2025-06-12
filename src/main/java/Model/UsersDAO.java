@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UsersDAO {
-    // Add a new user
     public boolean addUser(Users user, String role) {
         String sql = "INSERT INTO Users (email, username, password, role) VALUES (?, ?, ?, ?)";
         try (Connection conn = DBConnection.getConnection();
@@ -22,7 +21,6 @@ public class UsersDAO {
         }
     }
 
-    // Update an existing user
     public boolean updateUser(Users user, String role) {
         String sql = "UPDATE Users SET username=?, password=?, role=? WHERE email=?";
         try (Connection conn = DBConnection.getConnection();
@@ -38,7 +36,6 @@ public class UsersDAO {
         }
     }
 
-    // Delete a user
     public boolean deleteUser(String email) {
         String sql = "DELETE FROM Users WHERE email=?";
         try (Connection conn = DBConnection.getConnection();
@@ -51,7 +48,6 @@ public class UsersDAO {
         }
     }
 
-    // Get all users
     public List<Users> getAllUsers() {
         List<Users> users = new ArrayList<>();
         String sql = "SELECT email, username, password, userid FROM Users";
@@ -72,7 +68,6 @@ public class UsersDAO {
         return users;
     }
 
-    // Get user role by email
     public String getUserRole(String email) {
         String sql = "SELECT role FROM Users WHERE email=?";
         try (Connection conn = DBConnection.getConnection();
@@ -89,7 +84,6 @@ public class UsersDAO {
         return null;
     }
 
-    // Get username by email
     public String getUsernameByEmail(String email) {
         String username = null;
         String sql = "SELECT username FROM Users WHERE email=?";
@@ -107,7 +101,6 @@ public class UsersDAO {
         return username;
     }
 
-    // Get user ID by email
     public int getUserIdByEmail(String email) {
         String sql = "SELECT userid FROM Users WHERE email=?";
         try (Connection conn = DBConnection.getConnection();

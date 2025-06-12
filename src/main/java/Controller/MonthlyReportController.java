@@ -14,7 +14,6 @@ public class MonthlyReportController {
     }
 
     private void initialize() {
-        // Add generate button listener
         view.getBtnGenerate().addActionListener(e -> generateReport());
     }
 
@@ -24,7 +23,6 @@ public class MonthlyReportController {
 
         MonthlyReport report = dao.generateReport(year, month);
 
-        // Update GUI labels
         view.getLblTotalDeliveriesNumber().setText(String.valueOf(report.getTotalDeliveries()));
         view.getLblDelayedDeliveriesNumber().setText(String.valueOf(report.getDelayedDeliveries()));
         view.getLblTotalShipmentsNumber().setText(String.valueOf(report.getTotalShipments()));

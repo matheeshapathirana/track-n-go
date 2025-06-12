@@ -11,7 +11,6 @@ public class TrackShipmentProgress {
     private int trackingID;
     private int userid;
 
-    // Getters and setters
     public int getShipmentID() {
         return shipmentID;
     }

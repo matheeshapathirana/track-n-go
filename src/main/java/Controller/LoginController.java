@@ -7,9 +7,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 public class LoginController {
-
-    // Method for user login
-    // Returns the user's role if authenticated, otherwise null
     public String login(String email, String password) {
         String userRole = null;
         long startTime = System.currentTimeMillis();
@@ -26,7 +23,7 @@ public class LoginController {
             long queryEnd = System.currentTimeMillis();
             System.out.println("[DB Timing] login - Query execution time: " + (queryEnd - queryStart) + " ms");
             if (rs.next()) {
-                userRole = rs.getString("role"); // Get the user's role
+                userRole = rs.getString("role");
             }
         } catch (Exception e) {
             System.out.println("Login error: " + e.getMessage());
@@ -36,7 +33,6 @@ public class LoginController {
         return userRole;
     }
 
-    // Method for user registration
     public boolean register(String username, String email, String password, String role) {
         boolean isRegistered = false;
         long startTime = System.currentTimeMillis();
@@ -55,7 +51,7 @@ public class LoginController {
             long execEnd = System.currentTimeMillis();
             System.out.println("[DB Timing] register - Query execution time: " + (execEnd - execStart) + " ms");
             if (rowsInserted > 0) {
-                isRegistered = true; // Registration successful
+                isRegistered = true;
             }
         } catch (Exception e) {
             System.out.println("Registration error: " + e.getMessage());

@@ -94,7 +94,6 @@ public class adminView {
     private JComboBox<String> comboUserDrivers;
     private java.util.Map<String, Integer> driverMap = new java.util.HashMap<>();
 
-    //pt2:load drivers to combo box (personnel part)
     private void loadDriverUsers() {
         if (comboUserDrivers == null) {
             System.err.println("comboUserDrivers is null. Check your form bindings or initialization.");
@@ -114,7 +113,6 @@ public class adminView {
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Error loading drivers: " + e.getMessage());
         }
-        // Update txtID field when a driver is selected
         comboUserDrivers.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -129,36 +127,26 @@ public class adminView {
     }
 
     public adminView(String loggedInUserEmail) {
-        // Remove manual initialization of GUI components!
-        // The GUI designer (adminView.form) already initializes these fields.
-        // If you get NullPointerException, ensure the form is loaded properly.
-
-        //call the method to fill the combobox when selected
         loadDriverUsers();
 
-        // Get the logged-in user's ID from the database
         Model.UsersDAO usersDAO = new Model.UsersDAO();
         this.loggedInUserId = usersDAO.getUserIdByEmail(loggedInUserEmail);
 
-        txtID.setEditable(false); // Make ID field non-editable
+        txtID.setEditable(false);
         txtshipmentid.setEditable(false);
-        txttrackingid.setEditable(false); // trackingID should not be editable
-        txtemail.setEditable(false);
+        txttrackingid.setEditable(false);
 
-
-        // Initialize availability combo box options
         comboboxavailability.addItem("Available");
         comboboxavailability.addItem("Unavailable");
 
         loadTrackTable();
         loadPersonnelTable();
         loadUserTable();
-        setNextPersonnelID(); // Set next available ID on startup
-        setNextShipmentID(); // Set next available shipment ID on startup
-        setNextTrackingID(); // Set next available tracking ID on startup
+        setNextPersonnelID();
+        setNextShipmentID();
+        setNextTrackingID();
         clearPersonnelFields();
         clearUserFields();
-        //action to clear all fields
         clearbtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -166,7 +154,6 @@ public class adminView {
             }
         });
 
-        // Refresh tracking table
         btnrefreshtrack.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -191,24 +178,21 @@ public class adminView {
                     String location = txtlocation.getText();
                     String delay = txtdelays.getText();
                     String status = comboBox1.getSelectedItem() != null ? comboBox1.getSelectedItem().toString() : "";
-                    // Build delivery date string from spinnerday, comboBoxmonth, comboBoxyear
                     int day = (int) spinnerday.getValue();
                     String month = comboBoxmonth.getSelectedItem() != null ? comboBoxmonth.getSelectedItem().toString() : "";
                     String year = comboBoxyear.getSelectedItem() != null ? comboBoxyear.getSelectedItem().toString() : "";
                     String deliveryTime = "";
                     if (!month.isEmpty() && !year.isEmpty()) {
-                        // Convert month name to month number (1-12)
                         int monthNum = java.time.Month.valueOf(month.toUpperCase()).getValue();
                         deliveryTime = String.format("%s-%02d-%02d 00:00:00", year, monthNum, day);
                     }
                     Controller.TrackShipmentProgressController controller = new Controller.TrackShipmentProgressController();
                     controller.updateShipmentProgress(trackingID, shipmentID, location, deliveryTime, delay, status);
-                    loadTrackTable(); // Refresh table after update
+                    loadTrackTable(); 
                 }
             }
         });
 
-        // Populate text fields when a row is selected
         tracktable.getSelectionModel().addListSelectionListener(e -> {
             int selectedRow = tracktable.getSelectedRow();
             if (selectedRow >= 0) {
@@ -220,7 +204,6 @@ public class adminView {
                 txttrackingid.setText(val0 != null ? val0.toString() : "");
                 txtshipmentid.setText(val1 != null ? val1.toString() : "");
                 txtlocation.setText(val2 != null ? val2.toString() : "");
-                // Parse delivery time string and set spinnerday, comboBoxmonth, comboBoxyear
                 if (val3 != null && !val3.toString().isEmpty()) {
                     try {
                         String[] parts = val3.toString().split("[ -:]");
@@ -234,24 +217,21 @@ public class adminView {
                             spinnerday.setValue(Integer.parseInt(parts[2]));
                         }
                     } catch (Exception ex) {
-                        // Ignore parse errors
                     }
                 }
                 txtdelays.setText(val4 != null ? val4.toString() : "");
-                // status is not editable, but you can add a field if needed
             }
         });
 
-        // Delivery Personnel Table: populate fields when a row is selected
         AllDriversView.getSelectionModel().addListSelectionListener(e -> {
             int selectedRow = AllDriversView.getSelectedRow();
             if (selectedRow >= 0) {
                 String username = AllDriversView.getValueAt(selectedRow, 1).toString();
-                comboUserDrivers.setSelectedItem(username); // select by name
+                comboUserDrivers.setSelectedItem(username);
                 if (driverMap.containsKey(username)) {
-                    txtID.setText(String.valueOf(driverMap.get(username))); // set corresponding userID
+                    txtID.setText(String.valueOf(driverMap.get(username))); 
                 } else {
-                    txtID.setText(""); // fallback if somehow not found
+                    txtID.setText("");
                 }
                 txtContact.setText(AllDriversView.getValueAt(selectedRow, 2).toString());
                 comboBoxtimeslot.setSelectedItem(AllDriversView.getValueAt(selectedRow, 3).toString());
@@ -262,7 +242,6 @@ public class adminView {
         });
 
 
-        // Add Personnel: pt2
         addDriverButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -274,7 +253,7 @@ public class adminView {
                         JOptionPane.showMessageDialog(null, "Please select a valid driver!", "Error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
-                    int personnelID = driverMap.get(selectedDriver); // foreign key
+                    int personnelID = driverMap.get(selectedDriver);
                     String personnelContact = txtContact.getText();
                     String assignedRoute = txtRoute.getText();
                     String schedule = comboBoxtimeslot.getSelectedItem().toString();
@@ -293,7 +272,6 @@ public class adminView {
         });
 
 
-        // Update Personnel: pt2
         updateDriverButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -304,7 +282,6 @@ public class adminView {
                         JOptionPane.showMessageDialog(null, "Please select a valid driver from the list!", "Error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
-                    // double-check selected personnelID matches selected driver
                     if (driverMap.get(selectedDriver) != personnelID) {
                         JOptionPane.showMessageDialog(null, "Selected ID does not match chosen driver!", "Error", JOptionPane.ERROR_MESSAGE);
                         return;
@@ -330,7 +307,6 @@ public class adminView {
         });
 
 
-        // Delete Personnel/ pt:2
         deleteDriverButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -342,12 +318,10 @@ public class adminView {
                         JOptionPane.showMessageDialog(null, "Please select a valid driver!", "Error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
-                    // Double-check if combo selection matches personnelID (safety)
                     if (driverMap.get(selectedDriver) != personnelID) {
                         JOptionPane.showMessageDialog(null, "Mismatch between selected driver and ID!", "Error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
-                    // Check if driver is assigned to any shipment
                     boolean isAssigned = false;
                     try (Connection conn = Utility.DBConnection.getConnection();
                          PreparedStatement stmt = conn.prepareStatement("SELECT COUNT(*) FROM Shipments WHERE assignedDriverID = ?")) {
@@ -380,7 +354,6 @@ public class adminView {
         });
 
 
-        // User Table: populate fields when a row is selected
         userdata.getSelectionModel().addListSelectionListener(e -> {
             int selectedRow = userdata.getSelectedRow();
             if (selectedRow >= 0) {
@@ -390,7 +363,6 @@ public class adminView {
                 comboboxrole.setSelectedItem(userdata.getValueAt(selectedRow, 3).toString());
             }
         });
-        //Refresh the delivery personnel table/ pt:2
         btnrefreshdrivers.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -399,7 +371,6 @@ public class adminView {
             }
         });
 
-        // Add User
         btnadduser.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -423,7 +394,6 @@ public class adminView {
             }
         });
 
-        // Update User
         btnupdateuser.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -447,7 +417,6 @@ public class adminView {
             }
         });
 
-        // Delete User
         btndeleteuser.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -468,7 +437,6 @@ public class adminView {
             }
         });
 
-        // Clear User Fields
         btnclearuserfields.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -476,10 +444,8 @@ public class adminView {
             }
         });
 
-        // Load shipment data
         loadShipmentTable();
 
-        // Shipment table row selection
         shipmentdatatable.getSelectionModel().addListSelectionListener(e -> {
             int selectedRow = shipmentdatatable.getSelectedRow();
 
@@ -492,7 +458,6 @@ public class adminView {
             }
         });
 
-        // Add shipment button
         btnaddshipment.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -502,7 +467,6 @@ public class adminView {
                     String receiverName = txtreceivername.getText();
                     String status = comboBox2.getSelectedItem().toString();
                     Integer driverID = txtassigneddriverid.getText().isEmpty() ? null : Integer.parseInt(txtassigneddriverid.getText());
-                    // Get estimated delivery date from comboBoxyear, comboBoxmonth, spinnerday
                     int year = Integer.parseInt(comboBoxyear.getSelectedItem().toString());
                     String monthName = comboBoxmonth.getSelectedItem().toString();
                     int month = java.time.Month.valueOf(monthName.toUpperCase()).getValue(); // 1-based
@@ -518,7 +482,6 @@ public class adminView {
             }
         });
 
-        // Update shipment button
         btnupdateshipment.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -543,7 +506,6 @@ public class adminView {
             }
         });
 
-        // Delete shipment button
         btndeleteshipment.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -564,7 +526,6 @@ public class adminView {
             }
         });
 
-        // Clear fields button
         btnclearfields.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -574,10 +535,8 @@ public class adminView {
 
 
 
-        // Initialize Monthly Report Controller (connects button and dropdowns)
         new Controller.MonthlyReportController(this);
 
-        // Populate year and month dropdowns for reports (if not already populated)
         if (comboBoxYear.getItemCount() == 0) {
             int currentYear = java.time.Year.now().getValue();
             for (int y = currentYear - 5; y <= currentYear + 1; y++) {
@@ -588,9 +547,33 @@ public class adminView {
             String[] months = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
             for (String m : months) comboBoxMonth.addItem(m);
         }
+
+        if (btnrefreshshipments != null) {
+            btnrefreshshipments.addActionListener(new java.awt.event.ActionListener() {
+                @Override
+                public void actionPerformed(java.awt.event.ActionEvent e) {
+                    loadShipmentTable();
+                    JOptionPane.showMessageDialog(null, "Shipment table refreshed");
+                }
+            });
+        }
+
+        if (spinnerday != null) {
+            spinnerday.setModel(new javax.swing.SpinnerNumberModel(1, 1, 31, 1));
+        }
+
+        txtContact.setDocument(new javax.swing.text.PlainDocument() {
+            @Override
+            public void insertString(int offs, String str, javax.swing.text.AttributeSet a) throws javax.swing.text.BadLocationException {
+                if (str == null) return;
+                String current = getText(0, getLength());
+                if ((current + str).matches("\\d{0,10}") && str.matches("\\d+")) {
+                    super.insertString(offs, str, a);
+                }
+            }
+        });
     }
 
-    // Load all shipment tracking data into the table
     private void loadTrackTable() {
         TrackShipmentProgressDAO dao = new TrackShipmentProgressDAO();
         List<TrackShipmentProgress> list = dao.getAllShipmentProgress();
@@ -608,7 +591,6 @@ public class adminView {
         tracktable.setModel(new DefaultTableModel(data, columnNames));
     }
 
-    // Load all delivery personnel data into the table / pt:2
     private void loadPersonnelTable() {
         Model.DeliveryPersonnelDAO dao = new Model.DeliveryPersonnelDAO();
         java.util.List<Model.DeliveryPersonnel> list = dao.getAllPersonnel();
@@ -627,7 +609,6 @@ public class adminView {
         AllDriversView.setModel(new javax.swing.table.DefaultTableModel(data, columnNames));
     }
 
-    // Load all user data into the table
     private void loadUserTable() {
         Controller.UsersController controller = new Controller.UsersController();
         java.util.List<Model.Users> list = controller.getAllUsers();
@@ -641,10 +622,9 @@ public class adminView {
             data[i][3] = controller.getUserRole(user.getEmail());
         }
         userdata.setModel(new javax.swing.table.DefaultTableModel(data, columnNames));
-        loadDriverUsers(); // to repopulate the combo box
+        loadDriverUsers();
     }
 
-    // Helper to get next available personnel ID (auto-increment)
     private int getNextPersonnelID() {
         Model.DeliveryPersonnelDAO dao = new Model.DeliveryPersonnelDAO();
         java.util.List<Model.DeliveryPersonnel> list = dao.getAllPersonnel();
@@ -657,12 +637,10 @@ public class adminView {
         return maxID + 1;
     }
 
-    // Set txtID to next available ID
     private void setNextPersonnelID() {
         txtID.setText(String.valueOf(getNextPersonnelID()));
     }
 
-    // Clear personnel fields and set next available ID/ pt:2
     private void clearPersonnelFields() {
         txtID.setText("");
         comboUserDrivers.setSelectedIndex(-1);
@@ -673,7 +651,6 @@ public class adminView {
         comboboxavailability.setSelectedItem("Available");
     }
 
-    // Helper to get next available shipment ID (auto-increment)
     private int getNextShipmentID() {
         TrackShipmentProgressDAO dao = new TrackShipmentProgressDAO();
         List<TrackShipmentProgress> list = dao.getAllShipmentProgress();
@@ -685,18 +662,15 @@ public class adminView {
                     maxID = id;
                 }
             } catch (NumberFormatException ex) {
-                // Ignore invalid IDs
             }
         }
         return maxID + 1;
     }
 
-    // Set txtshipmentid to next available shipment ID
     private void setNextShipmentID() {
         txtshipmentid.setText(String.valueOf(getNextShipmentID()));
     }
 
-    // Helper to get next available tracking ID (auto-increment)
     private int getNextTrackingID() {
         TrackShipmentProgressDAO dao = new TrackShipmentProgressDAO();
         List<TrackShipmentProgress> list = dao.getAllShipmentProgress();
@@ -708,18 +682,15 @@ public class adminView {
                     maxID = id;
                 }
             } catch (NumberFormatException ex) {
-                // Ignore invalid IDs
             }
         }
         return maxID + 1;
     }
 
-    // Set txttrackingid to next available tracking ID
     public void setNextTrackingID() {
         txttrackingid.setText(String.valueOf(getNextTrackingID()));
     }
 
-    // Clear user fields
     private void clearUserFields() {
         txtemail.setText("");
         txtusername.setText("");
@@ -727,10 +698,9 @@ public class adminView {
         comboboxrole.setSelectedIndex(0);
     }
 
-    // populating rows in  table/ pt:2
     public static void populatePersonnelRow(String[][] data, int i, Model.DeliveryPersonnel personnel) {
         data[i][0] = String.valueOf(personnel.getPersonnelID());
-        data[i][1] = personnel.getPersonnelName(); // show username instead of raw ID
+        data[i][1] = personnel.getPersonnelName();
         data[i][2] = personnel.getPersonnelContact();
         data[i][3] = personnel.getSchedule();
         data[i][4] = personnel.getAssignedRoute();
@@ -738,7 +708,6 @@ public class adminView {
         data[i][6] = personnel.getAvailability();
     }
 
-    // Add shipments methods
     private void loadShipmentTable() {
         Controller.ShipmentsController controller = new Controller.ShipmentsController();
         List<Model.Shipments> list = controller.getAllShipments();
@@ -768,19 +737,10 @@ public class adminView {
     }
 
     public static void main(String[] args) {
-        // Start scheduled polling for shipment progress changes
-        new Model.TrackShipmentProgressPoller().startPolling();
-        // Example: pass a dummy logged-in user email (should be set from login/session)
-        JFrame frame = new JFrame("Admin View");
-        adminView view = new adminView("admin@admin.com"); // Replace with actual logged-in user email
-        frame.setContentPane(view.tabbedPane1);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(800, 600);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+        JOptionPane.showMessageDialog(null, "Access Denied. Please login first.", "Access Denied", JOptionPane.WARNING_MESSAGE);
+        View.loginView.main(args); 
     }
 
-    // Declare components matching your GUI
     public JButton btnGenerate;
     public JLabel lblTotalDeliveriesNumber;
     public JLabel lblDelayedDeliveriesNumber;
@@ -791,13 +751,15 @@ public class adminView {
     private JComboBox comboBoxyear;
 
 
-    // Add getters for components
     public JComboBox<String> getComboBoxMonth() { return comboBoxMonth; }
     public JComboBox<String> getComboBoxYear() { return comboBoxYear; }
     public JButton getBtnGenerate() { return btnGenerate; }
     public JLabel getLblTotalDeliveriesNumber() { return lblTotalDeliveriesNumber; }
     public JLabel getLblDelayedDeliveriesNumber() { return lblDelayedDeliveriesNumber; }
     public JLabel getLblTotalShipmentsNumber() { return lblTotalShipmentsNumber; }
+    public JTabbedPane getMainPanel() {
+        return tabbedPane1;
+    }
 
 }
 
