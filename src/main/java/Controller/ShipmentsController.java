@@ -16,6 +16,13 @@ public class ShipmentsController {
         shipmentsDAO.addShipment(shipment);
     }
 
+    // Overloaded method to support urgent flag
+    public void addShipment(String receiverName, String status, Integer driverID, Integer userid, String estimatedDeliveryTime, int urgent) {
+        Shipments shipment = new Shipments(receiverName, status, driverID, userid, estimatedDeliveryTime);
+        shipment.setUrgent(urgent);
+        shipmentsDAO.addShipment(shipment);
+    }
+
     public void updateShipment(int shipmentID, String receiverName, String status, Integer driverID, Integer userid) {
         Shipments shipment = new Shipments(shipmentID, receiverName, status, driverID, null, userid);
         shipmentsDAO.updateShipment(shipment);
@@ -55,6 +62,24 @@ public class ShipmentsController {
         if (driverId != null) {
             // Do NOT add a notification for the driver, only for the user
             // (recipientID should always be the user ID)
+        }
+    }
+
+    // Update all shipment fields including status
+    public void updateShipmentStatusAndFields(int shipmentID, String currentLocation, String estimatedDeliveryTime, String delay, int urgent, String status) {
+        // Update location, estimatedDeliveryTime, delay, urgent
+        shipmentsDAO.updateShipmentFields(shipmentID, currentLocation, estimatedDeliveryTime, delay, urgent);
+        // Update status separately
+        Shipments shipment = null;
+        for (Shipments s : getAllShipments()) {
+            if (s.getShipmentID() == shipmentID) {
+                shipment = s;
+                break;
+            }
+        }
+        if (shipment != null && status != null && !status.isEmpty()) {
+            shipment.setShipmentStatus(status);
+            shipmentsDAO.updateShipment(shipment);
         }
     }
 }

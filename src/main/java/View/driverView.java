@@ -202,7 +202,6 @@ public class driverView {
                 try {
                     int shipmentId = Integer.parseInt(txtshipmentid.getText());
                     String location = txtlocation.getText();
-                    // Build deliveryTime from comboBoxyear, comboBoxmonth, spinnerday
                     int year = Integer.parseInt(comboBoxyear.getSelectedItem().toString());
                     String monthName = comboBoxmonth.getSelectedItem().toString();
                     int month = java.time.Month.valueOf(monthName.toUpperCase()).getValue();
@@ -210,8 +209,10 @@ public class driverView {
                     String deliveryTime = String.format("%04d-%02d-%02d 00:00:00", year, month, day);
                     String delay = txtdelays.getText();
                     int urgent = urgentCheckBox.isSelected() ? 1 : 0;
+                    String status = comboBox1.getSelectedItem() != null ? comboBox1.getSelectedItem().toString() : "";
                     Controller.ShipmentsController controller = new Controller.ShipmentsController();
-                    controller.updateShipmentFields(shipmentId, location, deliveryTime, delay, urgent);
+                    // Update all fields including status
+                    controller.updateShipmentStatusAndFields(shipmentId, location, deliveryTime, delay, urgent, status);
                     loadAssignedShipmentsTable(driverId);
                     JOptionPane.showMessageDialog(null, "Shipment updated successfully.");
                 } catch (Exception ex) {

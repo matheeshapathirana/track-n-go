@@ -86,4 +86,7 @@ public class Shipments {
     public void setEstimatedDeliveryTime(String estimatedDeliveryTime) {
         this.estimatedDeliveryTime = estimatedDeliveryTime;
     }
+    public void setUrgent(Integer urgent) {
+        this.urgent = urgent;
+    }
 }
