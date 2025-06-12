@@ -105,10 +105,10 @@ public class adminView {
             comboUserDrivers.removeAllItems();
             driverMap.clear();
             while (rs.next()) {
-                int id = rs.getInt("userID");
+                int userID = rs.getInt("userID"); // userID is the recipientID for notifications
                 String name = rs.getString("username");
                 comboUserDrivers.addItem(name);
-                driverMap.put(name, id);
+                driverMap.put(name, userID);
             }
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Error loading drivers: " + e.getMessage());
@@ -737,8 +737,11 @@ public class adminView {
     }
 
     public static void main(String[] args) {
-        JOptionPane.showMessageDialog(null, "Access Denied. Please login first.", "Access Denied", JOptionPane.WARNING_MESSAGE);
-        View.loginView.main(args); 
+        // Start scheduled polling for shipment progress changes
+        new Model.TrackShipmentProgressPoller().startPolling();
+        // Prevent direct running of adminView. Force login flow.
+        JOptionPane.showMessageDialog(null, "Please login as admin to access the admin panel.", "Access Denied", JOptionPane.ERROR_MESSAGE);
+        View.loginView.main(new String[]{});
     }
 
     public JButton btnGenerate;
