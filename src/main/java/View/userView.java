@@ -96,20 +96,26 @@ public class userView {
         } else {
             System.err.println("btnclearfields is null. Check your form bindings.");
         }
-        btndeletenotification.addActionListener(e -> deleteSelectedNotification(customerId));
-        btnclearallnotifications.addActionListener(e -> clearAllNotifications(customerId));
-        btnclearfields.addActionListener(e -> {
-            clearNotificationsTable();
-            JOptionPane.showMessageDialog(null, "All notifications have been cleared from the display.");
-        });
+       
 
         loadAvailableDrivers();
 
         if (refreshButton != null) {
-            refreshButton.addActionListener(e -> loadAvailableDrivers());
+            refreshButton.addActionListener(e -> {
+                loadCustomerNotifications(customerId);
+            });
+        } else {
+            System.err.println("refreshButton is null. Check your form bindings for the notifications tab refresh button.");
         }
         if (refreshButton1 != null) {
-            refreshButton1.addActionListener(e -> loadTrackShipmentProgressTable(customerId));
+            refreshButton1.addActionListener(e -> {
+                loadTrackShipmentProgressTable(customerId);
+            });
+        }
+        if (refreshButton2 != null) {
+            refreshButton2.addActionListener(e -> {
+                loadCustomerNotifications(customerId);
+            });
         }
 
         btnaddshipment.addActionListener(e -> {
@@ -205,6 +211,7 @@ public class userView {
     public void loadCustomerNotifications(int customerId) {
         CustomerNotificationDAO dao = new CustomerNotificationDAO();
         List<CustomerNotification> notifications = dao.getNotificationsByUserID(customerId);
+        System.out.println("Loaded notifications count: " + notifications.size());
 
         String[] columnNames = {"Message", "Timestamp"};
         DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
