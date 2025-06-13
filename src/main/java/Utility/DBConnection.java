@@ -19,6 +19,7 @@ public class DBConnection {
         config.setPassword(PASSWORD);
         config.setMaximumPoolSize(10);
         config.setDriverClassName("com.mysql.cj.jdbc.Driver");
+        config.setMaxLifetime(25200000);
         dataSource = new HikariDataSource(config);
     }
 
