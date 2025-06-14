@@ -1,7 +1,5 @@
 package Model;
 
-import java.sql.Timestamp;
-
 public class TrackShipmentProgress {
     private int shipmentID;
     private String currentLocation;
