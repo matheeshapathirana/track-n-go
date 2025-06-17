@@ -39,7 +39,7 @@ A Java Swing application developed by **Tecsoz** to automate **Track n Go** logi
     cd track-n-go
     ```
 3. Open the project in your preferred IDE (e.g., IntelliJ IDEA, VS Code).
-5. Run the `Main.java` class to start the application.
+5. Run the `loginView.java` class to start the application.
 
 ## Usage
 1. After starting the application, use the GUI to manage shipments and personnel.
