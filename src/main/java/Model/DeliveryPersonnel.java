@@ -11,18 +11,6 @@ public class DeliveryPersonnel {
     private String createdOn;
     private String lastUpdated;
 
-    public DeliveryPersonnel(int personnelID, String personnelName , String personnelContact, String schedule, String assignedRoute, String deliveryHistory, String availability, String createdOn, String lastUpdated) {
-        this.personnelID = personnelID;
-        this.personnelName = personnelName;
-        this.personnelContact = personnelContact;
-        this.schedule = schedule;
-        this.assignedRoute = assignedRoute;
-        this.deliveryHistory = deliveryHistory;
-        this.availability = availability;
-        this.createdOn = createdOn;
-        this.lastUpdated = lastUpdated;
-    }
-
     public DeliveryPersonnel(int personnelID, String personnelName, String personnelContact, String schedule, String assignedRoute, String deliveryHistory, String availability) {
         this.personnelID = personnelID;
         this.personnelName = personnelName;
@@ -56,12 +44,6 @@ public class DeliveryPersonnel {
     }
     public String getAvailability() {
         return availability;
-    }
-    public String getCreatedOn() {
-        return createdOn;
-    }
-    public String getLastUpdated() {
-        return lastUpdated;
     }
     public void setPersonnelID(int personnelID) {
         this.personnelID = personnelID;
@@ -100,8 +82,6 @@ public class DeliveryPersonnel {
                 ", assignedRoute='" + assignedRoute + '\'' +
                 ", deliveryHistory='" + deliveryHistory + '\'' +
                 ", availability='" + availability + '\'' +
-                ", createdOn='" + createdOn + '\'' +
-                ", lastUpdated='" + lastUpdated + '\'' +
                 '}';
     }
 }

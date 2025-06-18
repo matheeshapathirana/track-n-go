@@ -159,6 +159,9 @@
                 <properties>
                   <model>
                     <item value="2025"/>
+                    <item value="2026"/>
+                    <item value="2027"/>
+                    <item value="2028"/>
                   </model>
                 </properties>
               </component>

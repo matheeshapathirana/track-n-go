@@ -12,9 +12,6 @@ public class MonthlyReport {
     public int getDelayedDeliveries() { return delayedDeliveries; }
     public void setDelayedDeliveries(int delayedDeliveries) { this.delayedDeliveries = delayedDeliveries; }
 
-    public double getAverageRating() { return averageRating; }
-    public void setAverageRating(double averageRating) { this.averageRating = averageRating; }
-
     public int getTotalShipments() { return totalShipments; }
     public void setTotalShipments(int totalShipments) { this.totalShipments = totalShipments; }
 }

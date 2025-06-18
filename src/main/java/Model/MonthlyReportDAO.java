@@ -23,7 +23,7 @@ public class MonthlyReportDAO {
                 if(rs.next()) report.setTotalDeliveries(rs.getInt(1));
             }
 
-            String sqlDelayed = "SELECT COUNT(*) FROM TrackShipmentProgress tsp JOIN Shipments s ON tsp.shipmentID = s.shipmentID WHERE YEAR(s.createdOn) = ? AND MONTHNAME(s.createdOn) = ? AND tsp.status = 'Delayed'";
+            String sqlDelayed = "SELECT COUNT(*) FROM Shipments WHERE YEAR(createdOn) = ? AND MONTHNAME(createdOn) = ? AND shipmentStatus = 'Delayed'";
             try (PreparedStatement stmt = conn.prepareStatement(sqlDelayed)) {
                 stmt.setInt(1, year);
                 stmt.setString(2, month);

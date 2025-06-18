@@ -138,46 +138,6 @@ public class ShipmentsDAO {
         return list;
     }
 
-    public List<Shipments> getShipmentsByStatus(String status) {
-        long startTime = System.currentTimeMillis();
-        List<Shipments> list = new ArrayList<>();
-        String sql = "SELECT * FROM Shipments WHERE shipmentStatus = ?";
-
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement s = conn.prepareStatement(sql)) {
-            long connTime = System.currentTimeMillis();
-            System.out.println("[DB Timing] getShipmentsByStatus - DB connection time: " + (connTime - startTime) + " ms");
-
-            s.setString(1, status);
-            ResultSet result = s.executeQuery();
-
-            long execStart = System.currentTimeMillis();
-            while (result.next()) {
-                Shipments shipment = new Shipments(
-                        result.getInt("shipmentID"),
-                        result.getString("receiverName"),
-                        result.getString("shipmentStatus"),
-                        result.getObject("assignedDriverID") != null ? result.getInt("assignedDriverID") : null,
-                        result.getTimestamp("createdOn"),
-                        result.getObject("userid") != null ? result.getInt("userid") : null,
-                        result.getObject("urgent") != null ? result.getInt("urgent") : null,
-                        result.getString("currentLocation"),
-                        result.getString("estimatedDeliveryTime"),
-                        result.getObject("delay") != null ? String.valueOf(result.getObject("delay")) : null
-                );
-                list.add(shipment);
-            }
-            long execEnd = System.currentTimeMillis();
-            System.out.println("[DB Timing] getShipmentsByStatus - Query execution time: " + (execEnd - execStart) + " ms");
-        } catch (SQLException e) {
-            System.out.println("Error getting shipments by status: " + e.getMessage());
-            e.printStackTrace();
-        }
-        long endTime = System.currentTimeMillis();
-        System.out.println("[DB Timing] getShipmentsByStatus - Total time: " + (endTime - startTime) + " ms");
-        return list;
-    }
-
     public void updateShipmentFields(int shipmentID, String currentLocation, String estimatedDeliveryTime, String delay, int urgent) {
         long startTime = System.currentTimeMillis();
         String sql = "UPDATE Shipments SET currentLocation = ?, estimatedDeliveryTime = ?, delay = ?, urgent = ? WHERE shipmentID = ?";

@@ -204,18 +204,6 @@ public class userView {
         }
     }
 
-    public int getCustomerId() {
-        return customerId;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public userView() {
-        scheduleDeliveriesController = new ScheduleDeliveriesController();
-    }
-
     public void loadCustomerNotifications(int customerId) {
         CustomerNotificationDAO dao = new CustomerNotificationDAO();
         List<CustomerNotification> notifications = dao.getNotificationsByUserID(customerId);
@@ -238,26 +226,6 @@ public class userView {
         } else {
             System.err.println("notificationsdata JTable is null. Ensure it is initialized and matches the field name in the .form file.");
         }
-    }
-
-    public void loadAllNotificationsTable() {
-        CustomerNotificationDAO dao = new CustomerNotificationDAO();
-        List<CustomerNotification> notifications = dao.getAllNotifications();
-
-        String[] columnNames = {"Message", "Created On"};
-        DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
-
-        for (CustomerNotification notification : notifications) {
-            Object[] row = {notification.getMessage(), notification.getCreatedOn()};
-            model.addRow(row);
-        }
-
-        notificationsdata.setModel(model);
     }
 
     public void deleteSelectedNotification(int customerId) {
@@ -299,13 +267,6 @@ public class userView {
             model.setRowCount(0);
 
             JOptionPane.showMessageDialog(null, "All notifications cleared successfully.");
-        }
-    }
-
-    public void clearNotificationsTable() {
-        DefaultTableModel model = (DefaultTableModel) notificationsdata.getModel();
-        if (model != null) {
-            model.setRowCount(0);
         }
     }
 

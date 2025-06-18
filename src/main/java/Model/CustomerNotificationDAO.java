@@ -70,21 +70,6 @@ public class CustomerNotificationDAO {
         return notifications;
     }
 
-    public int getNotificationIdByMessageAndUser(String message, int userId) {
-        String sql = "SELECT notificationID FROM Notifications WHERE message = ? AND recipientID = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, message);
-            stmt.setInt(2, userId);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return rs.getInt("notificationID");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return -1;
-    }
-
     public int getNotificationIdByMessageAndTimestamp(String message, String timestamp, int userId) {
         String sql = "SELECT notificationID FROM Notifications WHERE message = ? AND createdOn = ? AND recipientID = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {

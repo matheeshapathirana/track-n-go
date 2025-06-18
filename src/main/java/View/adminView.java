@@ -487,7 +487,28 @@ public class adminView {
                     int month = java.time.Month.valueOf(monthName.toUpperCase()).getValue(); // 1-based
                     int day = Integer.parseInt(spinnerday.getValue().toString());
                     String timeSlot = (comboBoxtimeslot != null && comboBoxtimeslot.getSelectedItem() != null) ? comboBoxtimeslot.getSelectedItem().toString() : "12:00:00";
-                    String estimatedDeliveryTime = String.format("%04d-%02d-%02d %s", year, month, day, timeSlot);
+                    // Map time slot to valid time for DATETIME
+                    String timeForDB;
+                    switch (timeSlot) {
+                        case "8AM - 10AM":
+                            timeForDB = "08:00:00";
+                            break;
+                        case "10AM - 12PM":
+                            timeForDB = "10:00:00";
+                            break;
+                        case "12PM - 2PM":
+                            timeForDB = "12:00:00";
+                            break;
+                        case "2PM - 4PM":
+                            timeForDB = "14:00:00";
+                            break;
+                        case "4PM - 6PM":
+                            timeForDB = "16:00:00";
+                            break;
+                        default:
+                            timeForDB = "12:00:00";
+                    }
+                    String estimatedDeliveryTime = String.format("%04d-%02d-%02d %s", year, month, day, timeForDB);
                     Controller.ShipmentsController controller = new Controller.ShipmentsController();
                     controller.addShipment(receiverName, status, driverID, loggedInUserId, estimatedDeliveryTime);
                     JOptionPane.showMessageDialog(null, "Shipment added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
@@ -718,17 +739,6 @@ public class adminView {
         comboboxrole.setSelectedIndex(0);
     }
 
-    //Themiya: fills one row of the table's data array using a DeliveryPersonnel object.
-    public static void populatePersonnelRow(String[][] data, int i, Model.DeliveryPersonnel personnel) {
-        data[i][0] = String.valueOf(personnel.getPersonnelID());
-        data[i][1] = personnel.getPersonnelName();
-        data[i][2] = personnel.getPersonnelContact();
-        data[i][3] = personnel.getSchedule();
-        data[i][4] = personnel.getAssignedRoute();
-        data[i][5] = personnel.getDeliveryHistory();
-        data[i][6] = personnel.getAvailability();
-    }
-
     private void loadShipmentTable() {
         Controller.ShipmentsController controller = new Controller.ShipmentsController();
         List<Model.Shipments> list = controller.getAllShipments();
@@ -773,6 +783,9 @@ public class adminView {
     private JSpinner spinnerday;
     private JComboBox comboBoxmonth;
     private JComboBox comboBoxyear;
+    private JComboBox shipmentyear;
+    private JComboBox shipmentmonth;
+    private JSpinner shipmentday;
 
 
     public JComboBox<String> getComboBoxMonth() { return comboBoxMonth; }

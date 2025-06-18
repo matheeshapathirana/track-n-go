@@ -15,14 +15,6 @@ public class DriverNotification {
         this.sentOn = sentOn;
     }
 
-    public int getNotificationID() {
-        return notificationID;
-    }
-
-    public int getPersonnelID() {
-        return personnelID;
-    }
-
     public String getMessage() {
         return message;
     }

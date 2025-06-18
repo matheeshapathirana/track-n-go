@@ -3,7 +3,6 @@ package Controller;
 import Model.CustomerNotificationDAO;
 import View.userView;
 
-import java.util.List;
 
 public class CustomerNotificationController {
     private userView view;

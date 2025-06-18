@@ -81,14 +81,8 @@ public class Shipments {
     public void setShipmentStatus(String shipmentStatus) {
         this.shipmentStatus = shipmentStatus;
     }
-    public void setAssignedDriverID(Integer assignedDriverID) {
-        this.assignedDriverID = assignedDriverID;
-    }
     public void setUserid(Integer userid) {
         this.userid = userid;
-    }
-    public void setEstimatedDeliveryTime(String estimatedDeliveryTime) {
-        this.estimatedDeliveryTime = estimatedDeliveryTime;
     }
     public void setUrgent(Integer urgent) {
         this.urgent = urgent;

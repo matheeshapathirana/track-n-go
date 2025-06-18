@@ -7,9 +7,9 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 public class DBConnection {
-    private static final String URL = "jdbc:mysql://pixel-host.zapto.org:3306/trackngo";
-    private static final String USER = "user";
-    private static final String PASSWORD = "user2006";
+    private static final String URL = "jdbc:mysql://localhost:3306/trackngo";
+    private static final String USER = "root";
+    private static final String PASSWORD = "";
     private static final HikariDataSource dataSource;
 
     static {
