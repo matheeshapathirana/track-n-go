@@ -1,6 +1,5 @@
 package Model;
 
-import Model.MonthlyReport;
 import Utility.DBConnection;
 
 import java.sql.*;

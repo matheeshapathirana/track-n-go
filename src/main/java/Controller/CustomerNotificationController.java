@@ -1,6 +1,5 @@
 package Controller;
 
-import Model.CustomerNotification;
 import Model.CustomerNotificationDAO;
 import View.userView;
 
