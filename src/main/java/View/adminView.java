@@ -100,7 +100,9 @@ public class adminView {
             System.err.println("comboUserDrivers is null. Check your form bindings or initialization.");
             return;
         }
+        //opens a connection to the DB
         try (Connection conn = Utility.DBConnection.getConnection();
+             //query to the get the user with role driver
              PreparedStatement stmt = conn.prepareStatement("SELECT userID, username FROM Users WHERE role = 'driver'");
              ResultSet rs = stmt.executeQuery()) {
             // clear previous entries
@@ -229,17 +231,19 @@ public class adminView {
             }
         });
 
-        //Themiya: selection listner for Jtable
+        //Themiya: when a user clicks a row in the table, it fills the input form with that row’s data.
         AllDriversView.getSelectionModel().addListSelectionListener(e -> {
             int selectedRow = AllDriversView.getSelectedRow();
-            if (selectedRow >= 0) {
+            if (selectedRow >= 0) { //row must be >0
+                //gets the username from column 1
                 String username = AllDriversView.getValueAt(selectedRow, 1).toString();
-                comboUserDrivers.setSelectedItem(username);
+                comboUserDrivers.setSelectedItem(username); //use the driver map to get the relevent userID fro the username
                 if (driverMap.containsKey(username)) {
                     txtID.setText(String.valueOf(driverMap.get(username))); 
                 } else {
                     txtID.setText("");
                 }
+                //autofill the form with the rest of the data
                 txtContact.setText(AllDriversView.getValueAt(selectedRow, 2).toString());
                 comboBoxtimeslot.setSelectedItem(AllDriversView.getValueAt(selectedRow, 3).toString());
                 txtRoute.setText(AllDriversView.getValueAt(selectedRow, 4).toString());
@@ -267,10 +271,11 @@ public class adminView {
                     String deliveryHistory = txtAreaHistory.getText();
                     String availability = comboboxavailability.getSelectedItem() != null ? comboboxavailability.getSelectedItem().toString() : "";
 
+                    //calls the Controller to insert it into the DB
                     Controller.DeliveryPersonnelController controller = new Controller.DeliveryPersonnelController();
                     Model.DeliveryPersonnel p1 = new Model.DeliveryPersonnel(personnelID, selectedDriver, personnelContact, schedule, assignedRoute, deliveryHistory, availability);
                     controller.addDeliveryPersonnel(p1);
-
+                    //shows success msg
                     JOptionPane.showMessageDialog(null, "Driver added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
                     clearPersonnelFields();
                     loadPersonnelTable();
@@ -282,6 +287,7 @@ public class adminView {
         updateDriverButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                //check if the required fields are entered
                 try {
                     int personnelID = Integer.parseInt(txtID.getText()); // This is userID from Users table
                     String selectedDriver = (String) comboUserDrivers.getSelectedItem(); //select driver name
@@ -299,6 +305,7 @@ public class adminView {
                     String deliveryHistory = txtAreaHistory.getText();
                     String availability = comboboxavailability.getSelectedItem() != null ? comboboxavailability.getSelectedItem().toString() : "";
 
+                    //calls the controller to update the db
                     Controller.DeliveryPersonnelController controller = new Controller.DeliveryPersonnelController();
                     Model.DeliveryPersonnel p1 = new Model.DeliveryPersonnel(personnelID, selectedDriver, personnelContact, schedule, assignedRoute, deliveryHistory, availability);
                     controller.updateDeliveryPersonnel(p1);
@@ -599,12 +606,14 @@ public class adminView {
         tracktable.setModel(new DefaultTableModel(data, columnNames));
     }
 
-    //Themiya: load all the DB data into the table
+    //Themiya: so when user enter data to the form it takes that input as a new object and stores it (default constructor)
     private void loadPersonnelTable() {
+        //creates a new DAo object
         Model.DeliveryPersonnelDAO dao = new Model.DeliveryPersonnelDAO();
+        //fetches all data from the db into an array list (controller)
         java.util.List<Model.DeliveryPersonnel> list = dao.getAllPersonnel();
-        String[] columnNames = {"ID", "Name", "Contact", "Schedule", "Route", "Deliveries", "Availability"};
-        String[][] data = new String[list.size()][columnNames.length];
+        String[] columnNames = {"ID", "Name", "Contact", "Schedule", "Route", "Deliveries", "Availability"}; //column names
+        String[][] data = new String[list.size()][columnNames.length]; //2d array to hold data
         for (int i = 0; i < list.size(); i++) {
             Model.DeliveryPersonnel personnel = list.get(i);
             data[i][0] = String.valueOf(personnel.getPersonnelID());
@@ -615,6 +624,7 @@ public class adminView {
             data[i][5] = personnel.getDeliveryHistory();
             data[i][6] = personnel.getAvailability();
         }
+        //sets the table with data and column headers
         AllDriversView.setModel(new javax.swing.table.DefaultTableModel(data, columnNames));
     }
 
@@ -708,7 +718,7 @@ public class adminView {
         comboboxrole.setSelectedIndex(0);
     }
 
-    //Themiya: populate fields when selecting fields in tables
+    //Themiya: fills one row of the table's data array using a DeliveryPersonnel object.
     public static void populatePersonnelRow(String[][] data, int i, Model.DeliveryPersonnel personnel) {
         data[i][0] = String.valueOf(personnel.getPersonnelID());
         data[i][1] = personnel.getPersonnelName();
