@@ -94,6 +94,7 @@ public class adminView {
     private JComboBox<String> comboUserDrivers;
     private java.util.Map<String, Integer> driverMap = new java.util.HashMap<>();
 
+    //Themiya: driver combobox for availability
     private void loadDriverUsers() {
         if (comboUserDrivers == null) {
             System.err.println("comboUserDrivers is null. Check your form bindings or initialization.");
@@ -102,17 +103,21 @@ public class adminView {
         try (Connection conn = Utility.DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement("SELECT userID, username FROM Users WHERE role = 'driver'");
              ResultSet rs = stmt.executeQuery()) {
+            // clear previous entries
             comboUserDrivers.removeAllItems();
             driverMap.clear();
             while (rs.next()) {
                 int id = rs.getInt("userID");
                 String name = rs.getString("username");
+                // shows username in combo box
                 comboUserDrivers.addItem(name);
+                // stores mapping for later use
                 driverMap.put(name, id);
             }
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Error loading drivers: " + e.getMessage());
         }
+        //when user selects a name from the combo box, set its ID in txtID field
         comboUserDrivers.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -147,6 +152,7 @@ public class adminView {
         setNextTrackingID();
         clearPersonnelFields();
         clearUserFields();
+        //Themiya: clear fields of the form
         clearbtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -223,6 +229,7 @@ public class adminView {
             }
         });
 
+        //Themiya: selection listner for Jtable
         AllDriversView.getSelectionModel().addListSelectionListener(e -> {
             int selectedRow = AllDriversView.getSelectedRow();
             if (selectedRow >= 0) {
@@ -241,7 +248,7 @@ public class adminView {
             }
         });
 
-
+        //Themiya: adding drivers btn
         addDriverButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -271,7 +278,7 @@ public class adminView {
             }
         });
 
-
+        //Themiya: updating drivers btn
         updateDriverButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -306,7 +313,7 @@ public class adminView {
             }
         });
 
-
+        //Themiya: deleting drivers btns
         deleteDriverButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -363,6 +370,7 @@ public class adminView {
                 comboboxrole.setSelectedItem(userdata.getValueAt(selectedRow, 3).toString());
             }
         });
+        //Themiya: Refresh table (DB)
         btnrefreshdrivers.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -591,6 +599,7 @@ public class adminView {
         tracktable.setModel(new DefaultTableModel(data, columnNames));
     }
 
+    //Themiya: load all the DB data into the table
     private void loadPersonnelTable() {
         Model.DeliveryPersonnelDAO dao = new Model.DeliveryPersonnelDAO();
         java.util.List<Model.DeliveryPersonnel> list = dao.getAllPersonnel();
@@ -641,6 +650,7 @@ public class adminView {
         txtID.setText(String.valueOf(getNextPersonnelID()));
     }
 
+    //Themiya: to clear fields from the form
     private void clearPersonnelFields() {
         txtID.setText("");
         comboUserDrivers.setSelectedIndex(-1);
@@ -698,6 +708,7 @@ public class adminView {
         comboboxrole.setSelectedIndex(0);
     }
 
+    //Themiya: populate fields when selecting fields in tables
     public static void populatePersonnelRow(String[][] data, int i, Model.DeliveryPersonnel personnel) {
         data[i][0] = String.valueOf(personnel.getPersonnelID());
         data[i][1] = personnel.getPersonnelName();
@@ -760,7 +771,6 @@ public class adminView {
     public JTabbedPane getMainPanel() {
         return tabbedPane1;
     }
-
 }
 
 
