@@ -8,7 +8,7 @@ import java.util.List;
 public class ShipmentsDAO {
     public void addShipment(Shipments shipment) {
         long startTime = System.currentTimeMillis();
-        String sql = "INSERT INTO Shipments (receiverName, shipmentStatus, assignedDriverID, userid, estimatedDeliveryTime) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Shipments (receiverName, shipmentStatus, assignedDriverID, userid, estimatedDeliveryTime, currentLocation) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement s = conn.prepareStatement(sql)) {
@@ -28,6 +28,7 @@ public class ShipmentsDAO {
                 s.setNull(4, Types.INTEGER);
             }
             s.setString(5, shipment.getEstimatedDeliveryTime());
+            s.setString(6, shipment.getCurrentLocation());
 
             long execStart = System.currentTimeMillis();
             s.executeUpdate();

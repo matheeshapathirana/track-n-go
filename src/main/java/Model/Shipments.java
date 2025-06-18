@@ -31,6 +31,15 @@ public class Shipments {
         this.estimatedDeliveryTime = estimatedDeliveryTime;
     }
 
+    public Shipments(String receiverName, String shipmentStatus, Integer assignedDriverID, Integer userid, String estimatedDeliveryTime, String currentLocation) {
+        this.receiverName = receiverName;
+        this.shipmentStatus = shipmentStatus;
+        this.assignedDriverID = assignedDriverID;
+        this.userid = userid;
+        this.estimatedDeliveryTime = estimatedDeliveryTime;
+        this.currentLocation = currentLocation;
+    }
+
     public Shipments(int shipmentID, String receiverName, String shipmentStatus, Integer assignedDriverID, Timestamp createdOn, Integer userid, Integer urgent, String currentLocation, String estimatedDeliveryTime, String delay) {
         this.shipmentID = shipmentID;
         this.receiverName = receiverName;

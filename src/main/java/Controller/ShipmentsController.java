@@ -22,6 +22,17 @@ public class ShipmentsController {
         shipmentsDAO.addShipment(shipment);
     }
 
+    public void addShipment(String receiverName, String status, Integer driverID, Integer userid, String estimatedDeliveryTime, String currentLocation) {
+        Shipments shipment = new Shipments(receiverName, status, driverID, userid, estimatedDeliveryTime, currentLocation);
+        shipmentsDAO.addShipment(shipment);
+    }
+
+    public void addShipment(String receiverName, String status, Integer driverID, Integer userid, String estimatedDeliveryTime, int urgent, String currentLocation) {
+        Shipments shipment = new Shipments(receiverName, status, driverID, userid, estimatedDeliveryTime, currentLocation);
+        shipment.setUrgent(urgent);
+        shipmentsDAO.addShipment(shipment);
+    }
+
     public void updateShipment(int shipmentID, String receiverName, String status, Integer driverID, Integer userid) {
         Shipments shipment = new Shipments(shipmentID, receiverName, status, driverID, null, userid);
         shipmentsDAO.updateShipment(shipment);

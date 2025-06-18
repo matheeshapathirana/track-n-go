@@ -90,8 +90,15 @@ public class userView {
         }
         if (btnclearfields != null) {
             btnclearfields.addActionListener(e -> {
-                clearNotificationsTable();
-                JOptionPane.showMessageDialog(null, "All notifications have been cleared from the display.");
+                if (txtreceivername != null) txtreceivername.setText("");
+                if (txtaddress != null) txtaddress.setText("");
+                if (comboBoxyear != null) comboBoxyear.setSelectedIndex(0);
+                if (comboBoxmonth != null) comboBoxmonth.setSelectedIndex(0);
+                if (spinnerday != null) spinnerday.setValue(1);
+                if (comboBoxtimeslot != null) comboBoxtimeslot.setSelectedIndex(0);
+                if (availableDriversDropdown != null) availableDriversDropdown.setSelectedIndex(0);
+                if (urgentCheckBox != null) urgentCheckBox.setSelected(false);
+                JOptionPane.showMessageDialog(null, "All fields have been cleared.");
             });
         } else {
             System.err.println("btnclearfields is null. Check your form bindings.");
@@ -102,10 +109,10 @@ public class userView {
 
         if (refreshButton != null) {
             refreshButton.addActionListener(e -> {
-                loadCustomerNotifications(customerId);
+                loadAvailableDrivers();
             });
         } else {
-            System.err.println("refreshButton is null. Check your form bindings for the notifications tab refresh button.");
+            System.err.println("refreshButton is null. Check your form bindings for the available drivers refresh button.");
         }
         if (refreshButton1 != null) {
             refreshButton1.addActionListener(e -> {
@@ -124,6 +131,7 @@ public class userView {
                 String status = "Pending";
                 Integer driverID = null;
                 int urgent = (urgentCheckBox != null && urgentCheckBox.isSelected()) ? 1 : 0;
+                String currentLocation = (txtaddress != null) ? txtaddress.getText() : null;
                 if (availableDriversDropdown != null && availableDriversDropdown.getSelectedItem() != null) {
                     String selected = availableDriversDropdown.getSelectedItem().toString();
                     Model.DeliveryPersonnelDAO dao = new Model.DeliveryPersonnelDAO();
@@ -164,7 +172,7 @@ public class userView {
                     return;
                 }
                 Controller.ShipmentsController controller = new Controller.ShipmentsController();
-                controller.addShipment(receiverName, status, driverID, customerId, estimatedDeliveryTime, urgent);
+                controller.addShipment(receiverName, status, driverID, customerId, estimatedDeliveryTime, urgent, currentLocation);
                 if (driverID != null) {
                     Model.DriverNotificationDAO driverNotificationDAO = new Model.DriverNotificationDAO();
                     String message = "A new shipment has been assigned to you. Please check your dashboard.";
